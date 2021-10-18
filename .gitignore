@@ -1,0 +1,10 @@
+# ide
+.idea/
+
+# local
+target/
+logs/
+
+# other
+*.class
+*.iml

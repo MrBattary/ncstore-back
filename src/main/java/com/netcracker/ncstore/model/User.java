@@ -27,7 +27,7 @@ public class User { //need to implement UserDetails but no spring security yet
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String login;
+    private String email;
     private String password;
     private double balance;
 

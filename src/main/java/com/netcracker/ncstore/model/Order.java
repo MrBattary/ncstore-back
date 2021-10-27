@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 
@@ -18,12 +19,23 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private long userId;
     private Instant instantOfCreation;
-    private EOrderStatus status;
     private String bankData;
 
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToMany(mappedBy = "order")
     private List<OrderItem> products;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "order_status")
+    private EOrderStatus orderStatus;
+
 }

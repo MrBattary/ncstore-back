@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.time.Instant;
 
 /**
@@ -16,9 +17,16 @@ import java.time.Instant;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Discount {
-    private long productPriceId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     private double discountPrice;
     private Instant startInstant;
     private Instant endInstant;
+
+    @OneToOne
+    @JoinColumn(name = "product_price_id")
+    private ProductPrice productPrice;
 }

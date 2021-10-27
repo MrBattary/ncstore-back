@@ -7,7 +7,7 @@ package com.netcracker.ncstore.model.enumerations;
  * we need to know the status of each item in order.
  * @author Artem Bakin
  */
-public enum EOrderProductStatus {
+public enum EOrderItemStatus {
     /**
      * Product is ready to use.
      */

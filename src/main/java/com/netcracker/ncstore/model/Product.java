@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
+
 /**
  * Class that defines one product in the store.
  * @author Artem Bakin
@@ -14,11 +16,23 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private long companyId;
-    private long parentProductId;
     private String name;
     private String description;
-    private EProductStatus status;
+
+    @OneToOne
+    @JoinColumn(name = "parent_product_id")
+    private Product parentProduct;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User supplier;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "product_status")
+    private EProductStatus productStatus;
 }

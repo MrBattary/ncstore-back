@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.util.Locale;
 
 /**
@@ -17,9 +18,15 @@ import java.util.Locale;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class ProductPrice {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private long productId;
     private double price;
     private Locale locale;
+
+    @OneToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 }

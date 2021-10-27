@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -15,9 +16,13 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Role {//need to implement GrantedAuthority, but no spring security yet
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String name;
 
+    @ManyToMany(mappedBy = "roles")
     private List<User> users;
 }

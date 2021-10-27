@@ -14,7 +14,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import java.util.List;
 
 /**
  * Class that defines one product in the store.
@@ -42,4 +44,8 @@ public class Product {
     @Enumerated(EnumType.STRING)
     @Column(name = "product_status")
     private EProductStatus productStatus;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductPrice> productPrices;
+
 }

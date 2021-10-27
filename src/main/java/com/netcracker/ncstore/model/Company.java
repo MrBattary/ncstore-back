@@ -15,7 +15,6 @@ import java.time.LocalDate;
 /**
  * Class that defines company data of user of the system.
  * Used if user is a company, not an individual.
- * @author Artem Bakin
  */
 @Getter
 @Setter

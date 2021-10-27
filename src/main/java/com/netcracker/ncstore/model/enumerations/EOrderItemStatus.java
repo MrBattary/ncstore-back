@@ -5,7 +5,6 @@ package com.netcracker.ncstore.model.enumerations;
  * For example, order includes several products,
  * and 1 or more products could be refunded. That is why
  * we need to know the status of each item in order.
- * @author Artem Bakin
  */
 public enum EOrderItemStatus {
     /**

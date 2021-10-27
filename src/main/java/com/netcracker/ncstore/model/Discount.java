@@ -16,7 +16,6 @@ import java.time.Instant;
 /**
  * Class that defines a discount for a specific product price.
  * Discounted price is always a temporary price.
- * @author Artem Bakin
  */
 @Getter
 @Setter

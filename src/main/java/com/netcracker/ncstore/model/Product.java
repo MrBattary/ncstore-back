@@ -18,7 +18,6 @@ import javax.persistence.OneToOne;
 
 /**
  * Class that defines one product in the store.
- * @author Artem Bakin
  */
 @Getter
 @Setter

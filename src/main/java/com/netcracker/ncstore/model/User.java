@@ -17,7 +17,6 @@ import java.util.List;
 
 /**
  * Class that defines a user of the system
- * @author Artem Bakin
  */
 @Getter
 @Setter

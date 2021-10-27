@@ -15,7 +15,6 @@ import java.time.LocalDate;
 /**
  * Class that defines personal data of user of the system.
  * Used for user if one is an individual (real-life human).
- * @author Artem Bakin
  */
 @Getter
 @Setter

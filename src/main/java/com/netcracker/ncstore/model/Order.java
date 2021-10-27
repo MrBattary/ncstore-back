@@ -22,7 +22,6 @@ import java.util.List;
 /**
  * Class that defines a single order of user.
  * Order consists of some number of products.
- * @author Artem Bakin
  */
 @Getter
 @Setter

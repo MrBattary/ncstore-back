@@ -20,7 +20,6 @@ import java.util.Locale;
 
 /**
  * Class that defines a single product item in order.
- * @author Artem Bakin
  */
 @Getter
 @Setter

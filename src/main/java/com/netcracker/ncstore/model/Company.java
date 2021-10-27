@@ -1,0 +1,36 @@
+package com.netcracker.ncstore.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
+import java.time.LocalDate;
+
+/**
+ * Class that defines company data of user of the system.
+ * Used if user is a company, not an individual.
+ */
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+public class Company {
+    @Id
+    private long userId;
+    private String companyName;
+    private String description;
+    private LocalDate foundationDate;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    @MapsId
+    private User user;
+
+}

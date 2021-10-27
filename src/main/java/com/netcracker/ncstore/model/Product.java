@@ -6,15 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Class that defines one product in the store.
@@ -42,4 +35,8 @@ public class Product {
     @Enumerated(EnumType.STRING)
     @Column(name = "product_status")
     private EProductStatus productStatus;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductPrice> productPrices;
+
 }

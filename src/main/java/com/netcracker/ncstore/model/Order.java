@@ -33,7 +33,7 @@ public class Order {
     @Id
     @GeneratedValue
     private UUID id;
-    private Instant instantOfCreation;
+    private Instant creationUtcTime;
     private String bankData;
 
     @OneToOne

@@ -28,8 +28,8 @@ public class Discount {
     @GeneratedValue
     private UUID id;
     private double discountPrice;
-    private Instant startInstant;
-    private Instant endInstant;
+    private Instant startUtcTime;
+    private Instant endUtcTime;
 
     @OneToOne
     @JoinColumn(name = "product_price_id")

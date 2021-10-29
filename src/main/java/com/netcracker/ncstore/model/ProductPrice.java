@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Class that defines a price of a specific product in specific region.
@@ -25,8 +26,8 @@ import java.util.Locale;
 @Entity
 public class ProductPrice {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue
+    private UUID id;
     private double price;
     private Locale locale;
 

@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Class that defines a single product item in order.
@@ -28,8 +29,8 @@ import java.util.Locale;
 @Entity
 public class OrderItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue
+    private UUID id;
     private double price;
     private Locale priceLocale;
     private String licenseKey;

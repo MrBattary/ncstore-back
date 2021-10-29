@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * Response on successful Sign In request
+ * Response on successful sign in request
  */
 @Jacksonized
 @Builder
@@ -15,5 +15,6 @@ import lombok.extern.jackson.Jacksonized;
 @AllArgsConstructor
 @Getter
 public class SignInResponse {
-    private String userToken;
+    private final String userType;
+    private final String userToken;
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * User controller which is responsible for authorisation
- * and requests and responses which are related to the user's accounts
+ * and requests/responses which are related to the user's accounts
  */
 @RestController
 public class UserController {
@@ -19,7 +19,7 @@ public class UserController {
 
     /**
      * Constructor
-     * <p>
+     *
      * TODO: In the future, any services should be the arguments of constructor
      */
     public UserController() {
@@ -32,6 +32,7 @@ public class UserController {
      * @param request - email and password
      * @return - HTTP code
      */
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signUp
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> signUp(@RequestBody final SignRequest request) {
@@ -47,6 +48,7 @@ public class UserController {
         }
     }
 
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signIn
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<SignInResponse> signIn(@RequestBody final SignRequest request) {
@@ -61,5 +63,33 @@ public class UserController {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signOut
+    @RequestMapping(value = "/signout", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<SignInResponse> signOut() {
+        return null;
+    }
+
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/User/getUser
+    @RequestMapping(value = "/user/info", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getOwnUserInfo() {
+        return null;
+    }
+
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/User/changeUser
+    @RequestMapping(value = "/user/info", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> changeOwnUserInfo() {
+        return null;
+    }
+
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/User/getUserProfile
+    @RequestMapping(value = "/user/info/{userId}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getUserInfo(@PathVariable final String userId) {
+        return null;
     }
 }

@@ -5,13 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Product controller is responsible for any actions with products
+ */
 @RestController
 public class ProductController {
     private final Logger log;
 
     /**
      * Constructor
-     * <p>
+     *
      * TODO: In the future, any services should be the arguments of constructor
      */
     public ProductController() {

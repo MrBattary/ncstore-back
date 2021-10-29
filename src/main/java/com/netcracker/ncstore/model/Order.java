@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Class that defines a single order of user.
@@ -30,8 +31,8 @@ import java.util.List;
 @Entity
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue
+    private UUID id;
     private Instant creationUtcTime;
     private String bankData;
 

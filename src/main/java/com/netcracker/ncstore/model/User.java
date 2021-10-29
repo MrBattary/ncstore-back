@@ -7,12 +7,12 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -25,8 +25,8 @@ import java.util.List;
 @Entity
 public class User { //need to implement UserDetails but no spring security yet
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue
+    private UUID id;
     private String email;
     private String password;
     private double balance;

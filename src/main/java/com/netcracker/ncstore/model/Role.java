@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Class that defines a role of user in the system. User can have multiple roles.
@@ -22,8 +23,8 @@ import java.util.List;
 @Entity
 public class Role {//need to implement GrantedAuthority, but no spring security yet
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue
+    private UUID id;
     private String name;
 
     @ManyToMany(mappedBy = "roles")

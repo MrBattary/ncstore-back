@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import java.time.Instant;
+import java.util.UUID;
 
 /**
  * Class that defines a discount for a specific product price.
@@ -24,8 +25,8 @@ import java.time.Instant;
 @Entity
 public class Discount {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue
+    private UUID id;
     private double discountPrice;
     private Instant startInstant;
     private Instant endInstant;

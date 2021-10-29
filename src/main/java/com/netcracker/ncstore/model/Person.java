@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * Class that defines personal data of user of the system.
@@ -23,7 +24,7 @@ import java.time.LocalDate;
 @Entity
 public class Person {
     @Id
-    private long userId;
+    private UUID userId;
     private String firstName;
     private String secondName;
     private String nickName;

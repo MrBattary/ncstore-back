@@ -3,5 +3,7 @@ package com.netcracker.ncstore.repository;
 import com.netcracker.ncstore.model.Discount;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DiscountRepository extends JpaRepository<Discount, Long> {
+import java.util.UUID;
+
+public interface DiscountRepository extends JpaRepository<Discount, UUID> {
 }

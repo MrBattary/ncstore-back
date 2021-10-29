@@ -23,7 +23,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class User { //need to implement UserDetails but no spring security yet
+public class User {
+    //TODO: need to implement UserDetails but no spring security yet
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

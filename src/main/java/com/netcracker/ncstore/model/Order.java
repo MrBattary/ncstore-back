@@ -32,7 +32,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private Instant instantOfCreation;
+    private Instant creationUtcTime;
     private String bankData;
 
     @OneToOne

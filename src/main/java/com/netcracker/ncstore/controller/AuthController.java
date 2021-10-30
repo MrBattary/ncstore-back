@@ -10,7 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Auth controller which is responsible for the authorisation
+ * Auth controller which is responsible for:
+ * authorization and authentication
  */
 @RestController
 public class AuthController {

@@ -6,6 +6,8 @@ The backend repository for ncstore project.
 - Java 8
 - Maven 3
 - Spring Boot
+- Spring JPA
+- Lombok
 
 ## Developers
 

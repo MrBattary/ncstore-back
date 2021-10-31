@@ -51,7 +51,7 @@ public class ProductController {
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/deleteProduct
-    @RequestMapping(value = "/products/{productId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/products/{productId}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> deleteProduct(@PathVariable final String productId){
         return null;

@@ -24,7 +24,9 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getProductsWithPagination(@RequestParam final Integer page,
+    public ResponseEntity<?> getProductsWithPagination(@RequestParam final String categoryId,
+                                                       @RequestParam final String searchText,
+                                                       @RequestParam final Integer page,
                                                        @RequestParam final Integer size) {
         return null;
     }

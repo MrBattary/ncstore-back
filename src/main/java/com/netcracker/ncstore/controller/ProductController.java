@@ -1,9 +1,24 @@
 package com.netcracker.ncstore.controller;
 
+import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
+import com.netcracker.ncstore.dto.ProductsGetResponseDTO;
+import com.netcracker.ncstore.service.ProductsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Product controller is responsible for any actions with products
@@ -11,14 +26,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class ProductController {
     private final Logger log;
+    private ProductsService productsService;
 
     /**
      * Constructor
      *
      * TODO: In the future, any services should be the arguments of constructor
      */
-    public ProductController() {
+    public ProductController(ProductsService productsService) {
         this.log = LoggerFactory.getLogger(ProductController.class);
+        this.productsService = productsService;
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
@@ -26,9 +43,21 @@ public class ProductController {
     @ResponseBody
     public ResponseEntity<?> getProductsWithPagination(@RequestParam final String categoryId,
                                                        @RequestParam final String searchText,
-                                                       @RequestParam final Integer page,
-                                                       @RequestParam final Integer size) {
-        return null;
+                                                       @RequestParam final int page,
+                                                       @RequestParam final int size,
+                                                       Locale locale) {
+
+
+        List<UUID> categories = Arrays.stream(categoryId.split("\\|")).
+                    map(UUID::fromString).collect(Collectors.toList());
+
+        ProductsGetRequestDTO productsGetRequestDTO =
+                new ProductsGetRequestDTO(categories, searchText, page, size, locale);
+
+        List<ProductsGetResponseDTO> targetProducts =
+                productsService.getPageOfProducts(productsGetRequestDTO);
+
+        return new ResponseEntity<>(targetProducts, HttpStatus.OK);
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/createProduct

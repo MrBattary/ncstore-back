@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.dto;
+package com.netcracker.ncstore.dto.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

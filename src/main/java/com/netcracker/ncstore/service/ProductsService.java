@@ -1,0 +1,56 @@
+package com.netcracker.ncstore.service;
+
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
+import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
+import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
+import com.netcracker.ncstore.dto.ProductsGetResponseDTO;
+import com.netcracker.ncstore.model.Product;
+import com.netcracker.ncstore.repository.ProductRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
+
+@AllArgsConstructor
+@Service
+public class ProductsService {
+    private ProductRepository productRepository;
+    private PricesService pricesService;
+
+    public List<ProductsGetResponseDTO> getPageOfProducts(ProductsGetRequestDTO productsGetRequestDTO){
+        Pageable productsPageRequest =
+                PageRequest.of(productsGetRequestDTO.getPage(), productsGetRequestDTO.getSize());
+
+        Page<Product> productsPage = productRepository.findProductsByNameAndCategories(
+                productsGetRequestDTO.getSearchText(),
+                productsGetRequestDTO.getCategoriesIds(),
+                productsPageRequest);
+
+        List<ProductsGetResponseDTO> returnDTOList = new ArrayList<>();
+
+        for(Product product : productsPage.getContent()){
+            ProductLocaleDTO productLocaleDTO =
+                    new ProductLocaleDTO(product.getId(), productsGetRequestDTO.getLocale());
+
+            ProductPriceInRegionDTO priceInRegion =
+                    pricesService.getPriceForProductInRegion(productLocaleDTO);
+
+            ProductsGetResponseDTO productDTO = new ProductsGetResponseDTO(
+                    product.getId(),
+                    product.getName(),
+                    priceInRegion.getNormalPrice(),
+                    priceInRegion.getDiscountPrice(),
+                    Currency.getInstance(priceInRegion.getLocale()).getSymbol()
+            );
+
+            returnDTOList.add(productDTO);
+        }
+
+        return returnDTOList;
+    }
+}

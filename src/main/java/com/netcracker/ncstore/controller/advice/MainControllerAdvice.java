@@ -17,9 +17,12 @@ public class MainControllerAdvice {
     }
 
     @ExceptionHandler(value = {ProductsPageNumberExceedsPageCountException.class})
-    public ResponseEntity<?> handleProductsPageNumberExceedsPageCountException(){
+    public ResponseEntity<?> handleProductsPageNumberExceedsPageCountException(
+            ProductsPageNumberExceedsPageCountException exception){
         return new ResponseEntity<>(
-                "Provided page number for provide page size exceeds page count. There is no such page.",
+                "Provided page number for provide page size exceeds page count. There is no such page.\n" +
+                        "Requested page: " + exception.getRequestedPageNumber() +"\n" +
+                        "Total page count: " + exception.getTotalPageCount(),
                 HttpStatus.NOT_FOUND);
     }
 }

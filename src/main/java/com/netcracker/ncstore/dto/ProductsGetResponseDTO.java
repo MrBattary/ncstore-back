@@ -19,4 +19,6 @@ public class ProductsGetResponseDTO {
     private final double productPrice;
     private final Double discountPrice;//non-primitive because there may be no discount
     private final String priceCurrency;
+    private final int currentPageNumber;
+    private final int totalPageCount;
 }

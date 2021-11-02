@@ -33,7 +33,7 @@ public class ProductsService {
                 productsPageRequest);
 
         if((productsGetRequestDTO.getPage()+1) >= productsPage.getTotalPages())
-            throw new ProductsPageNumberExceedsPageCountException();
+            throw new ProductsPageNumberExceedsPageCountException(productsGetRequestDTO.getPage(), productsPage.getTotalPages());
 
         List<ProductsGetResponseDTO> returnDTOList = new ArrayList<>();
 
@@ -49,7 +49,9 @@ public class ProductsService {
                     product.getName(),
                     priceInRegion.getNormalPrice(),
                     priceInRegion.getDiscountPrice(),
-                    Currency.getInstance(priceInRegion.getLocale()).getSymbol()
+                    Currency.getInstance(priceInRegion.getLocale()).getSymbol(),
+                    productsPage.getNumber(),
+                    productsPage.getTotalPages()
             );
 
             returnDTOList.add(productDTO);

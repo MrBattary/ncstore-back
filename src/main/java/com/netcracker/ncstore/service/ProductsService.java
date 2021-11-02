@@ -7,7 +7,6 @@ import com.netcracker.ncstore.dto.ProductsGetResponseDTO;
 import com.netcracker.ncstore.exception.ProductsPageNumberExceedsPageCountException;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.repository.ProductRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,12 +19,22 @@ import java.util.List;
 /**
  * Service responsible for any logic related to Product entity.
  */
-@AllArgsConstructor
 @Service
 public class ProductsService {
     private ProductRepository productRepository;
     private PricesService pricesService;
 
+    public ProductsService(ProductRepository productRepository, PricesService pricesService) {
+        this.productRepository = productRepository;
+        this.pricesService = pricesService;
+    }
+
+    /**
+     * Returns list of DTOs containing information about
+     * product(name, price, discount, currency) and paging data.
+     * @param productsGetRequestDTO dto containing needed information
+     * @return list of DTOs
+     */
     public List<ProductsGetResponseDTO> getPageOfProductsByNameAndCategories(ProductsGetRequestDTO productsGetRequestDTO){
         Pageable productsPageRequest =
                 PageRequest.of(productsGetRequestDTO.getPage(), productsGetRequestDTO.getSize());

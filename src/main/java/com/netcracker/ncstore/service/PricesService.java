@@ -5,16 +5,14 @@ import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
 import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.ProductPriceRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.LocaleResolver;
 
 import java.time.Instant;
 import java.util.Locale;
 
 /**
- * Service which helps to get information about prices for product
+ * Service responsible for any logic related to Price entity.
  */
 @Service
 public class PricesService {
@@ -31,9 +29,10 @@ public class PricesService {
                 productPriceRepository.findByProduct_IdAndLocale(productLocale.getProductId(),
                                                                  productLocale.getLocale());
 
-        if(productPrice==null)
+        if(productPrice==null) {
             productPrice = productPriceRepository.findByProduct_IdAndLocale(productLocale.getProductId(),
-                                                                            Locale.forLanguageTag(defaultLocaleCode));
+                    Locale.forLanguageTag(defaultLocaleCode));
+        }
 
         Double discountPrice = null;
         if(productPrice.getDiscount()!=null){

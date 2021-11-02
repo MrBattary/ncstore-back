@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
+/**
+ * Service responsible for any logic related to Product entity.
+ */
 @AllArgsConstructor
 @Service
 public class ProductsService {
@@ -32,8 +35,9 @@ public class ProductsService {
                 productsGetRequestDTO.getCategoriesIds(),
                 productsPageRequest);
 
-        if((productsGetRequestDTO.getPage()+1) >= productsPage.getTotalPages())
+        if((productsGetRequestDTO.getPage()+1) >= productsPage.getTotalPages()) {
             throw new ProductsPageNumberExceedsPageCountException(productsGetRequestDTO.getPage(), productsPage.getTotalPages());
+        }
 
         List<ProductsGetResponseDTO> returnDTOList = new ArrayList<>();
 

@@ -7,8 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * This class is primary @ControllerAdvice.
+ * All custom exceptions must be handled here.
+ */
 @ControllerAdvice
 public class MainControllerAdvice {
+
     @ExceptionHandler(value = {RequestParametersInvalidException.class})
     public ResponseEntity<?> handleRequestParametersInvalidException(){
         return new ResponseEntity<>(

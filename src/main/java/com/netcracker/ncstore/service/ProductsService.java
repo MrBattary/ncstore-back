@@ -4,6 +4,7 @@ import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
 import com.netcracker.ncstore.dto.ProductsGetResponseDTO;
+import com.netcracker.ncstore.exception.ProductsPageNumberExceedsPageCountException;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.repository.ProductRepository;
 import lombok.AllArgsConstructor;
@@ -31,9 +32,12 @@ public class ProductsService {
                 productsGetRequestDTO.getCategoriesIds(),
                 productsPageRequest);
 
+        if((productsGetRequestDTO.getPage()+1) >= productsPage.getTotalPages())
+            throw new ProductsPageNumberExceedsPageCountException();
+
         List<ProductsGetResponseDTO> returnDTOList = new ArrayList<>();
 
-        for(Product product : productsPage.getContent()){
+        for(Product product : productsPage.getContent()){//for performance, this could be done by using 1 huge sql request in products repository
             ProductLocaleDTO productLocaleDTO =
                     new ProductLocaleDTO(product.getId(), productsGetRequestDTO.getLocale());
 

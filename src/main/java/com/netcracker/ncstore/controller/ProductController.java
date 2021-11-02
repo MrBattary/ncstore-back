@@ -2,6 +2,7 @@ package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
 import com.netcracker.ncstore.dto.ProductsGetResponseDTO;
+import com.netcracker.ncstore.exception.RequestParametersInvalidException;
 import com.netcracker.ncstore.service.ProductsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,10 +47,14 @@ public class ProductController {
                                                        @RequestParam final int page,
                                                        @RequestParam final int size,
                                                        Locale locale) {
+        List<UUID> categories;
 
-
-        List<UUID> categories = Arrays.stream(categoryId.split("\\|")).
+        try {
+            categories = Arrays.stream(categoryId.split("\\|")).
                     map(UUID::fromString).collect(Collectors.toList());
+        }catch (IllegalArgumentException e){
+            throw new RequestParametersInvalidException();
+        }
 
         ProductsGetRequestDTO productsGetRequestDTO =
                 new ProductsGetRequestDTO(categories, searchText, page, size, locale);

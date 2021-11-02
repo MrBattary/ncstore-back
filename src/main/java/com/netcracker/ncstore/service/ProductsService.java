@@ -26,14 +26,22 @@ public class ProductsService {
     private ProductRepository productRepository;
     private PricesService pricesService;
 
-    public List<ProductsGetResponseDTO> getPageOfProducts(ProductsGetRequestDTO productsGetRequestDTO){
+    public List<ProductsGetResponseDTO> getPageOfProductsByNameAndCategories(ProductsGetRequestDTO productsGetRequestDTO){
         Pageable productsPageRequest =
                 PageRequest.of(productsGetRequestDTO.getPage(), productsGetRequestDTO.getSize());
 
-        Page<Product> productsPage = productRepository.findProductsByNameAndCategories(
-                productsGetRequestDTO.getSearchText(),
-                productsGetRequestDTO.getCategoriesIds(),
-                productsPageRequest);
+        Page<Product> productsPage;
+
+        if(productsGetRequestDTO.getCategoriesIds().size()!=0) {
+            productsPage = productRepository.findProductsByLikeNameAndCategories(
+                    productsGetRequestDTO.getSearchText(),
+                    productsGetRequestDTO.getCategoriesIds(),
+                    productsPageRequest);
+        }else{
+            productsPage = productRepository.findProductByLikeName(
+                    productsGetRequestDTO.getSearchText(),
+                    productsPageRequest);
+        }
 
         if((productsGetRequestDTO.getPage()+1) >= productsPage.getTotalPages()) {
             throw new ProductsPageNumberExceedsPageCountException(productsGetRequestDTO.getPage(), productsPage.getTotalPages());

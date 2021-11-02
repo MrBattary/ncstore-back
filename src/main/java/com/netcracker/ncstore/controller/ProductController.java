@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -42,25 +43,29 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getProductsWithPagination(@RequestParam final String categoryId,
+    public ResponseEntity<?> getProductsWithPagination(@RequestParam(defaultValue = "") final String categoryId,
                                                        @RequestParam final String searchText,
                                                        @RequestParam final int page,
                                                        @RequestParam final int size,
                                                        Locale locale) {
         List<UUID> categories;
 
-        try {
-            categories = Arrays.stream(categoryId.split("\\|")).
-                    map(UUID::fromString).collect(Collectors.toList());
-        }catch (IllegalArgumentException e){
-            throw new RequestParametersInvalidException();
+        if(!categoryId.equals("")) {
+            try {
+                categories = Arrays.stream(categoryId.split("\\|")).
+                        map(UUID::fromString).collect(Collectors.toList());
+            } catch (IllegalArgumentException e) {
+                throw new RequestParametersInvalidException();
+            }
+        }else{
+            categories = new ArrayList<>();
         }
 
         ProductsGetRequestDTO productsGetRequestDTO =
                 new ProductsGetRequestDTO(categories, searchText, page, size, locale);
 
         List<ProductsGetResponseDTO> targetProducts =
-                productsService.getPageOfProducts(productsGetRequestDTO);
+                productsService.getPageOfProductsByNameAndCategories(productsGetRequestDTO);
 
         return new ResponseEntity<>(targetProducts, HttpStatus.OK);
     }

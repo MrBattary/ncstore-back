@@ -13,6 +13,7 @@ import java.util.Locale;
 
 /**
  * Service responsible for any logic related to Price entity.
+ * Is a default implementation of IPricesService.
  */
 @Service
 public class PricesService implements IPricesService {
@@ -26,11 +27,11 @@ public class PricesService implements IPricesService {
 
     public ProductPriceInRegionDTO getPriceForProductInRegion(ProductLocaleDTO productLocale) {
         ProductPrice productPrice =
-                productPriceRepository.findByProduct_IdAndLocale(productLocale.getProductId(),
+                productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
                         productLocale.getLocale());
 
         if (productPrice == null) {
-            productPrice = productPriceRepository.findByProduct_IdAndLocale(productLocale.getProductId(),
+            productPrice = productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
                     Locale.forLanguageTag(defaultLocaleCode));
         }
 

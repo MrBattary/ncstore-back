@@ -18,6 +18,7 @@ import java.util.List;
 
 /**
  * Service responsible for any logic related to Product entity.
+ * Is a default implementation of IPricesService.
  */
 @Service
 public class ProductsService implements IProductsService {
@@ -29,13 +30,6 @@ public class ProductsService implements IProductsService {
         this.pricesService = pricesService;
     }
 
-    /**
-     * Returns list of DTOs containing information about
-     * product(name, price, discount, currency) and paging data.
-     *
-     * @param productsGetRequestDTO dto containing needed information
-     * @return list of DTOs
-     */
     public ProductsGetResponseDTO getPageOfProductsByNameAndCategories(ProductsGetRequestDTO productsGetRequestDTO) {
         Pageable productsPageRequest =
                 PageRequest.of(productsGetRequestDTO.getPage(), productsGetRequestDTO.getSize());

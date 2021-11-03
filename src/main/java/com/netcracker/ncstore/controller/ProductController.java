@@ -33,7 +33,7 @@ public class ProductController {
 
     /**
      * Constructor
-     *
+     * <p>
      * TODO: In the future, any services should be the arguments of constructor
      */
     public ProductController(ProductsService productsService) {
@@ -45,20 +45,20 @@ public class ProductController {
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<ProductsGetResponseDTO> getProductsWithPagination(@RequestParam(defaultValue = "") final String categoryId,
-                                                       @RequestParam final String searchText,
-                                                       @RequestParam final int page,
-                                                       @RequestParam final int size,
-                                                       Locale locale) {
+                                                                            @RequestParam final String searchText,
+                                                                            @RequestParam final int page,
+                                                                            @RequestParam final int size,
+                                                                            Locale locale) {
         List<UUID> categories;
 
-        if(!categoryId.equals("")) {
+        if (!categoryId.equals("")) {
             try {
                 categories = Arrays.stream(categoryId.split("\\|")).
                         map(UUID::fromString).collect(Collectors.toList());
             } catch (IllegalArgumentException e) {
                 throw new RequestParametersInvalidException();
             }
-        }else{
+        } else {
             categories = new ArrayList<>();
         }
 
@@ -84,21 +84,21 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProduct
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getProduct(@PathVariable final String productId){
+    public ResponseEntity<?> getProduct(@PathVariable final String productId) {
         return null;
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/updateProduct
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<?> updateProduct(@PathVariable final String productId){
+    public ResponseEntity<?> updateProduct(@PathVariable final String productId) {
         return null;
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/deleteProduct
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteProduct(@PathVariable final String productId){
+    public ResponseEntity<?> deleteProduct(@PathVariable final String productId) {
         return null;
     }
 
@@ -106,7 +106,7 @@ public class ProductController {
 
     @RequestMapping(value = "/products/{productId}/buy", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> buyProduct(@PathVariable final String productId){
+    public ResponseEntity<?> buyProduct(@PathVariable final String productId) {
         return null;
     }
 }

@@ -15,7 +15,7 @@ import java.util.Locale;
  * Service responsible for any logic related to Price entity.
  */
 @Service
-public class PricesService implements IPricesService{
+public class PricesService implements IPricesService {
     private ProductPriceRepository productPriceRepository;
     @Value("${locale.default.code}")
     private String defaultLocaleCode;
@@ -24,21 +24,21 @@ public class PricesService implements IPricesService{
         this.productPriceRepository = productPriceRepository;
     }
 
-    public ProductPriceInRegionDTO getPriceForProductInRegion(ProductLocaleDTO productLocale){
+    public ProductPriceInRegionDTO getPriceForProductInRegion(ProductLocaleDTO productLocale) {
         ProductPrice productPrice =
                 productPriceRepository.findByProduct_IdAndLocale(productLocale.getProductId(),
-                                                                 productLocale.getLocale());
+                        productLocale.getLocale());
 
-        if(productPrice==null) {
+        if (productPrice == null) {
             productPrice = productPriceRepository.findByProduct_IdAndLocale(productLocale.getProductId(),
                     Locale.forLanguageTag(defaultLocaleCode));
         }
 
         Double discountPrice = null;
-        if(productPrice.getDiscount()!=null){
+        if (productPrice.getDiscount() != null) {
             Discount discount = productPrice.getDiscount();
-            if((discount.getStartUtcTime().compareTo(Instant.now()) <= 0)
-                    && (discount.getEndUtcTime().compareTo(Instant.now()) <= 0 )){
+            if ((discount.getStartUtcTime().compareTo(Instant.now()) <= 0)
+                    && (discount.getEndUtcTime().compareTo(Instant.now()) <= 0)) {
                 discountPrice = discount.getDiscountPrice();
             }
         }

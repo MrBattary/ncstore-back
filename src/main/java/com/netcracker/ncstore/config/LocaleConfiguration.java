@@ -21,10 +21,11 @@ public class LocaleConfiguration {
      * This method is used to configure LocaleResolver.
      * It uses basic Spring AcceptHeaderLocaleResolver,
      * but sets default locale based on application.properties
+     *
      * @return AcceptHeaderLocaleResolver
      */
     @Bean
-    public LocaleResolver localeResolver(){
+    public LocaleResolver localeResolver() {
         AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
         localeResolver.setDefaultLocale(Locale.forLanguageTag(defaultLocaleCode));
         return localeResolver;

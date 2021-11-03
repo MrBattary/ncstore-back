@@ -19,7 +19,7 @@ public class AuthController {
 
     /**
      * Constructor
-     *
+     * <p>
      * TODO: In the future, any services should be the arguments of constructor
      */
     public AuthController() {

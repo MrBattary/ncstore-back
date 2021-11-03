@@ -4,14 +4,14 @@ import com.netcracker.ncstore.exception.ProductsPageNumberExceedsPageCountExcept
 import com.netcracker.ncstore.exception.RequestParametersInvalidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * This class is primary @ControllerAdvice.
  * All custom exceptions must be handled here.
  */
-@ControllerAdvice
+@RestControllerAdvice
 public class MainControllerAdvice {
 
     @ExceptionHandler(value = {RequestParametersInvalidException.class})

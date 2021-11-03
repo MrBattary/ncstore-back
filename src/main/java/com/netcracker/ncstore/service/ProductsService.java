@@ -22,15 +22,15 @@ import java.util.List;
  */
 @Service
 public class ProductsService implements IProductsService {
-    private ProductRepository productRepository;
-    private PricesService pricesService;
+    private final ProductRepository productRepository;
+    private final PricesService pricesService;
 
-    public ProductsService(ProductRepository productRepository, PricesService pricesService) {
+    public ProductsService(final ProductRepository productRepository, final PricesService pricesService) {
         this.productRepository = productRepository;
         this.pricesService = pricesService;
     }
 
-    public ProductsGetResponseDTO getPageOfProductsByNameAndCategories(ProductsGetRequestDTO productsGetRequestDTO) {
+    public ProductsGetResponseDTO getPageOfProductsByNameAndCategories(final ProductsGetRequestDTO productsGetRequestDTO) {
         Pageable productsPageRequest =
                 PageRequest.of(productsGetRequestDTO.getPage(), productsGetRequestDTO.getSize());
 

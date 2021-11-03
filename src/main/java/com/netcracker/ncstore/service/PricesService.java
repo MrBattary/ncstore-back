@@ -17,11 +17,11 @@ import java.util.Locale;
  */
 @Service
 public class PricesService implements IPricesService {
-    private ProductPriceRepository productPriceRepository;
+    private final ProductPriceRepository productPriceRepository;
     @Value("${locale.default.code}")
     private String defaultLocaleCode;
 
-    public PricesService(ProductPriceRepository productPriceRepository) {
+    public PricesService(final ProductPriceRepository productPriceRepository) {
         this.productPriceRepository = productPriceRepository;
     }
 
@@ -51,6 +51,4 @@ public class PricesService implements IPricesService {
                 discountPrice,
                 productLocale.getLocale());
     }
-
-    //TODO: function to check if price for specified product exists for specified locale
 }

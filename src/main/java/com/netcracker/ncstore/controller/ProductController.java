@@ -36,7 +36,7 @@ public class ProductController {
      * <p>
      * TODO: In the future, any services should be the arguments of constructor
      */
-    public ProductController(ProductsService productsService) {
+    public ProductController(final ProductsService productsService) {
         this.log = LoggerFactory.getLogger(ProductController.class);
         this.productsService = productsService;
     }

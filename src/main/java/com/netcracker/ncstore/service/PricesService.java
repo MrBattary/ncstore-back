@@ -15,7 +15,7 @@ import java.util.Locale;
  * Service responsible for any logic related to Price entity.
  */
 @Service
-public class PricesService {
+public class PricesService implements IPricesService{
     private ProductPriceRepository productPriceRepository;
     @Value("${locale.default.code}")
     private String defaultLocaleCode;
@@ -45,6 +45,7 @@ public class PricesService {
 
         return new ProductPriceInRegionDTO(
                 productLocale.getProductId(),
+                productPrice.getProduct().getName(),
                 productPrice.getPrice(),
                 discountPrice,
                 productLocale.getLocale());

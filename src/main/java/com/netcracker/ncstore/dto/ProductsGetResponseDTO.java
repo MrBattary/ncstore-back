@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.List;
 import java.util.UUID;
 
 @Jacksonized
@@ -14,11 +15,7 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class ProductsGetResponseDTO {
-    private final UUID productId;
-    private final String productName;
-    private final double productPrice;
-    private final Double discountPrice;//non-primitive because there may be no discount
-    private final String priceCurrency;
+    private final List<ProductPriceInRegionDTO> productsWithPrices;
     private final int currentPageNumber;
     private final int totalPageCount;
 }

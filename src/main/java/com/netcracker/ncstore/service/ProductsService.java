@@ -20,7 +20,7 @@ import java.util.List;
  * Service responsible for any logic related to Product entity.
  */
 @Service
-public class ProductsService {
+public class ProductsService implements IProductsService{
     private ProductRepository productRepository;
     private PricesService pricesService;
 
@@ -35,7 +35,7 @@ public class ProductsService {
      * @param productsGetRequestDTO dto containing needed information
      * @return list of DTOs
      */
-    public List<ProductsGetResponseDTO> getPageOfProductsByNameAndCategories(ProductsGetRequestDTO productsGetRequestDTO){
+    public ProductsGetResponseDTO getPageOfProductsByNameAndCategories(ProductsGetRequestDTO productsGetRequestDTO){
         Pageable productsPageRequest =
                 PageRequest.of(productsGetRequestDTO.getPage(), productsGetRequestDTO.getSize());
 
@@ -52,11 +52,12 @@ public class ProductsService {
                     productsPageRequest);
         }
 
-        if((productsGetRequestDTO.getPage()+1) >= productsPage.getTotalPages()) {
+        if(productsGetRequestDTO.getPage() >= productsPage.getTotalPages()) {
             throw new ProductsPageNumberExceedsPageCountException(productsGetRequestDTO.getPage(), productsPage.getTotalPages());
         }
 
-        List<ProductsGetResponseDTO> returnDTOList = new ArrayList<>();
+        List<ProductPriceInRegionDTO> productPriceInRegionDTOS =
+                new ArrayList<>();
 
         for(Product product : productsPage.getContent()){//for performance, this could be done by using 1 huge sql request in products repository
             ProductLocaleDTO productLocaleDTO =
@@ -65,19 +66,12 @@ public class ProductsService {
             ProductPriceInRegionDTO priceInRegion =
                     pricesService.getPriceForProductInRegion(productLocaleDTO);
 
-            ProductsGetResponseDTO productDTO = new ProductsGetResponseDTO(
-                    product.getId(),
-                    product.getName(),
-                    priceInRegion.getNormalPrice(),
-                    priceInRegion.getDiscountPrice(),
-                    Currency.getInstance(priceInRegion.getLocale()).getSymbol(),
-                    productsPage.getNumber(),
-                    productsPage.getTotalPages()
-            );
-
-            returnDTOList.add(productDTO);
+            productPriceInRegionDTOS.add(priceInRegion);
         }
 
-        return returnDTOList;
+        return new ProductsGetResponseDTO(
+                productPriceInRegionDTOS,
+                productsPage.getNumber(),
+                productsPage.getTotalPages());
     }
 }

@@ -7,6 +7,7 @@ import com.netcracker.ncstore.service.ProductsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 @RestController
 public class ProductController {
     private final Logger log;
-    private ProductsService productsService;
+    private final ProductsService productsService;
 
     /**
      * Constructor
@@ -43,7 +44,7 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getProductsWithPagination(@RequestParam(defaultValue = "") final String categoryId,
+    public ResponseEntity<ProductsGetResponseDTO> getProductsWithPagination(@RequestParam(defaultValue = "") final String categoryId,
                                                        @RequestParam final String searchText,
                                                        @RequestParam final int page,
                                                        @RequestParam final int size,
@@ -64,10 +65,13 @@ public class ProductController {
         ProductsGetRequestDTO productsGetRequestDTO =
                 new ProductsGetRequestDTO(categories, searchText, page, size, locale);
 
-        List<ProductsGetResponseDTO> targetProducts =
+        ProductsGetResponseDTO responseObject =
                 productsService.getPageOfProductsByNameAndCategories(productsGetRequestDTO);
 
-        return new ResponseEntity<>(targetProducts, HttpStatus.OK);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(responseObject);
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/createProduct

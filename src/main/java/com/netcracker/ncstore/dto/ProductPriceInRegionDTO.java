@@ -16,7 +16,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ProductPriceInRegionDTO {
     private final UUID productId;
+    private final String productName;
     private final double normalPrice;
-    private final Double discountPrice; //non-primitive because there may be no discount
+    //should be null when no discount found
+    private final Double discountPrice;
     private final Locale locale;
 }

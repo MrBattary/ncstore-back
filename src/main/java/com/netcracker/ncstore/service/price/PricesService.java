@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Currency;
 import java.util.Locale;
 
 /**
@@ -28,18 +29,18 @@ public class PricesService implements IPricesService {
     @Override
     public ProductPriceInRegionDTO getPriceForProductInRegion(final ProductLocaleDTO productLocale) {
         ProductPrice productPrice = productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
-                                                                                    productLocale.getLocale());
+                productLocale.getLocale());
 
         if (productPrice == null) {
             productPrice = productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
-                                                                           Locale.forLanguageTag(defaultLocaleCode));
+                    Locale.forLanguageTag(defaultLocaleCode));
         }
 
         Double discountPrice = null;
         if (productPrice.getDiscount() != null) {
             Discount discount = productPrice.getDiscount();
             if ((discount.getStartUtcTime().compareTo(Instant.now()) <= 0) &&
-                (discount.getEndUtcTime().compareTo(Instant.now()) >= 0)) {
+                    (discount.getEndUtcTime().compareTo(Instant.now()) >= 0)) {
                 discountPrice = discount.getDiscountPrice();
             }
         }
@@ -49,6 +50,7 @@ public class PricesService implements IPricesService {
                 productPrice.getProduct().getName(),
                 productPrice.getPrice(),
                 discountPrice,
-                productLocale.getLocale());
+                Currency.getInstance(productLocale.getLocale()).
+                        getSymbol(productLocale.getLocale()));
     }
 }

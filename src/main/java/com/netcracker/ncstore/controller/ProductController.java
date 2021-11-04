@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.controller;
 
+import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.exception.RequestParametersInvalidException;
@@ -43,12 +44,14 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getProductsWithPagination(@RequestParam(defaultValue = "") final String categoryId,
-                                                                         @RequestParam final String searchText,
-                                                                         @RequestParam final int page,
-                                                                         @RequestParam final int size,
-                                                                         final Locale locale) {
-        log.info("REQUEST: to get products by search text:" + searchText + " on " + page + " with size" + size);
+    public ResponseEntity<List<ProductPriceInRegionDTO>> getProductsWithPagination(
+            @RequestParam(defaultValue = "") final String categoryId,
+            @RequestParam final String searchText,
+            @RequestParam final int page,
+            @RequestParam final int size,
+            final Locale locale
+    ) {
+        log.info("REQUEST: to get products by search text:" + searchText + " on: " + page + " page, with " + size + " size");
 
         List<UUID> categories;
 
@@ -68,7 +71,7 @@ public class ProductController {
 
         ProductsGetResponse response = productsService.getPageOfProductsByNameAndCategories(productsGetRequest);
 
-        log.info("REQUEST RESPONSE: to get products by search text:" + searchText + " on " + page + " with size" + size);
+        log.info("RESPONSE: to get products by search text:" + searchText + " on: " + page + " page, with " + size + " size");
         return ResponseEntity.
                 ok().
                 contentType(MediaType.APPLICATION_JSON).

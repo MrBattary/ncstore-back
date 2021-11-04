@@ -25,7 +25,7 @@ public class PricesService implements IPricesService {
         this.productPriceRepository = productPriceRepository;
     }
 
-    public ProductPriceInRegionDTO getPriceForProductInRegion(ProductLocaleDTO productLocale) {
+    public ProductPriceInRegionDTO getPriceForProductInRegion(final ProductLocaleDTO productLocale) {
         ProductPrice productPrice =
                 productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
                         productLocale.getLocale());

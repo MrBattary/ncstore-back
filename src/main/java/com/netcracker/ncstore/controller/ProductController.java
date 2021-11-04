@@ -47,7 +47,7 @@ public class ProductController {
                                                                             @RequestParam final String searchText,
                                                                             @RequestParam final int page,
                                                                             @RequestParam final int size,
-                                                                            Locale locale) {
+                                                                            final Locale locale) {
         List<UUID> categories;
 
         if (!categoryId.equals("")) {

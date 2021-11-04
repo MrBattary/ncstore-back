@@ -54,7 +54,7 @@ public class ProductsService implements IProductsService {
         List<ProductPriceInRegionDTO> productPriceInRegionDTOS =
                 new ArrayList<>();
 
-        for (Product product : productsPage.getContent()) {//for performance, this could be done by using 1 huge sql request in products repository
+        for (Product product : productsPage.getContent()) {
             ProductLocaleDTO productLocaleDTO =
                     new ProductLocaleDTO(product.getId(), productsGetRequestDTO.getLocale());
 

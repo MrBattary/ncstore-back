@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.dto.api;
+package com.netcracker.ncstore.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -10,19 +10,20 @@ import java.util.List;
 
 /**
  * Response on successful user info request
- * with company data
+ * with person data
  */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class CompanyInfoResponse {
+public class PersonInfoResponse {
     private final String email;
     private final List<String> roles;
     private final Double balance;
     private final String userType;
-    private final String companyName;
-    private final String description;
-    private final String foundationDate;
+    private final String userName;
+    private final String firstName;
+    private final String secondName;
+    private final String birthday;
 }

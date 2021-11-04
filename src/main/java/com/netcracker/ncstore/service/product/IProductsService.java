@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.service.product;
 
-import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
-import com.netcracker.ncstore.dto.api.ProductsGetResponse;
+import com.netcracker.ncstore.dto.request.ProductsGetRequest;
+import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 
 /**
  * Interface.
@@ -13,8 +13,8 @@ public interface IProductsService {
      * Returns list of DTOs containing information about
      * product(name, price, discount, currency) and paging data.
      *
-     * @param productsGetRequestDTO dto containing needed information
+     * @param productsGetRequest dto containing needed information
      * @return list of DTOs
      */
-    ProductsGetResponse getPageOfProductsByNameAndCategories(ProductsGetRequestDTO productsGetRequestDTO);
+    ProductsGetResponse getPageOfProductsByNameAndCategories(ProductsGetRequest productsGetRequest);
 }

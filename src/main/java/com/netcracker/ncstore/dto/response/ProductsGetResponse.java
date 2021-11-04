@@ -1,20 +1,19 @@
-package com.netcracker.ncstore.dto.api;
+package com.netcracker.ncstore.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
-/**
- * Response on successful sign in request
- */
+import java.util.List;
+
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-@AllArgsConstructor
 @Getter
-public class SignInResponse {
-    private final String userType;
-    private final String userToken;
+@AllArgsConstructor
+public class ProductsGetResponse {
+    private final List<ProductPriceInRegionDTO> productsWithPrices;
 }

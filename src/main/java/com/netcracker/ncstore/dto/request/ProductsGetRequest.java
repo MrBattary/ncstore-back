@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.dto;
+package com.netcracker.ncstore.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public class ProductsGetRequestDTO {
+public class ProductsGetRequest {
     private final List<UUID> categoriesIds;
     private final String searchText;
     private final int page;

@@ -2,8 +2,8 @@ package com.netcracker.ncstore.service.product;
 
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
-import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
-import com.netcracker.ncstore.dto.api.ProductsGetResponse;
+import com.netcracker.ncstore.dto.request.ProductsGetRequest;
+import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.repository.ProductRepository;
 import com.netcracker.ncstore.service.price.PricesService;
@@ -31,20 +31,20 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public ProductsGetResponse getPageOfProductsByNameAndCategories(final ProductsGetRequestDTO productsGetRequestDTO) {
+    public ProductsGetResponse getPageOfProductsByNameAndCategories(final ProductsGetRequest productsGetRequest) {
         Pageable productsPageRequest =
-                PageRequest.of(productsGetRequestDTO.getPage(), productsGetRequestDTO.getSize());
+                PageRequest.of(productsGetRequest.getPage(), productsGetRequest.getSize());
 
         Page<Product> productsPage;
 
-        if (productsGetRequestDTO.getCategoriesIds().size() != 0) {
+        if (productsGetRequest.getCategoriesIds().size() != 0) {
             productsPage = productRepository.findProductsByLikeNameAndCategories(
-                    productsGetRequestDTO.getSearchText(),
-                    productsGetRequestDTO.getCategoriesIds(),
+                    productsGetRequest.getSearchText(),
+                    productsGetRequest.getCategoriesIds(),
                     productsPageRequest);
         } else {
             productsPage = productRepository.findProductByLikeName(
-                    productsGetRequestDTO.getSearchText(),
+                    productsGetRequest.getSearchText(),
                     productsPageRequest);
         }
 
@@ -53,7 +53,7 @@ public class ProductsService implements IProductsService {
 
         for (Product product : productsPage.getContent()) {
             ProductLocaleDTO productLocaleDTO =
-                    new ProductLocaleDTO(product.getId(), productsGetRequestDTO.getLocale());
+                    new ProductLocaleDTO(product.getId(), productsGetRequest.getLocale());
 
             ProductPriceInRegionDTO priceInRegion =
                     pricesService.getPriceForProductInRegion(productLocaleDTO);

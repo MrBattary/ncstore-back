@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.controller;
 
-import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
-import com.netcracker.ncstore.dto.api.ProductsGetResponse;
+import com.netcracker.ncstore.dto.request.ProductsGetRequest;
+import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.exception.RequestParametersInvalidException;
 import com.netcracker.ncstore.service.product.ProductsService;
 import org.slf4j.Logger;
@@ -63,10 +63,10 @@ public class ProductController {
             categories = new ArrayList<>();
         }
 
-        ProductsGetRequestDTO productsGetRequestDTO =
-                new ProductsGetRequestDTO(categories, searchText, page, size, locale);
+        ProductsGetRequest productsGetRequest =
+                new ProductsGetRequest(categories, searchText, page, size, locale);
 
-        ProductsGetResponse response = productsService.getPageOfProductsByNameAndCategories(productsGetRequestDTO);
+        ProductsGetResponse response = productsService.getPageOfProductsByNameAndCategories(productsGetRequest);
 
         log.info("REQUEST RESPONSE: to get products by search text:" + searchText + " on " + page + " with size" + size);
         return ResponseEntity.

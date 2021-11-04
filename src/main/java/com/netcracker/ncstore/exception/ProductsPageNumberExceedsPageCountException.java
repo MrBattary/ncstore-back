@@ -1,7 +1,6 @@
 package com.netcracker.ncstore.exception;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**

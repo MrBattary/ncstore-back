@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.service.product;
 
 import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
-import com.netcracker.ncstore.dto.ProductsGetResponseDTO;
+import com.netcracker.ncstore.dto.api.ProductsGetResponse;
 import com.netcracker.ncstore.exception.ProductsPageNumberExceedsPageCountException;
 
 /**
@@ -18,6 +18,6 @@ public interface IProductsService {
      * @return list of DTOs
      * @throws ProductsPageNumberExceedsPageCountException - if requested page doesn't exist
      */
-    ProductsGetResponseDTO getPageOfProductsByNameAndCategories(ProductsGetRequestDTO productsGetRequestDTO)
+    ProductsGetResponse getPageOfProductsByNameAndCategories(ProductsGetRequestDTO productsGetRequestDTO)
     throws ProductsPageNumberExceedsPageCountException;
 }

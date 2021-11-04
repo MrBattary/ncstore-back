@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
-import com.netcracker.ncstore.dto.ProductsGetResponseDTO;
+import com.netcracker.ncstore.dto.api.ProductsGetResponse;
 import com.netcracker.ncstore.exception.RequestParametersInvalidException;
 import com.netcracker.ncstore.service.product.ProductsService;
 import org.slf4j.Logger;
@@ -43,11 +43,13 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<ProductsGetResponseDTO> getProductsWithPagination(@RequestParam(defaultValue = "") final String categoryId,
-                                                                            @RequestParam final String searchText,
-                                                                            @RequestParam final int page,
-                                                                            @RequestParam final int size,
-                                                                            final Locale locale) {
+    public ResponseEntity<ProductsGetResponse> getProductsWithPagination(@RequestParam(defaultValue = "") final String categoryId,
+                                                                         @RequestParam final String searchText,
+                                                                         @RequestParam final int page,
+                                                                         @RequestParam final int size,
+                                                                         final Locale locale) {
+        log.info("REQUEST: to get products by search text:" + searchText + " on " + page + " with size" + size);
+
         List<UUID> categories;
 
         if (!categoryId.equals("")) {
@@ -64,13 +66,13 @@ public class ProductController {
         ProductsGetRequestDTO productsGetRequestDTO =
                 new ProductsGetRequestDTO(categories, searchText, page, size, locale);
 
-        ProductsGetResponseDTO responseObject =
-                productsService.getPageOfProductsByNameAndCategories(productsGetRequestDTO);
+        ProductsGetResponse response = productsService.getPageOfProductsByNameAndCategories(productsGetRequestDTO);
 
+        log.info("REQUEST RESPONSE: to get products by search text:" + searchText + " on " + page + " with size" + size);
         return ResponseEntity.
                 ok().
                 contentType(MediaType.APPLICATION_JSON).
-                body(responseObject);
+                body(response);
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/createProduct

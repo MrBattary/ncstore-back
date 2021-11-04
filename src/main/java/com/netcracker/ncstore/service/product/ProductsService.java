@@ -3,7 +3,7 @@ package com.netcracker.ncstore.service.product;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
-import com.netcracker.ncstore.dto.ProductsGetResponseDTO;
+import com.netcracker.ncstore.dto.api.ProductsGetResponse;
 import com.netcracker.ncstore.exception.ProductsPageNumberExceedsPageCountException;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.repository.ProductRepository;
@@ -32,7 +32,7 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public ProductsGetResponseDTO getPageOfProductsByNameAndCategories(final ProductsGetRequestDTO productsGetRequestDTO)
+    public ProductsGetResponse getPageOfProductsByNameAndCategories(final ProductsGetRequestDTO productsGetRequestDTO)
     throws ProductsPageNumberExceedsPageCountException {
         Pageable productsPageRequest =
                 PageRequest.of(productsGetRequestDTO.getPage(), productsGetRequestDTO.getSize());
@@ -67,7 +67,7 @@ public class ProductsService implements IProductsService {
             productPriceInRegionDTOS.add(priceInRegion);
         }
 
-        return new ProductsGetResponseDTO(
+        return new ProductsGetResponse(
                 productPriceInRegionDTOS,
                 productsPage.getNumber(),
                 productsPage.getTotalPages());

@@ -3,7 +3,7 @@ package com.netcracker.ncstore.controller;
 import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
 import com.netcracker.ncstore.dto.ProductsGetResponseDTO;
 import com.netcracker.ncstore.exception.RequestParametersInvalidException;
-import com.netcracker.ncstore.service.ProductsService;
+import com.netcracker.ncstore.service.product.ProductsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;

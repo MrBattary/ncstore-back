@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.service;
+package com.netcracker.ncstore.service.product;
 
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
@@ -7,13 +7,13 @@ import com.netcracker.ncstore.dto.ProductsGetResponseDTO;
 import com.netcracker.ncstore.exception.ProductsPageNumberExceedsPageCountException;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.repository.ProductRepository;
+import com.netcracker.ncstore.service.price.PricesService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 /**
@@ -25,12 +25,15 @@ public class ProductsService implements IProductsService {
     private final ProductRepository productRepository;
     private final PricesService pricesService;
 
-    public ProductsService(final ProductRepository productRepository, final PricesService pricesService) {
+    public ProductsService(final ProductRepository productRepository,
+                           final PricesService pricesService) {
         this.productRepository = productRepository;
         this.pricesService = pricesService;
     }
 
-    public ProductsGetResponseDTO getPageOfProductsByNameAndCategories(final ProductsGetRequestDTO productsGetRequestDTO) {
+    @Override
+    public ProductsGetResponseDTO getPageOfProductsByNameAndCategories(final ProductsGetRequestDTO productsGetRequestDTO)
+    throws ProductsPageNumberExceedsPageCountException {
         Pageable productsPageRequest =
                 PageRequest.of(productsGetRequestDTO.getPage(), productsGetRequestDTO.getSize());
 

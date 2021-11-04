@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.service;
+package com.netcracker.ncstore.service.price;
 
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
@@ -25,21 +25,21 @@ public class PricesService implements IPricesService {
         this.productPriceRepository = productPriceRepository;
     }
 
+    @Override
     public ProductPriceInRegionDTO getPriceForProductInRegion(final ProductLocaleDTO productLocale) {
-        ProductPrice productPrice =
-                productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
-                        productLocale.getLocale());
+        ProductPrice productPrice = productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
+                                                                                    productLocale.getLocale());
 
         if (productPrice == null) {
             productPrice = productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
-                    Locale.forLanguageTag(defaultLocaleCode));
+                                                                           Locale.forLanguageTag(defaultLocaleCode));
         }
 
         Double discountPrice = null;
         if (productPrice.getDiscount() != null) {
             Discount discount = productPrice.getDiscount();
-            if ((discount.getStartUtcTime().compareTo(Instant.now()) <= 0)
-                    && (discount.getEndUtcTime().compareTo(Instant.now()) >= 0)) {
+            if ((discount.getStartUtcTime().compareTo(Instant.now()) <= 0) &&
+                (discount.getEndUtcTime().compareTo(Instant.now()) >= 0)) {
                 discountPrice = discount.getDiscountPrice();
             }
         }

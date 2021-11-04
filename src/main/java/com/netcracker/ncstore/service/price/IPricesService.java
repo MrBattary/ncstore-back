@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.service;
+package com.netcracker.ncstore.service.price;
 
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
@@ -14,8 +14,8 @@ public interface IPricesService {
      * for a specified ProductID and Locale pair.
      * Discount price should be null, if there is no discount.
      *
-     * @param productLocale
+     * @param productLocale - ProductID and Locale pair
      * @return ProductPriceInRegionDTO
      */
-    public ProductPriceInRegionDTO getPriceForProductInRegion(ProductLocaleDTO productLocale);
+    ProductPriceInRegionDTO getPriceForProductInRegion(ProductLocaleDTO productLocale);
 }

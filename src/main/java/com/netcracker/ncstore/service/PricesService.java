@@ -39,7 +39,7 @@ public class PricesService implements IPricesService {
         if (productPrice.getDiscount() != null) {
             Discount discount = productPrice.getDiscount();
             if ((discount.getStartUtcTime().compareTo(Instant.now()) <= 0)
-                    && (discount.getEndUtcTime().compareTo(Instant.now()) <= 0)) {
+                    && (discount.getEndUtcTime().compareTo(Instant.now()) >= 0)) {
                 discountPrice = discount.getDiscountPrice();
             }
         }

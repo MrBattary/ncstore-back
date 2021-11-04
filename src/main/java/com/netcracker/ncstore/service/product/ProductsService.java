@@ -4,7 +4,6 @@ import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ProductsGetRequestDTO;
 import com.netcracker.ncstore.dto.api.ProductsGetResponse;
-import com.netcracker.ncstore.exception.ProductsPageNumberExceedsPageCountException;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.repository.ProductRepository;
 import com.netcracker.ncstore.service.price.PricesService;
@@ -32,8 +31,7 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public ProductsGetResponse getPageOfProductsByNameAndCategories(final ProductsGetRequestDTO productsGetRequestDTO)
-    throws ProductsPageNumberExceedsPageCountException {
+    public ProductsGetResponse getPageOfProductsByNameAndCategories(final ProductsGetRequestDTO productsGetRequestDTO) {
         Pageable productsPageRequest =
                 PageRequest.of(productsGetRequestDTO.getPage(), productsGetRequestDTO.getSize());
 
@@ -50,10 +48,6 @@ public class ProductsService implements IProductsService {
                     productsPageRequest);
         }
 
-        if (productsGetRequestDTO.getPage() >= productsPage.getTotalPages()) {
-            throw new ProductsPageNumberExceedsPageCountException(productsGetRequestDTO.getPage(), productsPage.getTotalPages());
-        }
-
         List<ProductPriceInRegionDTO> productPriceInRegionDTOS =
                 new ArrayList<>();
 
@@ -67,9 +61,6 @@ public class ProductsService implements IProductsService {
             productPriceInRegionDTOS.add(priceInRegion);
         }
 
-        return new ProductsGetResponse(
-                productPriceInRegionDTOS,
-                productsPage.getNumber(),
-                productsPage.getTotalPages());
+        return new ProductsGetResponse(productPriceInRegionDTOS);
     }
 }

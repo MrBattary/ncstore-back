@@ -43,7 +43,7 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<ProductsGetResponse> getProductsWithPagination(@RequestParam(defaultValue = "") final String categoryId,
+    public ResponseEntity<?> getProductsWithPagination(@RequestParam(defaultValue = "") final String categoryId,
                                                                          @RequestParam final String searchText,
                                                                          @RequestParam final int page,
                                                                          @RequestParam final int size,
@@ -72,7 +72,7 @@ public class ProductController {
         return ResponseEntity.
                 ok().
                 contentType(MediaType.APPLICATION_JSON).
-                body(response);
+                body(response.getProductsWithPrices());
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/createProduct

@@ -16,6 +16,4 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductsGetResponse {
     private final List<ProductPriceInRegionDTO> productsWithPrices;
-    private final int currentPageNumber;
-    private final int totalPageCount;
 }

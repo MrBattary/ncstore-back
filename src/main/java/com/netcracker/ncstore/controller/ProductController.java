@@ -3,8 +3,8 @@ package com.netcracker.ncstore.controller;
 import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
-import com.netcracker.ncstore.exception.RequestParametersInvalidException;
 import com.netcracker.ncstore.service.product.ProductsService;
+import com.netcracker.ncstore.util.converter.ProductRequestConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -16,12 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Product controller is responsible for any actions with products
@@ -45,26 +42,15 @@ public class ProductController {
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<ProductPriceInRegionDTO>> getProductsWithPagination(
-            @RequestParam(defaultValue = "") final String categoryId,
+            @RequestParam(defaultValue = "") final String categoriesIds,
             @RequestParam final String searchText,
             @RequestParam final int page,
             @RequestParam final int size,
-            final Locale locale
-    ) {
+            final Locale locale) {
+
         log.info("REQUEST: to get products by search text:" + searchText + " on: " + page + " page, with " + size + " size");
 
-        List<UUID> categories;
-
-        if (!categoryId.equals("")) {
-            try {
-                categories = Arrays.stream(categoryId.split("\\|")).
-                        map(UUID::fromString).collect(Collectors.toList());
-            } catch (IllegalArgumentException e) {
-                throw new RequestParametersInvalidException();
-            }
-        } else {
-            categories = new ArrayList<>();
-        }
+        List<UUID> categories = ProductRequestConverter.convertCategoriesStringToList(categoriesIds);
 
         ProductsGetRequest productsGetRequest =
                 new ProductsGetRequest(categories, searchText, page, size, locale);

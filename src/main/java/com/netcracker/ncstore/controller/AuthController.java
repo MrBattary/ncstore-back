@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.controller;
 
-import com.netcracker.ncstore.dto.SignInResponse;
-import com.netcracker.ncstore.dto.SignRequest;
+import com.netcracker.ncstore.dto.response.SignInResponse;
+import com.netcracker.ncstore.dto.request.SignRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ public class AuthController {
 
     /**
      * Constructor
-     *
+     * <p>
      * TODO: In the future, any services should be the arguments of constructor
      */
     public AuthController() {

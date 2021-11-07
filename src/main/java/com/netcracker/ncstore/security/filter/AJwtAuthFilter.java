@@ -44,7 +44,7 @@ public abstract class AJwtAuthFilter extends AbstractAuthenticationProcessingFil
         try {
             token = takeToken(request);
         } catch (Exception e) {
-            logger.warn("Warning: Failed to get token: " + e.getMessage() + " !");
+            logger.warn("Failed to get token: " + e.getMessage() + " !");
             return anonymousToken();
         }
         return new UnauthenticatedJwtToken(token);

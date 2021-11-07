@@ -29,7 +29,7 @@ public class HeaderJwtAuthFilter extends AJwtAuthFilter {
         if (m.matches()) {
             return m.group(TOKEN_GROUP);
         } else {
-            throw new JwtAuthFilterException("Error: Invalid authorization header: " + authHeader + " !");
+            throw new JwtAuthFilterException("Exception: Invalid authorization header: " + authHeader + " !");
         }
     }
 

@@ -21,7 +21,7 @@ public class UnauthenticatedJwtToken extends AbstractAuthenticationToken {
     @Override
     public void setAuthenticated(final boolean authenticated) {
         if (authenticated) {
-            throw new IllegalArgumentException("Exception: Cannot set this token to trusted!");
+            throw new IllegalArgumentException("Cannot set this token to trusted!");
         }
         super.setAuthenticated(false);
     }

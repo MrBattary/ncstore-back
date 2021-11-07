@@ -67,10 +67,10 @@ public class JsonJwtTokenService implements IJwtTokenService {
 
         String subject = claims.getBody().getSubject();
         List<String> tokenAuthorities = claims.getBody().get(authorities, List.class);
-        List<GrantedAuthority> authorities = tokenAuthorities.stream()
+        List<GrantedAuthority> grantedAuthorities = tokenAuthorities.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        return new AuthenticatedJwtToken(subject, authorities);
+        return new AuthenticatedJwtToken(subject, grantedAuthorities);
     }
 }

@@ -14,11 +14,11 @@ public class AuthenticatedJwtToken extends AbstractAuthenticationToken {
     /**
      * Constructor
      * @param subject - User email (login)
-     * @param authorities - Collection of authorities
+     * @param grantedAuthorities - Collection of granted authorities
      */
     public AuthenticatedJwtToken(final String subject,
-                                 final Collection<GrantedAuthority> authorities) {
-        super(authorities);
+                                 final Collection<GrantedAuthority> grantedAuthorities) {
+        super(grantedAuthorities);
         this.subject = subject;
         setAuthenticated(true);
     }

@@ -4,6 +4,7 @@ import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 import com.netcracker.ncstore.dto.response.SignInResponse;
 import com.netcracker.ncstore.dto.request.SignInRequest;
+import com.netcracker.ncstore.service.auth.IAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,49 +18,45 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 public class AuthController {
+    private final IAuthService authService;
     private final Logger log;
 
     /**
      * Constructor
-     * <p>
-     * TODO: In the future, any services should be the arguments of constructor
+     *
+     * @param authService - IAuthService bean
      */
-    public AuthController() {
+    public AuthController(final IAuthService authService) {
+        this.authService = authService;
         this.log = LoggerFactory.getLogger(AuthController.class);
     }
 
     /**
      * Person sign up request
+     * https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signUpPerson
      *
      * @param request - SignUpPersonRequest
      * @return - HTTP code
      */
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signUpPerson
     @RequestMapping(value = "/signup/person", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> signUpPerson(@RequestBody SignUpPersonRequest request) {
-        try {
-            log.info("REQUEST: to signup " + request.getEmail() + " person");
-            // TODO: Here should be something like: UserService.signUp(request);
-            log.info("RESPONSE REQUEST: to signup " + request.getEmail() + " person");
-            return ResponseEntity.ok().build();
-            // TODO: Here should be another catch block for any error that returns 400
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<?> signUpPerson(@RequestBody final SignUpPersonRequest request) {
+        log.info("REQUEST: to signup " + request.getEmail() + " person");
+        authService.signUpPerson(request);
+        log.info("RESPONSE REQUEST: to signup " + request.getEmail() + " person");
+        return ResponseEntity.ok().build();
     }
 
     /**
      * Company sign up request
+     * https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signUpCompany
      *
      * @param request - SignUpCompanyRequest
      * @return - HTTP code
      */
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signUpCompany
     @RequestMapping(value = "/signup/company", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> signUpCompany(@RequestBody SignUpCompanyRequest request) {
+    public ResponseEntity<?> signUpCompany(@RequestBody final SignUpCompanyRequest request) {
         log.info("REQUEST: to signup " + request.getEmail() + " company");
         // TODO: Here should be something like: UserService.signUp(request);
         log.info("RESPONSE REQUEST: to signup " + request.getEmail() + " company");

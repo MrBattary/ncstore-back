@@ -1,5 +1,7 @@
 package com.netcracker.ncstore.controller;
 
+import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
+import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 import com.netcracker.ncstore.dto.response.SignInResponse;
 import com.netcracker.ncstore.dto.request.SignInRequest;
 import org.slf4j.Logger;
@@ -27,19 +29,19 @@ public class AuthController {
     }
 
     /**
-     * Sign up request
+     * Person sign up request
      *
-     * @param request - email and password
+     * @param request - SignUpPersonRequest
      * @return - HTTP code
      */
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signUp
-    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signUpPerson
+    @RequestMapping(value = "/signup/person", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> signUp(@RequestBody request) {
+    public ResponseEntity<?> signUpPerson(@RequestBody SignUpPersonRequest request) {
         try {
-            log.info("REQUEST: to signup " + request.getEmail() + " user");
+            log.info("REQUEST: to signup " + request.getEmail() + " person");
             // TODO: Here should be something like: UserService.signUp(request);
-            log.info("RESPONSE REQUEST: to signup " + request.getEmail() + " user");
+            log.info("RESPONSE REQUEST: to signup " + request.getEmail() + " person");
             return ResponseEntity.ok().build();
             // TODO: Here should be another catch block for any error that returns 400
         } catch (Exception e) {
@@ -48,21 +50,31 @@ public class AuthController {
         }
     }
 
+    /**
+     * Company sign up request
+     *
+     * @param request - SignUpCompanyRequest
+     * @return - HTTP code
+     */
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signUpCompany
+    @RequestMapping(value = "/signup/company", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> signUpCompany(@RequestBody SignUpCompanyRequest request) {
+        log.info("REQUEST: to signup " + request.getEmail() + " company");
+        // TODO: Here should be something like: UserService.signUp(request);
+        log.info("RESPONSE REQUEST: to signup " + request.getEmail() + " company");
+        return ResponseEntity.ok().build();
+    }
+
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signIn
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<SignInResponse> signIn(@RequestBody final SignInRequest request) {
-        try {
-            log.info("REQUEST: to signin " + request.getEmail() + " user");
-            // TODO: Here should be something like: SignInResponse response = UserService.signIn(request);
-            SignInResponse response = null;
-            log.info("RESPONSE REQUEST: to signin " + request.getEmail() + " user");
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
-            // TODO: Here should be another catch block for any error that returns 400
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        log.info("REQUEST: to signin " + request.getEmail() + " user");
+        // TODO: Here should be something like: SignInResponse response = UserService.signIn(request);
+        SignInResponse response = null;
+        log.info("RESPONSE REQUEST: to signin " + request.getEmail() + " user");
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signOut

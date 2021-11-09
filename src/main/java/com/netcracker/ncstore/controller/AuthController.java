@@ -58,7 +58,7 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<?> signUpCompany(@RequestBody final SignUpCompanyRequest request) {
         log.info("REQUEST: to signup " + request.getEmail() + " company");
-        // TODO: Here should be something like: UserService.signUp(request);
+        authService.signUpCompany(request);
         log.info("RESPONSE REQUEST: to signup " + request.getEmail() + " company");
         return ResponseEntity.ok().build();
     }

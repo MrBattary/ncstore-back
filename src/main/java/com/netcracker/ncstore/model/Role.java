@@ -1,15 +1,12 @@
 package com.netcracker.ncstore.model;
 
-import com.netcracker.ncstore.model.enumerations.ERole;
+import com.netcracker.ncstore.model.enumerations.ERoleName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +22,9 @@ public class Role {//need to implement GrantedAuthority, but no spring security 
     @Id
     @GeneratedValue
     private UUID id;
-    private ERole name;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "name")
+    private ERoleName roleName;
 
     @ManyToMany(mappedBy = "roles")
     private List<User> users;

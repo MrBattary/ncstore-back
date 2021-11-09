@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.netcracker.ncstore.model.enumerations.ERole;
+import com.netcracker.ncstore.model.enumerations.ERoleName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,5 +23,5 @@ public class SignUpCompanyRequest {
     private final String password;
     private final String companyName;
     private final LocalDate foundationDate;
-    private final List<ERole> roles;
+    private final List<ERoleName> roles;
 }

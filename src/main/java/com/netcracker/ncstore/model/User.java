@@ -20,8 +20,8 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class User {
     //TODO: need to implement UserDetails but no spring security yet
@@ -38,4 +38,20 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
 
+    /**
+     * Constructor
+     * @param email - email
+     * @param password - encoded password
+     * @param balance - balance
+     * @param roles - list of roles
+     */
+    public User(final String email,
+                final String password,
+                final double balance,
+                final List<Role> roles) {
+        this.email = email;
+        this.password = password;
+        this.balance = balance;
+        this.roles = roles;
+    }
 }

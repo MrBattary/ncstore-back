@@ -3,7 +3,7 @@ package com.netcracker.ncstore.model.enumerations;
 /**
  * Enum used for user roles that uses to separate privileges
  */
-public enum ERole {
+public enum ERoleName {
     /**
      * Admin role, absolute power
      */

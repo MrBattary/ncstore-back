@@ -10,18 +10,16 @@ public interface IAuthService {
     /**
      * Person sign up
      * @param request - SignUpPersonRequest
-     * @throws AuthServiceRepositoryException - person already exist
-     * @throws AuthServiceValidationException - invalid data
+     * @throws AuthServiceException - person already exist
      */
     void signUpPerson(SignUpPersonRequest request)
-            throws AuthServiceRepositoryException, AuthServiceValidationException;
+            throws AuthServiceException;
 
     /**
      * Company sign up
      * @param request - SignUpPersonRequest
-     * @throws AuthServiceRepositoryException - company already exist
-     * @throws AuthServiceValidationException - invalid data
+     * @throws AuthServiceException - company already exist
      */
     void signUpCompany(SignUpCompanyRequest request)
-            throws AuthServiceRepositoryException, AuthServiceValidationException;
+            throws AuthServiceException;
 }

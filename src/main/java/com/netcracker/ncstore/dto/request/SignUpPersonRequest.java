@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.netcracker.ncstore.model.enumerations.ERole;
+import com.netcracker.ncstore.model.enumerations.ERoleName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,9 +21,9 @@ import java.util.List;
 public class SignUpPersonRequest {
     private final String email;
     private final String password;
-    private final String nickname;
+    private final String nickName;
     private final String firstName;
     private final String lastName;
     private final LocalDate birthday;
-    private final List<ERole> roles;
+    private final List<ERoleName> roles;
 }

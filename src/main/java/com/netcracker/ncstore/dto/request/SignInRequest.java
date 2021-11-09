@@ -7,15 +7,14 @@ import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * Sign in/up request
- * Because this requests requires same data
+ * Sign in request with email and password
  */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class SignRequest {
+public class SignInRequest {
     private final String email;
     private final String password;
 }

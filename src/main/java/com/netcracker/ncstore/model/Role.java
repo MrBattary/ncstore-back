@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.model;
 
+import com.netcracker.ncstore.model.enumerations.ERole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ public class Role {//need to implement GrantedAuthority, but no spring security 
     @Id
     @GeneratedValue
     private UUID id;
-    private String name;
+    private ERole name;
 
     @ManyToMany(mappedBy = "roles")
     private List<User> users;

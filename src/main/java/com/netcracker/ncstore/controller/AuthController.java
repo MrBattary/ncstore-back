@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.response.SignInResponse;
-import com.netcracker.ncstore.dto.request.SignRequest;
+import com.netcracker.ncstore.dto.request.SignInRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class AuthController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signUp
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> signUp(@RequestBody final SignRequest request) {
+    public ResponseEntity<?> signUp(@RequestBody request) {
         try {
             log.info("REQUEST: to signup " + request.getEmail() + " user");
             // TODO: Here should be something like: UserService.signUp(request);
@@ -51,7 +51,7 @@ public class AuthController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signIn
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<SignInResponse> signIn(@RequestBody final SignRequest request) {
+    public ResponseEntity<SignInResponse> signIn(@RequestBody final SignInRequest request) {
         try {
             log.info("REQUEST: to signin " + request.getEmail() + " user");
             // TODO: Here should be something like: SignInResponse response = UserService.signIn(request);

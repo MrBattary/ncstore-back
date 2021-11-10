@@ -12,6 +12,7 @@ import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.service.user.UserServiceBuildingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 
@@ -35,7 +36,7 @@ public class AuthService implements IAuthService {
     public void signUpPerson(final SignUpPersonRequest personRequest)
             throws AuthServiceException {
         try {
-            log.info("The sign up person process with an email: " + personRequest.getEmail() + " begins");
+            log.info("The sign up process of person with an email: " + personRequest.getEmail() + " begins");
             User user = userService.buildUserFromUserModelDTO(
                     new UserModelWithoutIdDTO(
                             personRequest.getEmail(),
@@ -53,10 +54,15 @@ public class AuthService implements IAuthService {
                             user
                     )
             );
-            log.info("The sign up person process with an email: " + personRequest.getEmail() + " completed successfully");
+            log.info("The sign up process of person with an email: " + personRequest.getEmail() + " completed successfully");
         } catch (UserServiceBuildingException e) {
             log.error(e.getMessage());
-            throw new AuthServiceException("User build with an email: " + personRequest.getEmail() + " failed", e);
+            throw new AuthServiceException("The sign up process of person with an email: "
+                    + personRequest.getEmail() + " failed", e);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+            throw new AuthServiceException("The sign up process of person with an email: "
+                    + personRequest.getEmail() + " unexpectedly failed", e);
         }
     }
 
@@ -64,7 +70,7 @@ public class AuthService implements IAuthService {
     public void signUpCompany(final SignUpCompanyRequest companyRequest)
             throws AuthServiceException {
         try {
-            log.info("The sign up company process with an email: " + companyRequest.getEmail() + " begins");
+            log.info("The sign up process of company with an email: " + companyRequest.getEmail() + " begins");
             User user = userService.buildUserFromUserModelDTO(
                     new UserModelWithoutIdDTO(
                             companyRequest.getEmail(),
@@ -81,10 +87,15 @@ public class AuthService implements IAuthService {
                             user
                     )
             );
-            log.info("The sign up company process with an email: " + companyRequest.getEmail() + " completed successfully");
-        } catch (UserServiceBuildingException e) {
+            log.info("The sign up process of company with an email: " + companyRequest.getEmail() + " completed successfully");
+        } catch (UserServiceBuildingException | DataAccessException e) {
             log.error(e.getMessage());
-            throw new AuthServiceException("User build with an email: " + companyRequest.getEmail() + " failed", e);
+            throw new AuthServiceException("The sign up process of company with an email: "
+                    + companyRequest.getEmail() + " failed", e);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+            throw new AuthServiceException("The sign up process of person with an email: "
+                    + companyRequest.getEmail() + " unexpectedly failed", e);
         }
     }
 }

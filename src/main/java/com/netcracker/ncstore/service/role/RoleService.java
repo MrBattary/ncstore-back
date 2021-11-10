@@ -19,9 +19,11 @@ public class RoleService implements IRoleService {
     @Override
     public List<Role> buildRolesList(final List<ERoleName> roleNamesList) {
         List<Role> roleList = new ArrayList<>();
+        List<String> roleCheckList = new ArrayList<>();
         for (ERoleName roleName : roleNamesList) {
             Role role = roleRepository.getRoleByRoleName(roleName);
-            if (role != null) {
+            if (role != null && !roleCheckList.contains(role.getRoleName().toString())) {
+                roleCheckList.add(role.getRoleName().toString());
                 roleList.add(role);
             }
         }

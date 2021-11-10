@@ -76,7 +76,7 @@ public class AuthService implements IAuthService {
             companyRepository.save(
                     new Company(
                             companyRequest.getCompanyName(),
-                            "",
+                            null,
                             companyRequest.getFoundationDate(),
                             user
                     )

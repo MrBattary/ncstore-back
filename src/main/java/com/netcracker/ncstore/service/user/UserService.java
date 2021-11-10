@@ -38,21 +38,21 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User buildUserFromUserModelDTO(UserModelWithoutIdDTO userModel) throws UserServiceBuildingException {
+    public User buildUserFromUserModelDTO(UserModelWithoutIdDTO userModelDTO) throws UserServiceBuildingException {
         try {
-            log.info("The building of user with an email: " + userModel.getEmail() + " begins");
-            checkUserEmail(userModel.getEmail());
+            log.info("The building of user with an email: " + userModelDTO.getEmail() + " begins");
+            checkUserEmail(userModelDTO.getEmail());
             User user = new User(
-                    userModel.getEmail(),
-                    passwordEncoder.encode(userModel.getPassword()),
-                    userModel.getBalance(),
-                    roleService.buildRolesList(userModel.getRoleNames())
+                    userModelDTO.getEmail(),
+                    passwordEncoder.encode(userModelDTO.getPassword()),
+                    userModelDTO.getBalance(),
+                    roleService.buildRolesList(userModelDTO.getRoleNames())
             );
-            log.info("The building of user with an email: " + userModel.getEmail() + " completed successfully");
+            log.info("The building of user with an email: " + userModelDTO.getEmail() + " completed successfully");
             return user;
         } catch (UserServiceValidationException | UserServiceRepositoryException e) {
             log.error(e.getMessage());
-            throw new UserServiceBuildingException("Unable to build a user with email: " + userModel.getEmail(), e);
+            throw new UserServiceBuildingException("Unable to build a user with email: " + userModelDTO.getEmail(), e);
         }
     }
 

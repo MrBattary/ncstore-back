@@ -63,13 +63,17 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Sign in request for any type of user
+     * @param request - SignInRequest
+     * @return - SignInResponse + HTTP code
+     */
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signIn
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<SignInResponse> signIn(@RequestBody final SignInRequest request) {
         log.info("REQUEST: to signin " + request.getEmail() + " user");
-        // TODO: Here should be something like: SignInResponse response = UserService.signIn(request);
-        SignInResponse response = null;
+        SignInResponse response = authService.signIn(request);
         log.info("RESPONSE REQUEST: to signin " + request.getEmail() + " user");
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }

@@ -1,7 +1,8 @@
 package com.netcracker.ncstore.service.user;
 
-import com.netcracker.ncstore.dto.UserModelWithoutIdDTO;
-import com.netcracker.ncstore.model.User;
+import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
+import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
+import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 
 public interface IUserService {
     /**
@@ -14,12 +15,27 @@ public interface IUserService {
     void checkUserEmail(String email) throws UserServiceValidationException, UserServiceRepositoryException;
 
     /**
-     * Build User model from SignUpPersonRequest
+     * Create Person from SignUpPersonRequest
      *
-     * @param modelDTO - SignUpPersonRequest
-     * @return - User model object
-     * @throws UserServiceBuildingException - if building is impossible
+     * @param request - SignUpPersonRequest
+     * @throws UserServiceBuildingException - if not created
      */
-    User buildUserFromUserModelDTO(UserModelWithoutIdDTO modelDTO)
-            throws UserServiceBuildingException;
+    void createPersonFromRequest(SignUpPersonRequest request) throws UserServiceBuildingException;
+
+    /**
+     * Create Person from SignUpCompanyRequest
+     *
+     * @param request - SignUpCompanyRequest
+     * @throws UserServiceBuildingException - if not created
+     */
+    void createCompanyFromRequest(SignUpCompanyRequest request) throws UserServiceBuildingException;
+
+    /**
+     * Returns data for authentication (type, email, password, roles)
+     *
+     * @param email - email
+     * @return - UserTypeEmailPasswordRolesDTO
+     * @throws UserServiceRepositoryException - if user not found
+     */
+    UserTypeEmailPasswordRolesDTO getUserAuthDataByEmail(String email) throws UserServiceRepositoryException;
 }

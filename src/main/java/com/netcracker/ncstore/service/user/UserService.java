@@ -55,5 +55,4 @@ public class UserService implements IUserService {
             throw new UserServiceBuildingException("Unable to build a user with email: " + userModelDTO.getEmail(), e);
         }
     }
-
 }

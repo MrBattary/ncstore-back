@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
  * validates email standard
  */
 public abstract class EmailValidator {
+    // Check https://datatracker.ietf.org/doc/html/rfc5322 for the additional info
     private static final Pattern RFC_5322_EMAIL_ADDRESS_SIMPLIFIED_REGEX =
             Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", Pattern.CASE_INSENSITIVE);
 

@@ -57,10 +57,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
          * .authorizeRequests().antMatchers(HttpMethod.POST, "/request").authenticated()
          *
          * 2) One authority:
-         * .authorizeRequests().antMatchers("/request").hasAuthority(ADMIN)
+         * .authorizeRequests().antMatchers("/request").hasAuthority("ADMIN")
          *
          * 3) Any of authority:
-         * .authorizeRequests().antMatchers("/request").hasAnyAuthority(ADMIN, SUPPLIER)
+         * .authorizeRequests().antMatchers("/request").hasAnyAuthority("ADMIN", "SUPPLIER")
          *
          * 4) All requests from one root: /request/first, /request/second, /request/third
          * .authorizeRequests().antMatchers("/request/**").permitAll()

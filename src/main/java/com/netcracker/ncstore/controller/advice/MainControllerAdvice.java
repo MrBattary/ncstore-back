@@ -1,6 +1,7 @@
 package com.netcracker.ncstore.controller.advice;
 
 import com.netcracker.ncstore.exception.RequestParametersInvalidException;
+import com.netcracker.ncstore.service.auth.AuthServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,13 @@ public class MainControllerAdvice {
     public ResponseEntity<?> handleRequestParametersInvalidException(final RequestParametersInvalidException e) {
         log.error(e.getMessage());
         return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(AuthServiceException.class)
+    public ResponseEntity<?> handleAuthServiceGeneralException(final AuthServiceException e) {
+        log.error(e.getMessage());
+        log.info("RESPONSE: 400");
+        return ResponseEntity.badRequest().build();
     }
 
     @ExceptionHandler(RuntimeException.class)

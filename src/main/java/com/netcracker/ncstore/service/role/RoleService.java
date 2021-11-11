@@ -26,7 +26,7 @@ public class RoleService implements IRoleService {
         List<String> roleCheckList = new ArrayList<>();
         for (String roleName : roleNamesList) {
             try {
-                Role role = roleRepository.getRoleByRoleName(ERoleName.valueOf(roleName));
+                Role role = roleRepository.findRoleByRoleName(ERoleName.valueOf(roleName));
                 if (!roleCheckList.contains(role.getRoleName().toString())) {
                     roleCheckList.add(role.getRoleName().toString());
                     rolesList.add(role);
@@ -38,7 +38,7 @@ public class RoleService implements IRoleService {
 
         if (rolesList.isEmpty()) {
             log.info("List of user roles is empty, adding default CUSTOMER role");
-            rolesList.add(roleRepository.getRoleByRoleName(ERoleName.CUSTOMER));
+            rolesList.add(roleRepository.findRoleByRoleName(ERoleName.CUSTOMER));
         }
 
         return rolesList;

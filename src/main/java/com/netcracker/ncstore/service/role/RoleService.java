@@ -21,26 +21,35 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public List<Role> buildRolesList(final List<String> roleNamesList) {
-        List<Role> roleList = new ArrayList<>();
+    public List<Role> parseRoleNamesListToRolesList(final List<String> roleNamesList) {
+        List<Role> rolesList = new ArrayList<>();
         List<String> roleCheckList = new ArrayList<>();
         for (String roleName : roleNamesList) {
             try {
                 Role role = roleRepository.getRoleByRoleName(ERoleName.valueOf(roleName));
                 if (!roleCheckList.contains(role.getRoleName().toString())) {
                     roleCheckList.add(role.getRoleName().toString());
-                    roleList.add(role);
+                    rolesList.add(role);
                 }
             } catch (IllegalArgumentException e) {
                 log.warn("Role " + roleName + " is not exist");
             }
         }
 
-        if (roleList.isEmpty()) {
+        if (rolesList.isEmpty()) {
             log.info("List of user roles is empty, adding default CUSTOMER role");
-            roleList.add(roleRepository.getRoleByRoleName(ERoleName.CUSTOMER));
+            rolesList.add(roleRepository.getRoleByRoleName(ERoleName.CUSTOMER));
         }
 
-        return roleList;
+        return rolesList;
+    }
+
+    @Override
+    public List<ERoleName> rolesListToRoleNamesList(List<Role> rolesList) {
+        List<ERoleName> roleNamesList = new ArrayList<>(rolesList.size());
+        for (Role role : rolesList) {
+            roleNamesList.add(role.getRoleName());
+        }
+        return roleNamesList;
     }
 }

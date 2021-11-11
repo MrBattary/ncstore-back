@@ -12,7 +12,7 @@ public interface IUserService {
      * @throws UserServiceValidationException - if email is incorrect
      * @throws UserServiceRepositoryException - if email is exist in the DB
      */
-    void checkUserEmail(String email) throws UserServiceValidationException, UserServiceRepositoryException;
+    void checkNewUserEmail(String email) throws UserServiceValidationException, UserServiceRepositoryException;
 
     /**
      * Create Person from SignUpPersonRequest

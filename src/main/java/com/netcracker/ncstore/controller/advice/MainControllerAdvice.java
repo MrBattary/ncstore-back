@@ -28,6 +28,7 @@ public class MainControllerAdvice {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleAllUncaughtException(final RuntimeException e) {
         log.error(e.getMessage());
+        log.info("RESPONSE: 500");
         return ResponseEntity.internalServerError().build();
     }
 }

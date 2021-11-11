@@ -7,12 +7,20 @@ import java.util.List;
 
 public interface IRoleService {
     /**
-     * User roles builder
+     * Creates list of Roles from provided valid role names
      * If roleNames is empty, returns list with the CUSTOMER role
      *
-     * @see ERoleName
      * @param roleNames - list of role names
-     * @return - List of Role objects
+     * @return - list of Role objects
      */
-    List<Role> buildRolesList(List<ERoleName> roleNames);
+    List<Role> parseRoleNamesListToRolesList(List<String> roleNames);
+
+
+    /**
+     * Creates list of roleNames from provided Roles list
+     *
+     * @param roles - list of Role objects
+     * @return - list of role names as ERoleName
+     */
+    List<ERoleName> rolesListToRoleNamesList(List<Role> roles);
 }

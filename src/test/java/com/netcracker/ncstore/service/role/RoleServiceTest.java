@@ -39,61 +39,100 @@ class RoleServiceTest {
     }
 
     @Test
-    void buildRolesNormalList() {
-        List<ERoleName> roleNameList = new ArrayList<>();
-        roleNameList.add(ERoleName.CUSTOMER);
-        roleNameList.add(ERoleName.ADMIN);
-        roleNameList.add(ERoleName.SUPPLIER);
+    void parseRoleNamesListToRolesList() {
+        List<String> roleNamesList = new ArrayList<>();
+        roleNamesList.add("CUSTOMER");
+        roleNamesList.add("SUPPLIER");
 
         Role roleMockedFirst = Mockito.mock(Role.class);
         Mockito.doReturn(ERoleName.CUSTOMER).when(roleMockedFirst).getRoleName();
         Role roleMockedSecond = Mockito.mock(Role.class);
         Mockito.doReturn(ERoleName.SUPPLIER).when(roleMockedSecond).getRoleName();
 
-        Mockito.when(roleRepositoryMocked.getRoleByRoleName(Mockito.any(ERoleName.class)))
+        Mockito.when(roleRepositoryMocked.findRoleByRoleName(Mockito.any(ERoleName.class)))
                 .thenReturn(roleMockedFirst)
-                .thenReturn(null)
                 .thenReturn(roleMockedSecond);
 
-        List<Role> result = roleService.buildRolesList(roleNameList);
+        List<Role> result = roleService.parseRoleNamesListToRolesList(roleNamesList);
         assertEquals(ERoleName.CUSTOMER, result.get(0).getRoleName());
         assertEquals(ERoleName.SUPPLIER, result.get(1).getRoleName());
-        Mockito.verify(roleRepositoryMocked, Mockito.times(3)).getRoleByRoleName(Mockito.any());
+        Mockito.verify(roleRepositoryMocked, Mockito.times(2)).findRoleByRoleName(Mockito.any());
     }
 
     @Test
-    void buildRolesEmptyList() {
-        List<ERoleName> roleNameList = new ArrayList<>();
+    void parseRoleNamesEmptyListToRolesList() {
+        List<String> roleNamesList = new ArrayList<>();
 
         Role roleMockedFirst = Mockito.mock(Role.class);
         Mockito.doReturn(ERoleName.CUSTOMER).when(roleMockedFirst).getRoleName();
 
-        Mockito.when(roleRepositoryMocked.getRoleByRoleName(Mockito.any(ERoleName.class)))
+        Mockito.when(roleRepositoryMocked.findRoleByRoleName(Mockito.any(ERoleName.class)))
                 .thenReturn(roleMockedFirst);
 
-        List<Role> result = roleService.buildRolesList(roleNameList);
+        List<Role> result = roleService.parseRoleNamesListToRolesList(roleNamesList);
         assertEquals(ERoleName.CUSTOMER, result.get(0).getRoleName());
-        Mockito.verify(roleRepositoryMocked, Mockito.times(1)).getRoleByRoleName(Mockito.any());
+        Mockito.verify(roleRepositoryMocked, Mockito.times(1)).findRoleByRoleName(Mockito.any());
     }
 
     @Test
-    void buildRolesDoubledList() {
-        List<ERoleName> roleNameList = new ArrayList<>();
-        roleNameList.add(ERoleName.CUSTOMER);
-        roleNameList.add(ERoleName.CUSTOMER);
+    void parseRoleNamesDoubledListToRolesList() {
+        List<String> roleNamesList = new ArrayList<>();
+        roleNamesList.add("CUSTOMER");
+        roleNamesList.add("CUSTOMER");
 
         Role roleMockedFirst = Mockito.mock(Role.class);
         Mockito.doReturn(ERoleName.CUSTOMER).when(roleMockedFirst).getRoleName();
         Role roleMockedSecond = Mockito.mock(Role.class);
         Mockito.doReturn(ERoleName.CUSTOMER).when(roleMockedSecond).getRoleName();
 
-        Mockito.when(roleRepositoryMocked.getRoleByRoleName(Mockito.any(ERoleName.class)))
+        Mockito.when(roleRepositoryMocked.findRoleByRoleName(Mockito.any(ERoleName.class)))
                 .thenReturn(roleMockedFirst)
                 .thenReturn(roleMockedSecond);
 
-        List<Role> result = roleService.buildRolesList(roleNameList);
+        List<Role> result = roleService.parseRoleNamesListToRolesList(roleNamesList);
         assertEquals(ERoleName.CUSTOMER, result.get(0).getRoleName());
         assertEquals(1, result.size());
-        Mockito.verify(roleRepositoryMocked, Mockito.times(2)).getRoleByRoleName(Mockito.any());
+        Mockito.verify(roleRepositoryMocked, Mockito.times(2)).findRoleByRoleName(Mockito.any());
+    }
+
+    @Test
+    void parseRoleNamesCorruptedListToRolesList() {
+        List<String> roleNamesList = new ArrayList<>();
+        roleNamesList.add("CUSTOMER");
+        roleNamesList.add("HACKER");
+        roleNamesList.add("SUPPLIER");
+        roleNamesList.add("SUPERADMIN");
+
+        Role roleMockedFirst = Mockito.mock(Role.class);
+        Mockito.doReturn(ERoleName.CUSTOMER).when(roleMockedFirst).getRoleName();
+        Role roleMockedSecond = Mockito.mock(Role.class);
+        Mockito.doReturn(ERoleName.SUPPLIER).when(roleMockedSecond).getRoleName();
+
+        Mockito.when(roleRepositoryMocked.findRoleByRoleName(Mockito.any(ERoleName.class)))
+                .thenReturn(roleMockedFirst)
+                .thenReturn(roleMockedSecond);
+
+        List<Role> result = roleService.parseRoleNamesListToRolesList(roleNamesList);
+        assertEquals(ERoleName.CUSTOMER, result.get(0).getRoleName());
+        assertEquals(ERoleName.SUPPLIER, result.get(1).getRoleName());
+        Mockito.verify(roleRepositoryMocked, Mockito.times(2)).findRoleByRoleName(Mockito.any());
+    }
+
+    @Test
+    void rolesListToRoleNamesList() {
+        Role mockedRole = Mockito.mock(Role.class);
+        List<Role> rolesList = new ArrayList<>();
+        rolesList.add(mockedRole);
+
+        Mockito.doReturn(ERoleName.CUSTOMER).when(mockedRole).getRoleName();
+
+        assertEquals(ERoleName.CUSTOMER, roleService.rolesListToRoleNamesList(rolesList).get(0));
+    }
+
+    @Test
+    void rolesEmptyListToRoleNamesList() {
+        List<Role> rolesList = new ArrayList<>();
+
+        assertEquals(0, roleService.rolesListToRoleNamesList(rolesList).size());
     }
 }

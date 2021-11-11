@@ -1,13 +1,12 @@
 package com.netcracker.ncstore.controller;
 
+import com.netcracker.ncstore.dto.request.SignInRequest;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 import com.netcracker.ncstore.dto.response.SignInResponse;
-import com.netcracker.ncstore.dto.request.SignInRequest;
 import com.netcracker.ncstore.service.auth.IAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,13 +62,17 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Sign in request for any type of user
+     * @param request - SignInRequest
+     * @return - SignInResponse + HTTP code
+     */
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Authorization/signIn
     @RequestMapping(value = "/signin", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<SignInResponse> signIn(@RequestBody final SignInRequest request) {
         log.info("REQUEST: to signin " + request.getEmail() + " user");
-        // TODO: Here should be something like: SignInResponse response = UserService.signIn(request);
-        SignInResponse response = null;
+        SignInResponse response = authService.signIn(request);
         log.info("RESPONSE REQUEST: to signin " + request.getEmail() + " user");
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }

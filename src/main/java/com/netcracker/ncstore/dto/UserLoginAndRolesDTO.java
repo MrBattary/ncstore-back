@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.dto;
 
+import com.netcracker.ncstore.model.enumerations.ERoleName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.Authentication;
@@ -15,8 +16,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class UserLoginAndRolesDTO {
-    private final String userEmail;
-    private final List<String> userRoleNames;
+    private final String email;
+    private final List<ERoleName> roles;
 
     /**
      * Constructor from Authentication
@@ -26,14 +27,22 @@ public class UserLoginAndRolesDTO {
     public UserLoginAndRolesDTO(final Authentication authentication) {
         Object principalAsLogin = authentication.getPrincipal();
         if (principalAsLogin instanceof UserDetails) {
-            this.userEmail = ((UserDetails) principalAsLogin).getUsername();
+            this.email = ((UserDetails) principalAsLogin).getUsername();
         } else {
-            this.userEmail = principalAsLogin.toString();
+            this.email = principalAsLogin.toString();
         }
 
-        this.userRoleNames = new ArrayList<>();
+        this.roles = new ArrayList<>();
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
-            this.userRoleNames.add(grantedAuthority.getAuthority());
+            this.roles.add(ERoleName.valueOf(grantedAuthority.getAuthority()));
         }
+    }
+
+    public List<String> getUserRoleNames() {
+        List<String> stringList = new ArrayList<>(roles.size());
+        for(ERoleName roleName: roles){
+            stringList.add(roleName.toString());
+        }
+        return stringList;
     }
 }

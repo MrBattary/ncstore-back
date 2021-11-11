@@ -39,14 +39,14 @@ public class JsonJwtTokenService implements IJwtTokenService {
 
     @Override
     public String createToken(final UserLoginAndRolesDTO userLoginAndRolesDTO) {
-        logger.info("Generating token for user {}", userLoginAndRolesDTO.getUserEmail());
+        logger.info("Generating token for user {}", userLoginAndRolesDTO.getEmail());
 
         Instant now = Instant.now();
 
         Claims claims = Jwts.claims()
                 .setIssuer(settings.getTokenIssuer())
                 .setIssuedAt(Date.from(now))
-                .setSubject(userLoginAndRolesDTO.getUserEmail())
+                .setSubject(userLoginAndRolesDTO.getEmail())
                 .setExpiration(Date.from(now.plus(settings.getTokenExpiredIn())));
         claims.put(authorities, userLoginAndRolesDTO.getUserRoleNames());
 

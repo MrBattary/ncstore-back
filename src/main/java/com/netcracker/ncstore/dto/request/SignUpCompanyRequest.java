@@ -25,5 +25,5 @@ public class SignUpCompanyRequest {
     private String password;
     private final String companyName;
     private final LocalDate foundationDate;
-    private final List<ERoleName> roles;
+    private final List<String> roles;
 }

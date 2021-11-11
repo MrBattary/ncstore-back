@@ -111,24 +111,24 @@ public class UserService implements IUserService {
         Person foundPerson = personRepository.findPersonByUserEmail(email);
         if (foundPerson != null) {
             List<Role> userRolesList = foundPerson.getUser().getRoles();
-            List<ERoleName> rolesList = new ArrayList<>(userRolesList.size());
+            List<ERoleName> roleNamesList = new ArrayList<>(userRolesList.size());
             for (Role userRole : userRolesList) {
-                rolesList.add(userRole.getRoleName());
+                roleNamesList.add(userRole.getRoleName());
             }
 
             return new UserTypeEmailPasswordRolesDTO(
                     EUserType.PERSON,
                     foundPerson.getUser().getEmail(),
                     foundPerson.getUser().getPassword(),
-                    rolesList
+                    roleNamesList
             );
         }
 
         Company foundCompany = companyRepository.findCompanyByUserEmail(email);
         if (foundCompany != null) {
-            List<Role> rolesList = foundCompany.getUser().getRoles();
-            List<ERoleName> roleNamesList = new ArrayList<>(rolesList.size());
-            for (Role userRole : rolesList) {
+            List<Role> userRolesList = foundCompany.getUser().getRoles();
+            List<ERoleName> roleNamesList = new ArrayList<>(userRolesList.size());
+            for (Role userRole : userRolesList) {
                 roleNamesList.add(userRole.getRoleName());
             }
 

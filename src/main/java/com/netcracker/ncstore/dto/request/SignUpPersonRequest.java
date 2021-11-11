@@ -27,5 +27,5 @@ public class SignUpPersonRequest {
     private final String firstName;
     private final String lastName;
     private final LocalDate birthday;
-    private final List<ERoleName> roles;
+    private final List<String> roles;
 }

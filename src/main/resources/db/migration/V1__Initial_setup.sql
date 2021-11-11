@@ -52,7 +52,7 @@ CREATE TABLE person
 (
     user_id     UUID NOT NULL,
     first_name  VARCHAR(255),
-    second_name VARCHAR(255),
+    last_name VARCHAR(255),
     nick_name   VARCHAR(255),
     birthday    date,
     CONSTRAINT pk_person PRIMARY KEY (user_id)

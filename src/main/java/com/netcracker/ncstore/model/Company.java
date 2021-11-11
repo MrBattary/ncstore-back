@@ -34,4 +34,10 @@ public class Company {
     @MapsId
     private User user;
 
+    public Company(String companyName, String description, LocalDate foundationDate, User user) {
+        this.companyName = companyName;
+        this.description = description;
+        this.foundationDate = foundationDate;
+        this.user = user;
+    }
 }

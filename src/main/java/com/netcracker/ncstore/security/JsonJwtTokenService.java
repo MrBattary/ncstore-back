@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.security;
 
-import com.netcracker.ncstore.dto.UserLoginAndRolesDTO;
+import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.security.token.AuthenticatedJwtToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -38,15 +38,15 @@ public class JsonJwtTokenService implements IJwtTokenService {
     }
 
     @Override
-    public String createToken(final UserLoginAndRolesDTO userLoginAndRolesDTO) {
-        logger.info("Generating token for user {}", userLoginAndRolesDTO.getUserEmail());
+    public String createToken(final UserEmailAndRolesDTO userLoginAndRolesDTO) {
+        logger.info("Generating token for user {}", userLoginAndRolesDTO.getEmail());
 
         Instant now = Instant.now();
 
         Claims claims = Jwts.claims()
                 .setIssuer(settings.getTokenIssuer())
                 .setIssuedAt(Date.from(now))
-                .setSubject(userLoginAndRolesDTO.getUserEmail())
+                .setSubject(userLoginAndRolesDTO.getEmail())
                 .setExpiration(Date.from(now.plus(settings.getTokenExpiredIn())));
         claims.put(authorities, userLoginAndRolesDTO.getUserRoleNames());
 

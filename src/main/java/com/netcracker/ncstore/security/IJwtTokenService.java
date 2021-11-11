@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.security;
 
-import com.netcracker.ncstore.dto.UserLoginAndRolesDTO;
+import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import org.springframework.security.core.Authentication;
 
 import java.time.Duration;
@@ -26,5 +26,5 @@ public interface IJwtTokenService {
      * @param userLoginAndRolesDTO - dto
      * @return - signed token
      */
-    String createToken(UserLoginAndRolesDTO userLoginAndRolesDTO);
+    String createToken(UserEmailAndRolesDTO userLoginAndRolesDTO);
 }

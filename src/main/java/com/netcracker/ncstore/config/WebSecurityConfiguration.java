@@ -16,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -55,17 +57,17 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
          * .authorizeRequests().antMatchers(HttpMethod.POST, "/request").authenticated()
          *
          * 2) One authority:
-         * .authorizeRequests().antMatchers("/request").hasAuthority(ADMIN)
+         * .authorizeRequests().antMatchers("/request").hasAuthority("ADMIN")
          *
          * 3) Any of authority:
-         * .authorizeRequests().antMatchers("/request").hasAnyAuthority(ADMIN, SUPPLIER)
+         * .authorizeRequests().antMatchers("/request").hasAnyAuthority("ADMIN", "SUPPLIER")
          *
          * 4) All requests from one root: /request/first, /request/second, /request/third
          * .authorizeRequests().antMatchers("/request/**").permitAll()
          */
 
         http
-                .authorizeRequests().antMatchers("/signup", "/signin", "/products").permitAll()
+                .authorizeRequests().antMatchers("/signup/**", "/signin", "/products").permitAll()
                 .and()
                 .authorizeRequests().anyRequest().authenticated();
     }
@@ -82,6 +84,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public HttpFirewall getHttpFirewall() {
+        return new DefaultHttpFirewall();
     }
 
     /**

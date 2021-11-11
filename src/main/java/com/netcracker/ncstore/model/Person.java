@@ -26,7 +26,7 @@ public class Person {
     @Id
     private UUID userId;
     private String firstName;
-    private String secondName;
+    private String lastName;
     private String nickName;
     private LocalDate birthday;
 
@@ -34,4 +34,12 @@ public class Person {
     @JoinColumn(name = "user_id")
     @MapsId
     private User user;
+
+    public Person(String firstName, String lastName, String nickName, LocalDate birthday, User user) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.nickName = nickName;
+        this.birthday = birthday;
+        this.user = user;
+    }
 }

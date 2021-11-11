@@ -5,6 +5,10 @@ import com.netcracker.ncstore.model.enumerations.ERoleName;
 
 import java.util.List;
 
+/**
+ * Interacts with repositories of roles
+ * Responsible for operations with Role
+ */
 public interface IRoleService {
     /**
      * Creates list of Roles from provided valid role names

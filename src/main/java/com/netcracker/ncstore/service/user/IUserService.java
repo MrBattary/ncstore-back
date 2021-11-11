@@ -4,6 +4,10 @@ import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 
+/**
+ * Interacts with repositories of users, persons and companies
+ * Responsible for operations with these entities
+ */
 public interface IUserService {
     /**
      * Check user email

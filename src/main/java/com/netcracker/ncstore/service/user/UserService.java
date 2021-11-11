@@ -48,9 +48,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void createPersonFromRequest(SignUpPersonRequest personRequest) throws UserServiceBuildingException {
+    public void createPersonFromRequest(SignUpPersonRequest personRequest) throws UserServiceCreationException {
         try {
-            log.info("The building of person with an email: " + personRequest.getEmail() + " begins");
+            log.info("The creation process of person with an email: " + personRequest.getEmail() + " begins");
             checkNewUserEmail(personRequest.getEmail());
             personRepository.save(
                     new Person(
@@ -66,18 +66,18 @@ public class UserService implements IUserService {
                             )
                     )
             );
-            log.info("The building of person with an email: " + personRequest.getEmail() + " completed successfully");
+            log.info("The creation process of person with an email: " + personRequest.getEmail() + " completed successfully");
         } catch (UserServiceValidationException | UserServiceRepositoryException e) {
             log.error(e.getMessage());
-            throw new UserServiceBuildingException("Unable to build a person with email: " + personRequest.getEmail(), e);
+            throw new UserServiceCreationException("Unable to create a person with email: " + personRequest.getEmail(), e);
         }
 
     }
 
     @Override
-    public void createCompanyFromRequest(SignUpCompanyRequest companyRequest) throws UserServiceBuildingException {
+    public void createCompanyFromRequest(SignUpCompanyRequest companyRequest) throws UserServiceCreationException {
         try {
-            log.info("The building of company with an email: " + companyRequest.getEmail() + " begins");
+            log.info("The creation process of company with an email: " + companyRequest.getEmail() + " begins");
             checkNewUserEmail(companyRequest.getEmail());
             companyRepository.save(
                     new Company(
@@ -92,10 +92,10 @@ public class UserService implements IUserService {
                             )
                     )
             );
-            log.info("The building of company with an email: " + companyRequest.getEmail() + " completed successfully");
+            log.info("The creation process of company with an email: " + companyRequest.getEmail() + " completed successfully");
         } catch (UserServiceValidationException | UserServiceRepositoryException e) {
             log.error(e.getMessage());
-            throw new UserServiceBuildingException("Unable to build a company with email: " + companyRequest.getEmail(), e);
+            throw new UserServiceCreationException("Unable to create a company with email: " + companyRequest.getEmail(), e);
         }
     }
 

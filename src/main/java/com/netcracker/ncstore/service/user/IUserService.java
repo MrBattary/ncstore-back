@@ -18,17 +18,17 @@ public interface IUserService {
      * Create Person from SignUpPersonRequest
      *
      * @param request - SignUpPersonRequest
-     * @throws UserServiceBuildingException - if not created
+     * @throws UserServiceCreationException - if not created
      */
-    void createPersonFromRequest(SignUpPersonRequest request) throws UserServiceBuildingException;
+    void createPersonFromRequest(SignUpPersonRequest request) throws UserServiceCreationException;
 
     /**
      * Create Person from SignUpCompanyRequest
      *
      * @param request - SignUpCompanyRequest
-     * @throws UserServiceBuildingException - if not created
+     * @throws UserServiceCreationException - if not created
      */
-    void createCompanyFromRequest(SignUpCompanyRequest request) throws UserServiceBuildingException;
+    void createCompanyFromRequest(SignUpCompanyRequest request) throws UserServiceCreationException;
 
     /**
      * Returns data for authentication (type, email, password, roles)

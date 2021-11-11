@@ -6,10 +6,9 @@ import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 import com.netcracker.ncstore.model.Company;
 import com.netcracker.ncstore.model.Person;
 import com.netcracker.ncstore.model.User;
-import com.netcracker.ncstore.repository.CompanyRepository;
-import com.netcracker.ncstore.repository.PersonRepository;
+import com.netcracker.ncstore.security.IJwtTokenService;
 import com.netcracker.ncstore.service.user.IUserService;
-import com.netcracker.ncstore.service.user.UserServiceBuildingException;
+import com.netcracker.ncstore.service.user.UserServiceCreationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -32,16 +32,16 @@ class AuthServiceTest {
     private IUserService userServiceMocked;
 
     @Mock
-    private PersonRepository personRepositoryMocked;
+    private IJwtTokenService jwtTokenServiceMocked;
 
     @Mock
-    private CompanyRepository companyRepositoryMocked;
+    private PasswordEncoder passwordEncoderMocked;
 
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        authService = new AuthService(userServiceMocked, personRepositoryMocked, companyRepositoryMocked);
+        authService = new AuthService(userServiceMocked, jwtTokenServiceMocked, passwordEncoderMocked);
     }
 
     @AfterEach
@@ -54,11 +54,13 @@ class AuthServiceTest {
         User userMocked = Mockito.mock(User.class);
         SignUpPersonRequest signUpPersonRequest = new SignUpPersonRequest("e", "p", "n", "f", "l", null, null);
 
+        Mockito.doReturn("pEncoded").when(passwordEncoderMocked).encode(Mockito.anyString());
+        Mockito.doNothing().when(userServiceMocked).createPersonFromRequest(Mockito.any(SignUpPersonRequest.class));
         Mockito.doReturn(userMocked).when(userServiceMocked).buildUserFromUserModelDTO(Mockito.any(UserModelWithoutIdDTO.class));
         Mockito.when(personRepositoryMocked.save(Mockito.any(Person.class))).thenAnswer(i -> i.getArguments()[0]);
 
         authService.signUpPerson(signUpPersonRequest);
-        Mockito.verify(userServiceMocked, Mockito.times(1)).buildUserFromUserModelDTO(Mockito.any());
+        Mockito.verify(userServiceMocked).createPersonFromRequest(Mockito.any(SignUpPersonRequest.class));
         Mockito.verify(personRepositoryMocked, Mockito.times(1)).save(Mockito.any());
     }
 
@@ -66,7 +68,7 @@ class AuthServiceTest {
     void signUpPersonUserServiceException() {
         SignUpPersonRequest signUpPersonRequest = new SignUpPersonRequest("e", "p", "n", "f", "l", null, null);
 
-        Mockito.doThrow(new UserServiceBuildingException("Test building exception"))
+        Mockito.doThrow(new UserServiceCreationException("Test building exception"))
                 .when(userServiceMocked).buildUserFromUserModelDTO(Mockito.any(UserModelWithoutIdDTO.class));
 
         assertThrows(AuthServiceException.class, () -> authService.signUpPerson(signUpPersonRequest));
@@ -93,23 +95,23 @@ class AuthServiceTest {
         SignUpCompanyRequest signUpCompanyRequest = new SignUpCompanyRequest("e", "p", "n", null, null);
 
         Mockito.doReturn(userMocked).when(userServiceMocked).buildUserFromUserModelDTO(Mockito.any(UserModelWithoutIdDTO.class));
-        Mockito.when(companyRepositoryMocked.save(Mockito.any(Company.class))).thenAnswer(i -> i.getArguments()[0]);
+        Mockito.when(passwordEncoderMocked.save(Mockito.any(Company.class))).thenAnswer(i -> i.getArguments()[0]);
 
         authService.signUpCompany(signUpCompanyRequest);
         Mockito.verify(userServiceMocked, Mockito.times(1)).buildUserFromUserModelDTO(Mockito.any());
-        Mockito.verify(companyRepositoryMocked, Mockito.times(1)).save(Mockito.any());
+        Mockito.verify(passwordEncoderMocked, Mockito.times(1)).save(Mockito.any());
     }
 
     @Test
     void signUpCompanyUserServiceException() {
         SignUpCompanyRequest signUpCompanyRequest = new SignUpCompanyRequest("e", "p", "n", null, null);
 
-        Mockito.doThrow(new UserServiceBuildingException("Test building exception"))
+        Mockito.doThrow(new UserServiceCreationException("Test building exception"))
                 .when(userServiceMocked).buildUserFromUserModelDTO(Mockito.any(UserModelWithoutIdDTO.class));
 
         assertThrows(AuthServiceException.class, () -> authService.signUpCompany(signUpCompanyRequest));
         Mockito.verify(userServiceMocked, Mockito.times(1)).buildUserFromUserModelDTO(Mockito.any());
-        Mockito.verify(companyRepositoryMocked, Mockito.never()).save(Mockito.any());
+        Mockito.verify(passwordEncoderMocked, Mockito.never()).save(Mockito.any());
     }
 
     @Test
@@ -118,10 +120,11 @@ class AuthServiceTest {
         SignUpCompanyRequest signUpCompanyRequest = new SignUpCompanyRequest("e", "p", "n", null, null);
 
         Mockito.doReturn(userMocked).when(userServiceMocked).buildUserFromUserModelDTO(Mockito.any(UserModelWithoutIdDTO.class));
-        Mockito.doThrow(new RuntimeException("Test unexpected exception")).when(companyRepositoryMocked).save(Mockito.any(Company.class));
+        Mockito.doThrow(new RuntimeException("Test unexpected exception")).when(passwordEncoderMocked).save(Mockito.any(Company.class));
 
         assertThrows(AuthServiceException.class, () -> authService.signUpCompany(signUpCompanyRequest));
         Mockito.verify(userServiceMocked, Mockito.times(1)).buildUserFromUserModelDTO(Mockito.any());
-        Mockito.verify(companyRepositoryMocked, Mockito.times(1)).save(Mockito.any());
+        Mockito.verify(passwordEncoderMocked, Mockito.times(1)).save(Mockito.any());
     }
-}*/
+}
+*/

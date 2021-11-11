@@ -8,7 +8,7 @@ import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 import com.netcracker.ncstore.dto.response.SignInResponse;
 import com.netcracker.ncstore.security.IJwtTokenService;
 import com.netcracker.ncstore.service.user.IUserService;
-import com.netcracker.ncstore.service.user.UserServiceBuildingException;
+import com.netcracker.ncstore.service.user.UserServiceCreationException;
 import com.netcracker.ncstore.service.user.UserServiceRepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class AuthService implements IAuthService {
             userService.createPersonFromRequest(personRequest);
             log.info("The sign up process of person with an email: " + personRequest.getEmail()
                     + " completed successfully");
-        } catch (UserServiceBuildingException e) {
+        } catch (UserServiceCreationException e) {
             log.error(e.getMessage());
             throw new AuthServiceException("The sign up process of person with an email: "
                     + personRequest.getEmail() + " failed", e);
@@ -59,7 +59,7 @@ public class AuthService implements IAuthService {
             userService.createCompanyFromRequest(companyRequest);
             log.info("The sign up process of company with an email: " + companyRequest.getEmail()
                     + " completed successfully");
-        } catch (UserServiceBuildingException e) {
+        } catch (UserServiceCreationException e) {
             log.error(e.getMessage());
             throw new AuthServiceException("The sign up process of company with an email: "
                     + companyRequest.getEmail() + " failed", e);

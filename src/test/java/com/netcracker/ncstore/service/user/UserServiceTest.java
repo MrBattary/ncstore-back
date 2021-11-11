@@ -1,8 +1,10 @@
-/*
 package com.netcracker.ncstore.service.user;
 
-import com.netcracker.ncstore.model.Role;
-import com.netcracker.ncstore.model.User;
+import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
+import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
+import com.netcracker.ncstore.model.Person;
+import com.netcracker.ncstore.repository.CompanyRepository;
+import com.netcracker.ncstore.repository.PersonRepository;
 import com.netcracker.ncstore.repository.UserRepository;
 import com.netcracker.ncstore.service.role.IRoleService;
 import com.netcracker.ncstore.util.validator.EmailValidator;
@@ -10,14 +12,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @RunWith(MockitoJUnitRunner.class)
 class UserServiceTest {
@@ -33,12 +36,15 @@ class UserServiceTest {
     private UserRepository userRepositoryMocked;
 
     @Mock
-    private PasswordEncoder passwordEncoderMocked;
+    private PersonRepository personRepositoryMocked;
+
+    @Mock
+    private CompanyRepository companyRepositoryMocked;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        userService = new UserService(roleServiceMocked, userRepositoryMocked, passwordEncoderMocked);
+        userService = new UserService(roleServiceMocked, userRepositoryMocked, personRepositoryMocked, companyRepositoryMocked);
     }
 
     @AfterEach
@@ -47,90 +53,120 @@ class UserServiceTest {
     }
 
     @Test
-    void checkUserEmail() {
+    void checkNewUserEmail() {
         try (MockedStatic<EmailValidator> emailValidatorMockedStatic = Mockito.mockStatic(EmailValidator.class)) {
             Mockito.doReturn(false).when(userRepositoryMocked).existsByEmail(Mockito.anyString());
             emailValidatorMockedStatic.when(() -> EmailValidator.isEmailValid(Mockito.anyString())).thenReturn(true);
 
-            userService.checkUserEmail("mail@gmail.com");
-            Mockito.verify(userRepositoryMocked, Mockito.times(1)).existsByEmail(Mockito.anyString());
-            emailValidatorMockedStatic.verify(() -> EmailValidator.isEmailValid(Mockito.anyString()), Mockito.times(1));
+            userService.checkNewUserEmail("mail@gmail.com");
+            Mockito.verify(userRepositoryMocked).existsByEmail(Mockito.anyString());
+            emailValidatorMockedStatic.verify(() -> EmailValidator.isEmailValid(Mockito.anyString()));
         }
     }
 
     @Test
-    void checkUserEmailInvalidException() {
+    void checkNewUserEmailInvalidException() {
         try (MockedStatic<EmailValidator> emailValidatorMockedStatic = Mockito.mockStatic(EmailValidator.class)) {
             emailValidatorMockedStatic.when(() -> EmailValidator.isEmailValid(Mockito.anyString())).thenReturn(false);
 
-            assertThrows(UserServiceValidationException.class, () -> userService.checkUserEmail("mail@gmail.com"));
+            assertThrows(UserServiceValidationException.class, () -> userService.checkNewUserEmail("mail@gmail.com"));
 
-            Mockito.verify(userRepositoryMocked, Mockito.times(0)).existsByEmail(Mockito.anyString());
-            emailValidatorMockedStatic.verify(() -> EmailValidator.isEmailValid(Mockito.anyString()), Mockito.times(1));
+            Mockito.verify(userRepositoryMocked, Mockito.never()).existsByEmail(Mockito.anyString());
+            emailValidatorMockedStatic.verify(() -> EmailValidator.isEmailValid(Mockito.anyString()));
         }
     }
 
     @Test
-    void checkUserEmailAlreadyExistException() {
+    void checkNewUserEmailAlreadyExistException() {
         try (MockedStatic<EmailValidator> emailValidatorMockedStatic = Mockito.mockStatic(EmailValidator.class)) {
             Mockito.doReturn(true).when(userRepositoryMocked).existsByEmail(Mockito.anyString());
             emailValidatorMockedStatic.when(() -> EmailValidator.isEmailValid(Mockito.anyString())).thenReturn(true);
 
-            assertThrows(UserServiceRepositoryException.class, () -> userService.checkUserEmail("mail@gmail.com"));
+            assertThrows(UserServiceRepositoryException.class, () -> userService.checkNewUserEmail("mail@gmail.com"));
 
-            Mockito.verify(userRepositoryMocked, Mockito.times(1)).existsByEmail(Mockito.anyString());
-            emailValidatorMockedStatic.verify(() -> EmailValidator.isEmailValid(Mockito.anyString()), Mockito.times(1));
+            Mockito.verify(userRepositoryMocked).existsByEmail(Mockito.anyString());
+            emailValidatorMockedStatic.verify(() -> EmailValidator.isEmailValid(Mockito.anyString()));
         }
     }
 
+
     @Test
-    void buildUserFromUserModelDTO() {
-        List<Role> roleListEmpty = new ArrayList<>();
-        UserModelWithoutIdDTO userModelWithoutIdDTO = new UserModelWithoutIdDTO("mail@gmail.com", "a", 0, null);
+    void createPersonFromRequest() {
+        SignUpPersonRequest signUpPersonRequest = new SignUpPersonRequest("mail@gmail.com", "p", "n", "f", "l", null, new ArrayList<>());
 
         Mockito.doReturn(false).when(userRepositoryMocked).existsByEmail(Mockito.anyString());
-        Mockito.doReturn("aEncoded").when(passwordEncoderMocked).encode(Mockito.anyString());
-        Mockito.doReturn(roleListEmpty).when(roleServiceMocked).buildRolesList(Mockito.anyList());
+        Mockito.doReturn(new ArrayList<>()).when(roleServiceMocked).parseRoleNamesListToRolesList(Mockito.anyList());
+        Mockito.when(personRepositoryMocked.save(Mockito.any(Person.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        User user = userService.buildUserFromUserModelDTO(userModelWithoutIdDTO);
-        assertEquals("mail@gmail.com", user.getEmail());
-        assertEquals("aEncoded", user.getPassword());
-        assertEquals(0.0, user.getBalance());
-        assertEquals(0, user.getRoles().size());
+        userService.createPersonFromRequest(signUpPersonRequest);
 
-        Mockito.verify(userRepositoryMocked, Mockito.times(1)).existsByEmail(Mockito.anyString());
-        Mockito.verify(passwordEncoderMocked, Mockito.times(1)).encode(Mockito.anyString());
-        Mockito.verify(roleServiceMocked, Mockito.times(1)).buildRolesList(Mockito.any());
+        Mockito.verify(userRepositoryMocked).existsByEmail(Mockito.anyString());
+        Mockito.verify(roleServiceMocked).parseRoleNamesListToRolesList(Mockito.anyList());
+        Mockito.verify(personRepositoryMocked).save(Mockito.any());
     }
 
     @Test
-    void buildUserFromUserModelDTOValidationException() {
-        List<Role> roleListEmpty = new ArrayList<>();
-        UserModelWithoutIdDTO userModelWithoutIdDTO = new UserModelWithoutIdDTO("mail", "a", 0, null);
+    void createPersonFromRequestValidationException() {
+        SignUpPersonRequest signUpPersonRequest = new SignUpPersonRequest("mail", "p", "n", "f", "l", null, null);
 
-        Mockito.doReturn("aEncoded").when(passwordEncoderMocked).encode(Mockito.anyString());
-        Mockito.doReturn(roleListEmpty).when(roleServiceMocked).buildRolesList(Mockito.anyList());
+        assertThrows(UserServiceCreationException.class, () -> userService.createPersonFromRequest(signUpPersonRequest));
 
-        assertThrows(UserServiceBuildingException.class, () -> userService.buildUserFromUserModelDTO(userModelWithoutIdDTO));
-
-        Mockito.verify(userRepositoryMocked, Mockito.times(0)).existsByEmail(Mockito.anyString());
-        Mockito.verify(passwordEncoderMocked, Mockito.times(0)).encode(Mockito.anyString());
-        Mockito.verify(roleServiceMocked, Mockito.times(0)).buildRolesList(Mockito.anyList());
+        Mockito.verify(userRepositoryMocked, Mockito.never()).existsByEmail(Mockito.anyString());
+        Mockito.verify(roleServiceMocked, Mockito.never()).parseRoleNamesListToRolesList(Mockito.anyList());
+        Mockito.verify(personRepositoryMocked, Mockito.never()).save(Mockito.any());
     }
 
     @Test
-    void buildUserFromUserModelDTORepositoryException() {
-        List<Role> roleListEmpty = new ArrayList<>();
-        UserModelWithoutIdDTO userModelWithoutIdDTO = new UserModelWithoutIdDTO("mail@gmail.com", "a", 0, null);
+    void createPersonFromRequestRepositoryException() {
+        SignUpPersonRequest signUpPersonRequest = new SignUpPersonRequest("mail@gmail.com", "p", "n", "f", "l", null, null);
 
         Mockito.doReturn(true).when(userRepositoryMocked).existsByEmail(Mockito.anyString());
-        Mockito.doReturn("aEncoded").when(passwordEncoderMocked).encode(Mockito.anyString());
-        Mockito.doReturn(roleListEmpty).when(roleServiceMocked).buildRolesList(Mockito.anyList());
+        Mockito.doReturn(null).when(roleServiceMocked).parseRoleNamesListToRolesList(Mockito.anyList());
 
-        assertThrows(UserServiceBuildingException.class, () -> userService.buildUserFromUserModelDTO(userModelWithoutIdDTO));
+        assertThrows(UserServiceCreationException.class, () -> userService.createPersonFromRequest(signUpPersonRequest));
 
-        Mockito.verify(userRepositoryMocked, Mockito.times(1)).existsByEmail(Mockito.anyString());
-        Mockito.verify(passwordEncoderMocked, Mockito.times(0)).encode(Mockito.anyString());
-        Mockito.verify(roleServiceMocked, Mockito.times(0)).buildRolesList(Mockito.anyList());
+        Mockito.verify(userRepositoryMocked).existsByEmail(Mockito.anyString());
+        Mockito.verify(roleServiceMocked, Mockito.never()).parseRoleNamesListToRolesList(Mockito.anyList());
+        Mockito.verify(personRepositoryMocked, Mockito.never()).save(Mockito.any());
     }
-}*/
+
+    @Test
+    void createCompanyFromRequest() {
+        SignUpCompanyRequest signUpCompanyRequest = new SignUpCompanyRequest("mail@gmail.com", "p", "n", null, new ArrayList<>());
+
+        Mockito.doReturn(false).when(userRepositoryMocked).existsByEmail(Mockito.anyString());
+        Mockito.doReturn(new ArrayList<>()).when(roleServiceMocked).parseRoleNamesListToRolesList(Mockito.anyList());
+        Mockito.when(personRepositoryMocked.save(Mockito.any(Person.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        userService.createCompanyFromRequest(signUpCompanyRequest);
+
+        Mockito.verify(userRepositoryMocked).existsByEmail(Mockito.anyString());
+        Mockito.verify(roleServiceMocked).parseRoleNamesListToRolesList(Mockito.anyList());
+        Mockito.verify(companyRepositoryMocked).save(Mockito.any());
+    }
+
+    @Test
+    void createCompanyFromRequestValidationException() {
+        SignUpCompanyRequest signUpCompanyRequest = new SignUpCompanyRequest("mail", "p", "n", null, null);
+
+        assertThrows(UserServiceCreationException.class, () -> userService.createCompanyFromRequest(signUpCompanyRequest));
+
+        Mockito.verify(userRepositoryMocked, Mockito.never()).existsByEmail(Mockito.anyString());
+        Mockito.verify(roleServiceMocked, Mockito.never()).parseRoleNamesListToRolesList(Mockito.anyList());
+        Mockito.verify(companyRepositoryMocked, Mockito.never()).save(Mockito.any());
+    }
+
+    @Test
+    void createCompanyFromRequestRepositoryException() {
+        SignUpCompanyRequest signUpCompanyRequest = new SignUpCompanyRequest("mail@gmail.com", "p", "n", null, null);
+
+        Mockito.doReturn(true).when(userRepositoryMocked).existsByEmail(Mockito.anyString());
+        Mockito.doReturn(null).when(roleServiceMocked).parseRoleNamesListToRolesList(Mockito.anyList());
+
+        assertThrows(UserServiceCreationException.class, () -> userService.createCompanyFromRequest(signUpCompanyRequest));
+
+        Mockito.verify(userRepositoryMocked).existsByEmail(Mockito.anyString());
+        Mockito.verify(roleServiceMocked, Mockito.never()).parseRoleNamesListToRolesList(Mockito.anyList());
+        Mockito.verify(companyRepositoryMocked, Mockito.never()).save(Mockito.any());
+    }
+}

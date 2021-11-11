@@ -27,7 +27,7 @@ public class MainControllerAdvice {
     }
 
     @ExceptionHandler(AuthServiceException.class)
-    public ResponseEntity<?> handleAuthServiceGeneralException(final AuthServiceException e) {
+    public ResponseEntity<?> handleAuthServiceException(final AuthServiceException e) {
         log.error(e.getMessage());
         log.info("RESPONSE: 400");
         return ResponseEntity.badRequest().build();

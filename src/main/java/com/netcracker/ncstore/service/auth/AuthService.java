@@ -6,8 +6,6 @@ import com.netcracker.ncstore.dto.request.SignInRequest;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 import com.netcracker.ncstore.dto.response.SignInResponse;
-import com.netcracker.ncstore.model.Company;
-import com.netcracker.ncstore.model.Person;
 import com.netcracker.ncstore.security.IJwtTokenService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.service.user.UserServiceBuildingException;

@@ -1,4 +1,3 @@
-/*
 package com.netcracker.ncstore.service.role;
 
 import com.netcracker.ncstore.model.Role;
@@ -97,4 +96,4 @@ class RoleServiceTest {
         assertEquals(1, result.size());
         Mockito.verify(roleRepositoryMocked, Mockito.times(2)).getRoleByRoleName(Mockito.any());
     }
-}*/
+}

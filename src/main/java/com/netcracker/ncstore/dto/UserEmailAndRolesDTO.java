@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Getter
 @AllArgsConstructor
-public class UserLoginAndRolesDTO {
+public class UserEmailAndRolesDTO {
     private final String email;
     private final List<ERoleName> roles;
 
@@ -24,7 +24,7 @@ public class UserLoginAndRolesDTO {
      *
      * @param authentication - Authentication with AuthenticatedJwtToken
      */
-    public UserLoginAndRolesDTO(final Authentication authentication) {
+    public UserEmailAndRolesDTO(final Authentication authentication) {
         Object principalAsLogin = authentication.getPrincipal();
         if (principalAsLogin instanceof UserDetails) {
             this.email = ((UserDetails) principalAsLogin).getUsername();

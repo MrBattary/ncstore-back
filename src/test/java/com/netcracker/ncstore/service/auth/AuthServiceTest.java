@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.service.auth;
 
-import com.netcracker.ncstore.dto.UserLoginAndRolesDTO;
+import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
 import com.netcracker.ncstore.dto.request.SignInRequest;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
@@ -113,7 +113,7 @@ class AuthServiceTest {
 
         Mockito.doReturn(dto).when(userServiceMocked).getUserAuthDataByEmail(Mockito.anyString());
         Mockito.doReturn(true).when(passwordEncoderMocked).matches(Mockito.anyString(), Mockito.anyString());
-        Mockito.doReturn("token").when(jwtTokenServiceMocked).createToken(Mockito.any(UserLoginAndRolesDTO.class));
+        Mockito.doReturn("token").when(jwtTokenServiceMocked).createToken(Mockito.any(UserEmailAndRolesDTO.class));
 
         SignInResponse response = authService.signIn(signInRequest);
         assertEquals(EUserType.PERSON, response.getType());
@@ -121,7 +121,7 @@ class AuthServiceTest {
 
         Mockito.verify(userServiceMocked).getUserAuthDataByEmail(Mockito.anyString());
         Mockito.verify(passwordEncoderMocked).matches(Mockito.anyString(), Mockito.anyString());
-        Mockito.verify(jwtTokenServiceMocked).createToken(Mockito.any(UserLoginAndRolesDTO.class));
+        Mockito.verify(jwtTokenServiceMocked).createToken(Mockito.any(UserEmailAndRolesDTO.class));
     }
 
     @Test
@@ -134,7 +134,7 @@ class AuthServiceTest {
 
         Mockito.verify(userServiceMocked).getUserAuthDataByEmail(Mockito.anyString());
         Mockito.verify(passwordEncoderMocked, Mockito.never()).matches(Mockito.anyString(), Mockito.anyString());
-        Mockito.verify(jwtTokenServiceMocked, Mockito.never()).createToken(Mockito.any(UserLoginAndRolesDTO.class));
+        Mockito.verify(jwtTokenServiceMocked, Mockito.never()).createToken(Mockito.any(UserEmailAndRolesDTO.class));
     }
 
     @Test
@@ -149,6 +149,6 @@ class AuthServiceTest {
 
         Mockito.verify(userServiceMocked).getUserAuthDataByEmail(Mockito.anyString());
         Mockito.verify(passwordEncoderMocked).matches(Mockito.anyString(), Mockito.anyString());
-        Mockito.verify(jwtTokenServiceMocked, Mockito.never()).createToken(Mockito.any(UserLoginAndRolesDTO.class));
+        Mockito.verify(jwtTokenServiceMocked, Mockito.never()).createToken(Mockito.any(UserEmailAndRolesDTO.class));
     }
 }

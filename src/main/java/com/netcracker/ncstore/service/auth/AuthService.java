@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.service.auth;
 
-import com.netcracker.ncstore.dto.UserLoginAndRolesDTO;
+import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
 import com.netcracker.ncstore.dto.request.SignInRequest;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
@@ -84,7 +84,7 @@ public class AuthService implements IAuthService {
                     userDTO.getType(),
                     userDTO.getRoles(),
                     jwtTokenService.createToken(
-                            new UserLoginAndRolesDTO(
+                            new UserEmailAndRolesDTO(
                                     userDTO.getEmail(),
                                     userDTO.getRoles()
                             )

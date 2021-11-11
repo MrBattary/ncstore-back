@@ -96,10 +96,6 @@ public class AuthService implements IAuthService {
             log.error(e.getMessage());
             throw new AuthServiceException("The sign in process of user with an email: "
                     + request.getEmail() + " failed", e);
-        } catch (RuntimeException e) {
-            log.error(e.getMessage());
-            throw new AuthServiceException("The sign in process of user with an email: "
-                    + request.getEmail() + " unexpectedly failed", e);
         }
     }
 }

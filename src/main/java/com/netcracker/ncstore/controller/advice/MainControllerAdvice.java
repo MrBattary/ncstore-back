@@ -3,11 +3,17 @@ package com.netcracker.ncstore.controller.advice;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
 import com.netcracker.ncstore.exception.RequestParametersInvalidException;
 import com.netcracker.ncstore.exception.AuthServiceException;
+import com.netcracker.ncstore.security.provider.JwtAuthenticationProviderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * This class is primary @ControllerAdvice.
@@ -39,6 +45,11 @@ public class MainControllerAdvice {
         log.error(e.getMessage());
         log.info("RESPONSE: 400");
         return ResponseEntity.badRequest().build();
+    }
+
+    @ExceptionHandler(value = { JwtAuthenticationProviderException.class })
+    public void commence(HttpServletRequest request, HttpServletResponse response, JwtAuthenticationProviderException e ) throws IOException {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     }
 
 /*    //Should be activated only on production

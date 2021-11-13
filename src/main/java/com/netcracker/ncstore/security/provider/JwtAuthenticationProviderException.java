@@ -1,6 +1,8 @@
 package com.netcracker.ncstore.security.provider;
 
-public class JwtAuthenticationProviderException extends RuntimeException {
+import org.springframework.security.access.AccessDeniedException;
+
+public class JwtAuthenticationProviderException extends AccessDeniedException {
     /**
      * Trace exception
      *

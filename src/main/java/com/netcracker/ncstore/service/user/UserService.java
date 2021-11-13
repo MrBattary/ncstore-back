@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+
 @Service
 public class UserService implements IUserService {
     private final IRoleService roleService;
@@ -121,5 +123,10 @@ public class UserService implements IUserService {
             );
         }
         throw new UserServiceRepositoryException("Unable to find a user with email: " + email);
+    }
+
+    @Override
+    public User loadUserByPrincipal(Principal principal) {
+        return userRepository.findByEmail(principal.getName());
     }
 }

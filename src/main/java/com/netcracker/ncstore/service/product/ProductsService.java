@@ -1,19 +1,35 @@
 package com.netcracker.ncstore.service.product;
 
+import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
-import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
+import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
+import com.netcracker.ncstore.dto.data.ProductDTO;
+import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.exception.CreatorOfProductNotSupplierException;
+import com.netcracker.ncstore.exception.ParentProductNotFoundException;
+import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
+import com.netcracker.ncstore.model.User;
+import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
-import com.netcracker.ncstore.service.price.PricesService;
+import com.netcracker.ncstore.service.category.ICategoryService;
+import com.netcracker.ncstore.service.price.IPricesService;
+import com.netcracker.ncstore.service.user.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Service responsible for any logic related to Product entity.
@@ -21,13 +37,21 @@ import java.util.List;
  */
 @Service
 public class ProductsService implements IProductsService {
+    private final Logger log;
     private final ProductRepository productRepository;
-    private final PricesService pricesService;
+    private final IPricesService pricesService;
+    private final IUserService userService;
+    private final ICategoryService categoryService;
 
     public ProductsService(final ProductRepository productRepository,
-                           final PricesService pricesService) {
+                           final IPricesService pricesService,
+                           final IUserService userService,
+                           final ICategoryService categoryService) {
+        this.log = LoggerFactory.getLogger(ProductsService.class);
         this.productRepository = productRepository;
         this.pricesService = pricesService;
+        this.userService = userService;
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -48,19 +72,60 @@ public class ProductsService implements IProductsService {
                     productsPageRequest);
         }
 
-        List<ProductPriceInRegionDTO> productPriceInRegionDTOS =
+        List<ActualProductPriceWithCurrencySymbolDTO> productPriceInRegionDTOS =
                 new ArrayList<>();
 
         for (Product product : productsPage.getContent()) {
             ProductLocaleDTO productLocaleDTO =
                     new ProductLocaleDTO(product.getId(), productsGetRequest.getLocale());
 
-            ProductPriceInRegionDTO priceInRegion =
-                    pricesService.getPriceForProductInRegion(productLocaleDTO);
+            ActualProductPriceWithCurrencySymbolDTO priceInRegion =
+                    pricesService.getActualPriceForProductInRegion(productLocaleDTO);
 
             productPriceInRegionDTOS.add(priceInRegion);
         }
 
         return new ProductsGetResponse(productPriceInRegionDTOS);
+    }
+
+    @Override
+    @Transactional //???
+    public ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws CreatorOfProductNotSupplierException {
+        User creator = userService.loadUserByPrincipal(productData.getPrincipal());
+
+        boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
+
+        if (isSupplier) {
+            Product parentProduct = productRepository.findById(productData.getParentProductUUID()).orElse(null);
+            if (parentProduct == null) {
+                throw new ParentProductNotFoundException("Product with UUID " + productData.getParentProductUUID() + " not found, but was requested as parent product for new product.");
+            }
+            List<Category> categories =
+                    productData.getCategoriesNames().
+                            stream().
+                            map(categoryService::getCategoryEntityByName).
+                            collect(Collectors.toList());
+
+            Product product = productRepository.save(new Product(
+                    null,
+                    productData.getName(),
+                    productData.getDescription(),
+                    parentProduct, creator,
+                    productData.getStatus(),
+                    null,
+                    categories));
+
+
+            productData.getPrices().
+                    stream().
+                    map(e-> new ProductPriceCreateDTO(e.getPrice(), e.getRegion(), product)).
+                    forEach(pricesService::createProductPrice);
+
+            return new ProductDTO(product);
+
+        } else {
+            log.error("User with UUID " + creator.getId() + " tried to create product while not having SUPPLIER role");
+            throw new CreatorOfProductNotSupplierException("User must have SUPPLIER role to create products");
+        }
     }
 }

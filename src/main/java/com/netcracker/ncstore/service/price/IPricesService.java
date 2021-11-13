@@ -1,7 +1,15 @@
 package com.netcracker.ncstore.service.price;
 
+import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.data.ProductPriceDTO;
+import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
-import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
+import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.exception.ProvidedLocaleIsNotValidException;
+import com.netcracker.ncstore.exception.ProvidedPriceIsNegativeException;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Interface.
@@ -17,5 +25,23 @@ public interface IPricesService {
      * @param productLocale - ProductID and Locale pair
      * @return ProductPriceInRegionDTO
      */
-    ProductPriceInRegionDTO getPriceForProductInRegion(ProductLocaleDTO productLocale);
+    ActualProductPriceWithCurrencySymbolDTO getActualPriceForProductInRegion(ProductLocaleDTO productLocale);
+
+    /**
+     * Creates new instance of ProductPrice based on provided parameters.
+     *
+     * @param productPriceCreateDTO - ProductPriceDataDTO
+     * @return ProductPriceDTO which represents created ProductPrice in a safe way
+     * @throws ProvidedPriceIsNegativeException - when price is negative
+     * @throws ProvidedLocaleIsNotValidException - when locale is not valid
+     */
+    ProductPriceDTO createProductPrice(ProductPriceCreateDTO productPriceCreateDTO) throws ProvidedPriceIsNegativeException, ProvidedLocaleIsNotValidException;
+
+    /**
+     * Returns all prices for specified product in DTO
+     *
+     * @param productId
+     * @return ProductPriceDTO
+     */
+    List<ProductPriceDTO> getPricesForProduct(UUID productId);
 }

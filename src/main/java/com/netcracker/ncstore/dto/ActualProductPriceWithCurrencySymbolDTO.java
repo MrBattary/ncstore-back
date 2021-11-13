@@ -8,12 +8,16 @@ import lombok.extern.jackson.Jacksonized;
 
 import java.util.UUID;
 
+/**
+ * This DTO stores information about actual price of product
+ * which means ordinary price, discount price and currency symbol
+ */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @AllArgsConstructor
-public class ProductPriceInRegionDTO {
+public class ActualProductPriceWithCurrencySymbolDTO {
     private final UUID productId;
     private final String productName;
     private final double normalPrice;

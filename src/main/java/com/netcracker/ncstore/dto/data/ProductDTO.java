@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.dto.data;
 
+import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import lombok.Getter;
@@ -16,18 +17,18 @@ public class ProductDTO {
     private final String description;
     private final UUID supplierId;
     private final EProductStatus productStatus;
-    private final List<CategoryDTO> categoryDTOS;
+    private final List<UUID> categoriesIds;
 
     public ProductDTO(Product product) {
         id = product.getId();
-        parentProductId = product.getParentProduct().getId();
+        parentProductId = product.getParentProduct() != null ? product.getParentProduct().getId() : null;
         name = product.getName();
         description = product.getDescription();
         supplierId = product.getSupplier().getId();
         productStatus = product.getProductStatus();
-        categoryDTOS = product.getCategories().
+        categoriesIds = product.getCategories().
                 stream().
-                map(CategoryDTO::new).
+                map(Category::getId).
                 collect(Collectors.toList());
     }
 }

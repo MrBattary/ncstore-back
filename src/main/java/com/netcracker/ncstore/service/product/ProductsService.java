@@ -96,10 +96,16 @@ public class ProductsService implements IProductsService {
         boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
 
         if (isSupplier) {
-            Product parentProduct = productRepository.findById(productData.getParentProductUUID()).orElse(null);
-            if (parentProduct == null) {
-                throw new ParentProductNotFoundException("Product with UUID " + productData.getParentProductUUID() + " not found, but was requested as parent product for new product.");
+            Product parentProduct;
+            if(productData.getParentProductUUID()!=null) {
+                parentProduct = productRepository.findById(productData.getParentProductUUID()).orElse(null);
+                if (parentProduct == null) {
+                    throw new ParentProductNotFoundException("Product with UUID " + productData.getParentProductUUID() + " not found, but was requested as parent product for new product.");
+                }
+            }else {
+                parentProduct = null;
             }
+
             List<Category> categories =
                     productData.getCategoriesNames().
                             stream().
@@ -110,7 +116,8 @@ public class ProductsService implements IProductsService {
                     null,
                     productData.getName(),
                     productData.getDescription(),
-                    parentProduct, creator,
+                    parentProduct,
+                    creator,
                     productData.getStatus(),
                     null,
                     categories));

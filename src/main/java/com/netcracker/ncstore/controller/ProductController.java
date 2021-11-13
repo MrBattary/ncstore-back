@@ -10,6 +10,7 @@ import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.CreateProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
+import com.netcracker.ncstore.service.category.ICategoryService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.product.IProductsService;
 import com.netcracker.ncstore.util.converter.ProductRequestConverter;
@@ -39,6 +40,7 @@ public class ProductController {
     private final Logger log;
     private final IProductsService productsService;
     private final IPricesService pricesService;
+    private final ICategoryService categoryService;
 
     /**
      * Constructor
@@ -46,10 +48,12 @@ public class ProductController {
      * TODO: In the future, any services should be the arguments of constructor
      */
     public ProductController(final IProductsService productsService,
-                             final IPricesService pricesService) {
+                             final IPricesService pricesService,
+                             final ICategoryService categoryService) {
         this.log = LoggerFactory.getLogger(ProductController.class);
         this.productsService = productsService;
         this.pricesService = pricesService;
+        this.categoryService = categoryService;
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
@@ -100,10 +104,10 @@ public class ProductController {
                 .map(e->new PriceRegionDTO(e.getPrice(),e.getLocale()))
                 .collect(Collectors.toList());
 
-        List<String> categoryNames = productDTO.getCategoryDTOS()
-                .stream()
-                .map(CategoryDTO::getName)
-                .collect(Collectors.toList());
+        List<String> categoryNames = categoryService.
+                getCategoriesForProduct(productDTO.getId()).
+                stream().map(CategoryDTO::getName).
+                collect(Collectors.toList());
 
         CreateProductResponse response = new CreateProductResponse(
                 productDTO.getId(),

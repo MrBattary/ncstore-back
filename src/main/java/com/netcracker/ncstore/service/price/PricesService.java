@@ -10,6 +10,7 @@ import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.ProductPriceRepository;
 import com.netcracker.ncstore.util.validator.LocaleValidator;
+import com.netcracker.ncstore.util.validator.PriceValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,7 +69,7 @@ public class PricesService implements IPricesService {
 
     @Override
     public ProductPriceDTO createProductPrice(ProductPriceCreateDTO productPriceCreateDTO) {
-        if(productPriceCreateDTO.getPrice() < 0){
+        if(!PriceValidator.validatePricesValue(productPriceCreateDTO.getPrice())){
             throw new ProvidedPriceIsNegativeException();
         }
         if(!LocaleValidator.isLocaleValid(productPriceCreateDTO.getRegion())){

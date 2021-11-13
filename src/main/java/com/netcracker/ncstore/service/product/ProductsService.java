@@ -101,7 +101,7 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    @Transactional //???
+    @Transactional
     public ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws ProductCreationException {
         User creator = userService.loadUserByPrincipal(productData.getPrincipal());
         log.info("Creation of new product for user with UUID " + creator.getId() + " begins");
@@ -109,7 +109,10 @@ public class ProductsService implements IProductsService {
         try {
             validateProductCreationData(productData);
 
-            Product parentProduct = productRepository.getById(productData.getParentProductUUID());
+            Product parentProduct = null;
+            if(productData.getParentProductUUID()!=null){
+                parentProduct = productRepository.getById(productData.getParentProductUUID());
+            }
 
             List<Category> categories =
                     productData.getCategoriesNames().
@@ -155,7 +158,7 @@ public class ProductsService implements IProductsService {
         User creator = userService.loadUserByPrincipal(productCreateDTO.getPrincipal());
 
         if(!ProductValidator.checkCategoriesNamesList(productCreateDTO.getCategoriesNames())){
-            throw new ProductCategoriesNotValidException("Categories list must be provided and must contain at least 1 category");
+            throw new ProductCategoriesNotValidException("Categories list not provided or empty");
         }
 
         if (productCreateDTO.getParentProductUUID() != null) {
@@ -165,21 +168,24 @@ public class ProductsService implements IProductsService {
             }
         }
 
-        boolean hasDefaultLocale = ProductValidator.hasProvidedLocale(
-                productCreateDTO.getPrices().stream()
-                        .map(PriceRegionDTO::getRegion)
-                        .collect(Collectors.toList()), defaultLocaleCode);
+        boolean hasDefaultLocale = productCreateDTO.getPrices() != null;
+        if(hasDefaultLocale) {
+            hasDefaultLocale = ProductValidator.hasProvidedLocale(
+                    productCreateDTO.getPrices().stream()
+                            .map(PriceRegionDTO::getRegion)
+                            .collect(Collectors.toList()), defaultLocaleCode);
+        }
 
         if (!hasDefaultLocale) {
             throw new NoPriceForDefaultLocaleException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
         }
 
         if(!ProductValidator.isNameValid(productCreateDTO.getName())){
-            throw new ProductNameNotValidException("Name must be provided, must not be null and must be between 3 and 255 symbols long.");
+            throw new ProductNameNotValidException("Product name not provided or it length is not between (3;255)");
         }
 
         if(!ProductValidator.isDescriptionValid(productCreateDTO.getDescription())){
-            throw new ProductDescriptionNotValidException("Description must be provided, must not be null and must be at least 50 symbols long.");
+            throw new ProductDescriptionNotValidException("Product description not provided or is whorter than 50 symbols");
         }
 
         boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));

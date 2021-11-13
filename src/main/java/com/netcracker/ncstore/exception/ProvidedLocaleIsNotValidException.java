@@ -7,4 +7,12 @@ public class ProvidedLocaleIsNotValidException extends RuntimeException{
     public ProvidedLocaleIsNotValidException() {
         super();
     }
+
+    public ProvidedLocaleIsNotValidException(String message) {
+        super(message);
+    }
+
+    public ProvidedLocaleIsNotValidException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

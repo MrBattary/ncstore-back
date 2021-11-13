@@ -6,6 +6,7 @@ import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.CreateProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.exception.ProductCreationException;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +31,7 @@ public interface IProductsService {
      *
      * @param productData - ProductDataDTO containing all needed information
      * @return ProductDTO - a DTO representing created entity
+     * @throws ProductCreationException - when product could not be created
      */
-    ProductDTO createNewProductInStore(final ProductCreateDTO productData);
+    ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws ProductCreationException;
 }

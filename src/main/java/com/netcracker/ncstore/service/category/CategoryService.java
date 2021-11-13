@@ -29,7 +29,7 @@ public class CategoryService implements ICategoryService{
         Category category = categoryRepository.findByName(name);
 
         if(category==null) {
-            throw new CategoryNotFoundException();
+            throw new CategoryNotFoundException("Unable to find category with name "+ name);
         }
 
         return category;

@@ -8,8 +8,12 @@ import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.exception.CategoryNotFoundException;
 import com.netcracker.ncstore.exception.CreatorOfProductNotSupplierException;
 import com.netcracker.ncstore.exception.ParentProductNotFoundException;
+import com.netcracker.ncstore.exception.ProductCreationException;
+import com.netcracker.ncstore.exception.ProvidedLocaleIsNotValidException;
+import com.netcracker.ncstore.exception.ProvidedPriceIsNegativeException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.User;
@@ -90,49 +94,60 @@ public class ProductsService implements IProductsService {
 
     @Override
     @Transactional //???
-    public ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws CreatorOfProductNotSupplierException {
+    public ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws ProductCreationException {
         User creator = userService.loadUserByPrincipal(productData.getPrincipal());
+        log.info("Creation of new product for user with UUID " + creator.getId() + " begins");
 
-        boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
+        try {
+            boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
 
-        if (isSupplier) {
-            Product parentProduct;
-            if(productData.getParentProductUUID()!=null) {
-                parentProduct = productRepository.findById(productData.getParentProductUUID()).orElse(null);
-                if (parentProduct == null) {
-                    throw new ParentProductNotFoundException("Product with UUID " + productData.getParentProductUUID() + " not found, but was requested as parent product for new product.");
+            if (isSupplier) {
+                Product parentProduct;
+                if (productData.getParentProductUUID() != null) {
+                    parentProduct = productRepository.findById(productData.getParentProductUUID()).orElse(null);
+                    if (parentProduct == null) {
+                        throw new ParentProductNotFoundException("Product with UUID " + productData.getParentProductUUID() + " not found, but was requested as parent product for new product.");
+                    }
+                } else {
+                    parentProduct = null;
                 }
-            }else {
-                parentProduct = null;
+
+                List<Category> categories =
+                        productData.getCategoriesNames().
+                                stream().
+                                map(categoryService::getCategoryEntityByName).
+                                collect(Collectors.toList());
+
+                Product product = productRepository.save(new Product(
+                        null,
+                        productData.getName(),
+                        productData.getDescription(),
+                        parentProduct,
+                        creator,
+                        productData.getStatus(),
+                        null,
+                        categories));
+
+
+                productData.getPrices().
+                        stream().
+                        map(e -> new ProductPriceCreateDTO(e.getPrice(), e.getRegion(), product)).
+                        forEach(pricesService::createProductPrice);
+
+                log.info("New Product with UUID " + product.getId() + " for user with UUID " + creator.getId() + " created successfully");
+                return new ProductDTO(product);
+
+            } else {
+                throw new CreatorOfProductNotSupplierException("User with UUID " + creator.getId() + " tried to create product while not having SUPPLIER role");
             }
+        }catch (CreatorOfProductNotSupplierException |
+                ParentProductNotFoundException |
+                CategoryNotFoundException |
+                ProvidedLocaleIsNotValidException |
+                ProvidedPriceIsNegativeException e){
 
-            List<Category> categories =
-                    productData.getCategoriesNames().
-                            stream().
-                            map(categoryService::getCategoryEntityByName).
-                            collect(Collectors.toList());
-
-            Product product = productRepository.save(new Product(
-                    null,
-                    productData.getName(),
-                    productData.getDescription(),
-                    parentProduct,
-                    creator,
-                    productData.getStatus(),
-                    null,
-                    categories));
-
-
-            productData.getPrices().
-                    stream().
-                    map(e-> new ProductPriceCreateDTO(e.getPrice(), e.getRegion(), product)).
-                    forEach(pricesService::createProductPrice);
-
-            return new ProductDTO(product);
-
-        } else {
-            log.error("User with UUID " + creator.getId() + " tried to create product while not having SUPPLIER role");
-            throw new CreatorOfProductNotSupplierException("User must have SUPPLIER role to create products");
+            log.error(e.getMessage());
+            throw new ProductCreationException("Unable to create new product for user with UUID " + creator.getId(), e);
         }
     }
 }

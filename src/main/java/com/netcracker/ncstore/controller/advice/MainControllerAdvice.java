@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.controller.advice;
 
+import com.netcracker.ncstore.exception.ProductCreationException;
 import com.netcracker.ncstore.exception.RequestParametersInvalidException;
 import com.netcracker.ncstore.service.auth.AuthServiceException;
 import org.slf4j.Logger;
@@ -28,6 +29,13 @@ public class MainControllerAdvice {
 
     @ExceptionHandler(AuthServiceException.class)
     public ResponseEntity<?> handleAuthServiceException(final AuthServiceException e) {
+        log.error(e.getMessage());
+        log.info("RESPONSE: 400");
+        return ResponseEntity.badRequest().build();
+    }
+
+    @ExceptionHandler(ProductCreationException.class)
+    public ResponseEntity<?> handleAuthServiceException(final ProductCreationException e) {
         log.error(e.getMessage());
         log.info("RESPONSE: 400");
         return ResponseEntity.badRequest().build();

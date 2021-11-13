@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.exception;
 
-public class ParentProductNotFoundException extends RuntimeException{
+public class ParentProductNotFoundException extends RuntimeException {
     public ParentProductNotFoundException() {
         super();
     }

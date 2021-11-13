@@ -1,8 +1,8 @@
 package com.netcracker.ncstore.controller.advice;
 
-import com.netcracker.ncstore.exception.ProductCreationException;
+import com.netcracker.ncstore.exception.ProductServiceCreationException;
 import com.netcracker.ncstore.exception.RequestParametersInvalidException;
-import com.netcracker.ncstore.service.auth.AuthServiceException;
+import com.netcracker.ncstore.exception.AuthServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +34,8 @@ public class MainControllerAdvice {
         return ResponseEntity.badRequest().build();
     }
 
-    @ExceptionHandler(ProductCreationException.class)
-    public ResponseEntity<?> handleAuthServiceException(final ProductCreationException e) {
+    @ExceptionHandler(ProductServiceCreationException.class)
+    public ResponseEntity<?> handleAuthServiceException(final ProductServiceCreationException e) {
         log.error(e.getMessage());
         log.info("RESPONSE: 400");
         return ResponseEntity.badRequest().build();

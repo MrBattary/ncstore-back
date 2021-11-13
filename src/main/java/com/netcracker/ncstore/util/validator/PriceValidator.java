@@ -5,7 +5,7 @@ package com.netcracker.ncstore.util.validator;
  */
 public abstract class PriceValidator {
 
-    public static boolean validatePricesValue(double price){
+    public static boolean validatePricesValue(double price) {
         return price >= 0;
     }
 }

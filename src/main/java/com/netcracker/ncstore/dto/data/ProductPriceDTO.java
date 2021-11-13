@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * Contains all information about real ProductPrice DTO,
  * as it is represented in database.
- *
+ * <p>
  * Used as return parameter for method which creates new entity
  */
 

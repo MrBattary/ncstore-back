@@ -1,10 +1,9 @@
 package com.netcracker.ncstore.service.price;
 
-import com.netcracker.ncstore.dto.PriceRegionDTO;
-import com.netcracker.ncstore.dto.data.ProductPriceDTO;
-import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
-import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
+import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
+import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.exception.ProvidedLocaleIsNotValidException;
 import com.netcracker.ncstore.exception.ProvidedPriceIsNegativeException;
 
@@ -40,7 +39,7 @@ public interface IPricesService {
     /**
      * Returns all prices for specified product in DTO
      *
-     * @param productId
+     * @param productId - product UUID
      * @return ProductPriceDTO
      */
     List<ProductPriceDTO> getPricesForProduct(UUID productId);

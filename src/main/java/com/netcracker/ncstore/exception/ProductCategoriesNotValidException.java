@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.exception;
 
-public class ProductCategoriesNotValidException extends RuntimeException{
+public class ProductCategoriesNotValidException extends RuntimeException {
     public ProductCategoriesNotValidException() {
     }
 

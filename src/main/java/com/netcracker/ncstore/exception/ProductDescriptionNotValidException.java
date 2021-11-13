@@ -3,7 +3,7 @@ package com.netcracker.ncstore.exception;
 /**
  * Used when product description is not valid
  */
-public class ProductDescriptionNotValidException extends RuntimeException{
+public class ProductDescriptionNotValidException extends RuntimeException {
     public ProductDescriptionNotValidException() {
     }
 

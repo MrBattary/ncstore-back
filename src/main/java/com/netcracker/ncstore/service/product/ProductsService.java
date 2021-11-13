@@ -13,7 +13,7 @@ import com.netcracker.ncstore.exception.CreatorOfProductNotSupplierException;
 import com.netcracker.ncstore.exception.NoPriceForDefaultLocaleException;
 import com.netcracker.ncstore.exception.ParentProductNotFoundException;
 import com.netcracker.ncstore.exception.ProductCategoriesNotValidException;
-import com.netcracker.ncstore.exception.ProductCreationException;
+import com.netcracker.ncstore.exception.ProductServiceCreationException;
 import com.netcracker.ncstore.exception.ProductDescriptionNotValidException;
 import com.netcracker.ncstore.exception.ProductNameNotValidException;
 import com.netcracker.ncstore.exception.ProvidedLocaleIsNotValidException;
@@ -102,7 +102,7 @@ public class ProductsService implements IProductsService {
 
     @Override
     @Transactional
-    public ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws ProductCreationException {
+    public ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws ProductServiceCreationException {
         User creator = userService.loadUserByPrincipal(productData.getPrincipal());
         log.info("Creation of new product for user with UUID " + creator.getId() + " begins");
 
@@ -110,7 +110,7 @@ public class ProductsService implements IProductsService {
             validateProductCreationData(productData);
 
             Product parentProduct = null;
-            if(productData.getParentProductUUID()!=null){
+            if (productData.getParentProductUUID() != null) {
                 parentProduct = productRepository.getById(productData.getParentProductUUID());
             }
 
@@ -150,14 +150,14 @@ public class ProductsService implements IProductsService {
                 ProvidedPriceIsNegativeException e) {
 
             log.error(e.getMessage());
-            throw new ProductCreationException("Unable to create new product for user with UUID " + creator.getId(), e);
+            throw new ProductServiceCreationException("Unable to create new product for user with UUID " + creator.getId(), e);
         }
     }
 
     private void validateProductCreationData(final ProductCreateDTO productCreateDTO) {
         User creator = userService.loadUserByPrincipal(productCreateDTO.getPrincipal());
 
-        if(!ProductValidator.checkCategoriesNamesList(productCreateDTO.getCategoriesNames())){
+        if (!ProductValidator.checkCategoriesNamesList(productCreateDTO.getCategoriesNames())) {
             throw new ProductCategoriesNotValidException("Categories list not provided or empty");
         }
 
@@ -169,7 +169,7 @@ public class ProductsService implements IProductsService {
         }
 
         boolean hasDefaultLocale = productCreateDTO.getPrices() != null;
-        if(hasDefaultLocale) {
+        if (hasDefaultLocale) {
             hasDefaultLocale = ProductValidator.hasProvidedLocale(
                     productCreateDTO.getPrices().stream()
                             .map(PriceRegionDTO::getRegion)
@@ -180,11 +180,11 @@ public class ProductsService implements IProductsService {
             throw new NoPriceForDefaultLocaleException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
         }
 
-        if(!ProductValidator.isNameValid(productCreateDTO.getName())){
+        if (!ProductValidator.isNameValid(productCreateDTO.getName())) {
             throw new ProductNameNotValidException("Product name not provided or it length is not between (3;255)");
         }
 
-        if(!ProductValidator.isDescriptionValid(productCreateDTO.getDescription())){
+        if (!ProductValidator.isDescriptionValid(productCreateDTO.getDescription())) {
             throw new ProductDescriptionNotValidException("Product description not provided or is whorter than 50 symbols");
         }
 

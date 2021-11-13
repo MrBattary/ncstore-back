@@ -69,10 +69,10 @@ public class PricesService implements IPricesService {
 
     @Override
     public ProductPriceDTO createProductPrice(ProductPriceCreateDTO productPriceCreateDTO) {
-        if(!PriceValidator.validatePricesValue(productPriceCreateDTO.getPrice())){
+        if (!PriceValidator.validatePricesValue(productPriceCreateDTO.getPrice())) {
             throw new ProvidedPriceIsNegativeException("Provided price is negative");
         }
-        if(!LocaleValidator.isLocaleValid(productPriceCreateDTO.getRegion())){
+        if (!LocaleValidator.isLocaleValid(productPriceCreateDTO.getRegion())) {
             throw new ProvidedLocaleIsNotValidException("Provided locale is invalid");
         }
 

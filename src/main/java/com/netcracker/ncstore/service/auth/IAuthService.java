@@ -4,6 +4,7 @@ import com.netcracker.ncstore.dto.request.SignInRequest;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 import com.netcracker.ncstore.dto.response.SignInResponse;
+import com.netcracker.ncstore.exception.AuthServiceException;
 
 /**
  * Auth service that handles auth controller

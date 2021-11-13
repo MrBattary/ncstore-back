@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class CategoryService implements ICategoryService{
+public class CategoryService implements ICategoryService {
 
     private final CategoryRepository categoryRepository;
     private final Logger log;
@@ -28,8 +28,8 @@ public class CategoryService implements ICategoryService{
     public Category getCategoryEntityByName(String name) throws CategoryNotFoundException {
         Category category = categoryRepository.findByName(name);
 
-        if(category==null) {
-            throw new CategoryNotFoundException("Unable to find category with name "+ name);
+        if (category == null) {
+            throw new CategoryNotFoundException("Unable to find category with name " + name);
         }
 
         return category;

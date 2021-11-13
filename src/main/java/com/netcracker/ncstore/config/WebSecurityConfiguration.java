@@ -9,6 +9,7 @@ import com.netcracker.ncstore.security.provider.JwtAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,6 +30,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * Constructor
+     *
      * @param jwtTokenService - JWT Token Service
      */
     public WebSecurityConfiguration(final IJwtTokenService jwtTokenService) {
@@ -67,7 +69,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
          */
 
         http
-                .authorizeRequests().antMatchers("/signup/**", "/signin", "/products").permitAll()
+                .authorizeRequests().antMatchers("/signup/**", "/signin").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/products").permitAll()
                 .and()
                 .authorizeRequests().anyRequest().authenticated();
     }
@@ -79,6 +83,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * Abstract factory for the password encoder
+     *
      * @return - PasswordEncoder realization
      */
     @Bean
@@ -93,6 +98,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * Abstract factory for the JWT token service
+     *
      * @param settings - settings
      * @return - JwtTokenService realization
      */

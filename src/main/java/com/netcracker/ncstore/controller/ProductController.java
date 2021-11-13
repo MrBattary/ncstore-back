@@ -101,7 +101,7 @@ public class ProductController {
         List<PriceRegionDTO> priceRegionDTOS = pricesService.
                 getPricesForProduct(productDTO.getId())
                 .stream()
-                .map(e->new PriceRegionDTO(e.getPrice(),e.getLocale()))
+                .map(e -> new PriceRegionDTO(e.getPrice(), e.getLocale()))
                 .collect(Collectors.toList());
 
         List<String> categoryNames = categoryService.

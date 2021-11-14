@@ -2,6 +2,9 @@ package com.netcracker.ncstore.service.user;
 
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
+import com.netcracker.ncstore.exception.UserServiceCreationException;
+import com.netcracker.ncstore.exception.UserServiceRepositoryException;
+import com.netcracker.ncstore.exception.UserServiceValidationException;
 import com.netcracker.ncstore.model.Person;
 import com.netcracker.ncstore.repository.CompanyRepository;
 import com.netcracker.ncstore.repository.PersonRepository;

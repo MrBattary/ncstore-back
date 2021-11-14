@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.netcracker.ncstore.dto.ProductPriceInRegionDTO;
+import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,5 +15,5 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class ProductsGetResponse {
-    private final List<ProductPriceInRegionDTO> productsWithPrices;
+    private final List<ActualProductPriceWithCurrencySymbolDTO> productsWithPrices;
 }

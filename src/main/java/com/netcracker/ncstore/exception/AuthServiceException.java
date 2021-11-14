@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.service.auth;
+package com.netcracker.ncstore.exception;
 
 /**
  * Custom exception for the auth service about repository issue

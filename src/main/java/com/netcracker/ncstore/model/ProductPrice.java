@@ -38,4 +38,5 @@ public class ProductPrice {
     @OneToOne(mappedBy = "productPrice")
     private Discount discount;
 
+
 }

@@ -1,7 +1,10 @@
 package com.netcracker.ncstore.service.product;
 
+import com.netcracker.ncstore.dto.create.ProductCreateDTO;
+import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.exception.ProductServiceCreationException;
 
 /**
  * Interface.
@@ -16,5 +19,14 @@ public interface IProductsService {
      * @param productsGetRequest dto containing needed information
      * @return list of DTOs
      */
-    ProductsGetResponse getPageOfProductsByNameAndCategories(ProductsGetRequest productsGetRequest);
+    ProductsGetResponse getPageOfProductsByNameAndCategories(final ProductsGetRequest productsGetRequest);
+
+    /**
+     * Create new product in store with given data.
+     *
+     * @param productData - ProductDataDTO containing all needed information
+     * @return ProductDTO - a DTO representing created entity
+     * @throws ProductServiceCreationException - when product could not be created
+     */
+    ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws ProductServiceCreationException;
 }

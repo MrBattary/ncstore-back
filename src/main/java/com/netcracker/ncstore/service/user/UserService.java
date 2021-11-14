@@ -1,8 +1,12 @@
 package com.netcracker.ncstore.service.user;
 
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
+import com.netcracker.ncstore.dto.data.UserDTO;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
+import com.netcracker.ncstore.exception.UserServiceCreationException;
+import com.netcracker.ncstore.exception.UserServiceRepositoryException;
+import com.netcracker.ncstore.exception.UserServiceValidationException;
 import com.netcracker.ncstore.model.Company;
 import com.netcracker.ncstore.model.Person;
 import com.netcracker.ncstore.model.User;
@@ -15,6 +19,8 @@ import com.netcracker.ncstore.util.validator.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.security.Principal;
 
 @Service
 public class UserService implements IUserService {
@@ -121,5 +127,15 @@ public class UserService implements IUserService {
             );
         }
         throw new UserServiceRepositoryException("Unable to find a user with email: " + email);
+    }
+
+    @Override
+    public UserDTO loadUserByPrincipal(Principal principal) {
+        return new UserDTO(loadUserEntityByPrincipal(principal));
+    }
+
+    @Override
+    public User loadUserEntityByPrincipal(Principal principal) {
+        return userRepository.findByEmail(principal.getName());
     }
 }

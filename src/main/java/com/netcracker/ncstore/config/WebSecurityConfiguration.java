@@ -9,12 +9,14 @@ import com.netcracker.ncstore.security.provider.JwtAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
@@ -26,13 +28,17 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final IJwtTokenService jwtTokenService;
+    private final AccessDeniedHandler accessDeniedHandler;
 
     /**
      * Constructor
+     *
      * @param jwtTokenService - JWT Token Service
      */
-    public WebSecurityConfiguration(final IJwtTokenService jwtTokenService) {
+    public WebSecurityConfiguration(final IJwtTokenService jwtTokenService,
+                                    final AccessDeniedHandler accessDeniedHandler) {
         this.jwtTokenService = jwtTokenService;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Override
@@ -67,9 +73,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
          */
 
         http
-                .authorizeRequests().antMatchers("/signup/**", "/signin", "/products").permitAll()
+                .authorizeRequests().antMatchers("/signup/**", "/signin").permitAll()
                 .and()
-                .authorizeRequests().anyRequest().authenticated();
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/products").permitAll()
+                .and()
+                .authorizeRequests().anyRequest().authenticated()
+                .and()
+                .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
     }
 
     @Override
@@ -79,6 +89,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * Abstract factory for the password encoder
+     *
      * @return - PasswordEncoder realization
      */
     @Bean
@@ -93,6 +104,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * Abstract factory for the JWT token service
+     *
      * @param settings - settings
      * @return - JwtTokenService realization
      */

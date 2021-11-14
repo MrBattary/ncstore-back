@@ -64,6 +64,7 @@ public class AuthController {
 
     /**
      * Sign in request for any type of user
+     *
      * @param request - SignInRequest
      * @return - SignInResponse + HTTP code
      */

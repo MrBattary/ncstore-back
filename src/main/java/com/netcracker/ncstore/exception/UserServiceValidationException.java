@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.service.user;
+package com.netcracker.ncstore.exception;
 
 /**
  * Exception if provided data is invalid

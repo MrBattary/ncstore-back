@@ -16,5 +16,5 @@ public interface IProductsService {
      * @param productsGetRequest dto containing needed information
      * @return list of DTOs
      */
-    ProductsGetResponse getPageOfProductsByNameAndCategories(ProductsGetRequest productsGetRequest);
+    ProductsGetResponse getPageOfProductsUsingFilterAndSortParameters(ProductsGetRequest productsGetRequest);
 }

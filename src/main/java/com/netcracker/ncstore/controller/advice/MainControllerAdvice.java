@@ -33,10 +33,10 @@ public class MainControllerAdvice {
         return ResponseEntity.badRequest().build();
     }
 
-    @ExceptionHandler(RuntimeException.class)
+/*    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleAllUncaughtException(final RuntimeException e) {
         log.error(e.getMessage());
         log.info("RESPONSE: 500");
         return ResponseEntity.internalServerError().build();
-    }
+    }*/
 }

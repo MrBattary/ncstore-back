@@ -10,10 +10,14 @@ import com.netcracker.ncstore.service.price.PricesService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service responsible for any logic related to Product entity.
@@ -31,11 +35,26 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public ProductsGetResponse getPageOfProductsByNameAndCategories(final ProductsGetRequest productsGetRequest) {
+    public ProductsGetResponse getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
         Pageable productsPageRequest =
                 PageRequest.of(productsGetRequest.getPage(), productsGetRequest.getSize());
 
         Page<Product> productsPage;
+
+        switch (productsGetRequest.getSortString()){
+            default:
+            case "default":
+            case "rating"://TODO separate and make when rating will be
+                break;
+            case "price":
+                break;
+            case "new":
+                break;
+            case "popular":
+                break;
+            case "discount":
+                break;
+        }
 
         if (productsGetRequest.getCategoriesIds().size() != 0) {
             productsPage = productRepository.findProductsByLikeNameAndCategories(
@@ -47,6 +66,8 @@ public class ProductsService implements IProductsService {
                     productsGetRequest.getSearchText(),
                     productsPageRequest);
         }
+
+        productsPage.getContent().forEach(e-> System.out.println(e.getName()));
 
         List<ProductPriceInRegionDTO> productPriceInRegionDTOS =
                 new ArrayList<>();

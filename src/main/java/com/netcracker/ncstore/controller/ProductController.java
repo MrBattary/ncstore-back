@@ -42,10 +42,11 @@ public class ProductController {
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<ProductPriceInRegionDTO>> getProductsWithPagination(
-            @RequestParam(defaultValue = "") final String categoriesIds,
-            @RequestParam final String searchText,
-            @RequestParam(defaultValue = "default") final String sortString,
-            @RequestParam final UUID supplierId,
+            @RequestParam(defaultValue = "", required = false) final String categoriesIds,
+            @RequestParam(defaultValue = "", required = false) final String searchText,
+            @RequestParam(defaultValue = "default", required = false) final String sort,
+            @RequestParam(defaultValue = "asc") final String sortOrder,
+            @RequestParam(required = false) final UUID supplierId,
             @RequestParam final int page,
             @RequestParam final int size,
             final Locale locale) {
@@ -55,9 +56,9 @@ public class ProductController {
         List<UUID> categories = ProductRequestConverter.convertCategoriesStringToList(categoriesIds);
 
         ProductsGetRequest productsGetRequest =
-                new ProductsGetRequest(categories, searchText, page, size, locale, sortString, supplierId);
+                new ProductsGetRequest(categories, searchText, page, size, locale, sort, sortOrder, supplierId);
 
-        ProductsGetResponse response = productsService.getPageOfProductsByNameAndCategories(productsGetRequest);
+        ProductsGetResponse response = productsService.getPageOfProductsUsingFilterAndSortParameters(productsGetRequest);
 
         log.info("RESPONSE: to get products by search text:" + searchText + " on: " + page + " page, with " + size + " size");
         return ResponseEntity.

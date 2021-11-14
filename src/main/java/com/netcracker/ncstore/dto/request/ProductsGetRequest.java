@@ -15,4 +15,6 @@ public class ProductsGetRequest {
     private final int page;
     private final int size;
     private final Locale locale;
+    private final String sortString;
+    private final UUID supplierId;
 }

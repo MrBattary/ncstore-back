@@ -44,6 +44,8 @@ public class ProductController {
     public ResponseEntity<List<ProductPriceInRegionDTO>> getProductsWithPagination(
             @RequestParam(defaultValue = "") final String categoriesIds,
             @RequestParam final String searchText,
+            @RequestParam(defaultValue = "default") final String sortString,
+            @RequestParam final UUID supplierId,
             @RequestParam final int page,
             @RequestParam final int size,
             final Locale locale) {
@@ -53,7 +55,7 @@ public class ProductController {
         List<UUID> categories = ProductRequestConverter.convertCategoriesStringToList(categoriesIds);
 
         ProductsGetRequest productsGetRequest =
-                new ProductsGetRequest(categories, searchText, page, size, locale);
+                new ProductsGetRequest(categories, searchText, page, size, locale, sortString, supplierId);
 
         ProductsGetResponse response = productsService.getPageOfProductsByNameAndCategories(productsGetRequest);
 

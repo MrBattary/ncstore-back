@@ -1,8 +1,8 @@
 package com.netcracker.ncstore.controller;
 
+import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
-import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.data.CategoryDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.request.CreateProductRequest;
@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,9 +64,6 @@ public class ProductController {
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<ActualProductPriceWithCurrencySymbolDTO>> getProductsWithPagination(
-            @RequestParam(defaultValue = "") final String categoriesIds,
-            @RequestParam final String searchText,
-    public ResponseEntity<List<ProductPriceInRegionDTO>> getProductsWithPagination(
             @RequestParam(defaultValue = "", required = false) final String categoriesIds,
             @RequestParam(defaultValue = "", required = false) final String searchText,
             @RequestParam(defaultValue = "default", required = false) final String sort,

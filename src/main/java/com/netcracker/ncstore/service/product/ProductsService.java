@@ -32,6 +32,7 @@ import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -136,6 +137,7 @@ public class ProductsService implements IProductsService {
                     null,
                     productData.getName(),
                     productData.getDescription(),
+                    Instant.now(),
                     parentProduct,
                     creator,
                     productData.getStatus(),

@@ -19,7 +19,7 @@ public interface IProductsService {
      * @param productsGetRequest dto containing needed information
      * @return list of DTOs
      */
-    ProductsGetResponse getPageOfProductsByNameAndCategories(final ProductsGetRequest productsGetRequest);
+    ProductsGetResponse getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest);
 
     /**
      * Create new product in store with given data.

@@ -4,8 +4,7 @@ import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
-import com.netcracker.ncstore.exception.ProvidedLocaleIsNotValidException;
-import com.netcracker.ncstore.exception.ProvidedPriceIsNegativeException;
+import com.netcracker.ncstore.exception.PricesServiceValidationException;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,10 +30,9 @@ public interface IPricesService {
      *
      * @param productPriceCreateDTO - ProductPriceDataDTO
      * @return ProductPriceDTO which represents created ProductPrice in a safe way
-     * @throws ProvidedPriceIsNegativeException - when price is negative
-     * @throws ProvidedLocaleIsNotValidException - when locale is not valid
+     * @throws PricesServiceValidationException - when price data is not valid
      */
-    ProductPriceDTO createProductPrice(ProductPriceCreateDTO productPriceCreateDTO) throws ProvidedPriceIsNegativeException, ProvidedLocaleIsNotValidException;
+    ProductPriceDTO createProductPrice(ProductPriceCreateDTO productPriceCreateDTO) throws PricesServiceValidationException;
 
     /**
      * Returns all prices for specified product in DTO

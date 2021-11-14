@@ -4,8 +4,7 @@ import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
-import com.netcracker.ncstore.exception.ProvidedLocaleIsNotValidException;
-import com.netcracker.ncstore.exception.ProvidedPriceIsNegativeException;
+import com.netcracker.ncstore.exception.PricesServiceValidationException;
 import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.ProductPriceRepository;
@@ -70,10 +69,10 @@ public class PricesService implements IPricesService {
     @Override
     public ProductPriceDTO createProductPrice(ProductPriceCreateDTO productPriceCreateDTO) {
         if (!PriceValidator.validatePricesValue(productPriceCreateDTO.getPrice())) {
-            throw new ProvidedPriceIsNegativeException("Provided price is negative");
+            throw new PricesServiceValidationException("Provided price is negative");
         }
         if (!LocaleValidator.isLocaleValid(productPriceCreateDTO.getRegion())) {
-            throw new ProvidedLocaleIsNotValidException("Provided locale is invalid");
+            throw new PricesServiceValidationException("Provided locale is invalid");
         }
 
         ProductPrice productPrice = productPriceRepository.save(new ProductPrice(null,

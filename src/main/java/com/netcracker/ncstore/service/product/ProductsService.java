@@ -6,19 +6,12 @@ import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
-import com.netcracker.ncstore.dto.data.UserDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
-import com.netcracker.ncstore.exception.CategoryNotFoundException;
-import com.netcracker.ncstore.exception.CreatorOfProductNotSupplierException;
-import com.netcracker.ncstore.exception.NoPriceForDefaultLocaleException;
-import com.netcracker.ncstore.exception.ParentProductNotFoundException;
-import com.netcracker.ncstore.exception.ProductCategoriesNotValidException;
+import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
+import com.netcracker.ncstore.exception.PricesServiceValidationException;
+import com.netcracker.ncstore.exception.ProductServiceCreationValidationException;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
-import com.netcracker.ncstore.exception.ProductDescriptionNotValidException;
-import com.netcracker.ncstore.exception.ProductNameNotValidException;
-import com.netcracker.ncstore.exception.ProvidedLocaleIsNotValidException;
-import com.netcracker.ncstore.exception.ProvidedPriceIsNegativeException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.User;
@@ -140,15 +133,9 @@ public class ProductsService implements IProductsService {
             log.info("New Product with UUID " + product.getId() + " for user with UUID " + creator.getId() + " created successfully");
             return new ProductDTO(product);
 
-        } catch (CreatorOfProductNotSupplierException |
-                ParentProductNotFoundException |
-                CategoryNotFoundException |
-                ProvidedLocaleIsNotValidException |
-                NoPriceForDefaultLocaleException |
-                ProductNameNotValidException |
-                ProductDescriptionNotValidException |
-                ProductCategoriesNotValidException |
-                ProvidedPriceIsNegativeException e) {
+        } catch (ProductServiceCreationValidationException |
+                CategoryServiceNotFoundException |
+                PricesServiceValidationException e) {
 
             log.error(e.getMessage());
             throw new ProductServiceCreationException("Unable to create new product for user with UUID " + creator.getId(), e);
@@ -160,39 +147,41 @@ public class ProductsService implements IProductsService {
 
         boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
         if (!isSupplier) {
-            throw new CreatorOfProductNotSupplierException("User with UUID " + creator.getId() + " tried to create product while not having SUPPLIER role");
+            throw new ProductServiceCreationValidationException("User with UUID " + creator.getId() + " tried to create product while not having SUPPLIER role");
         }
 
 
         if (!ProductValidator.checkCategoriesNamesList(productCreateDTO.getCategoriesNames())) {
-            throw new ProductCategoriesNotValidException("Categories list not provided or empty");
+            throw new ProductServiceCreationValidationException("Categories list not provided or empty");
         }
 
         if (productCreateDTO.getParentProductUUID() != null) {
             Product parentProduct = productRepository.findById(productCreateDTO.getParentProductUUID()).orElse(null);
             if (parentProduct == null) {
-                throw new ParentProductNotFoundException("Product with UUID " + productCreateDTO.getParentProductUUID() + " not found, but was requested as parent product for new product.");
+                throw new ProductServiceCreationValidationException("Product with UUID " + productCreateDTO.getParentProductUUID() + " not found, but was requested as parent product for new product.");
             }
         }
 
-        boolean hasDefaultLocale = productCreateDTO.getPrices() != null;
-        if (hasDefaultLocale) {
-            hasDefaultLocale = ProductValidator.hasProvidedLocale(
-                    productCreateDTO.getPrices().stream()
-                            .map(PriceRegionDTO::getRegion)
-                            .collect(Collectors.toList()), defaultLocaleCode);
+
+        if (productCreateDTO.getPrices() == null) {
+            throw new ProductServiceCreationValidationException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
         }
 
+        boolean hasDefaultLocale = ProductValidator.hasProvidedLocale(
+                productCreateDTO.getPrices().stream()
+                        .map(PriceRegionDTO::getRegion)
+                        .collect(Collectors.toList()), defaultLocaleCode);
+
         if (!hasDefaultLocale) {
-            throw new NoPriceForDefaultLocaleException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
+            throw new ProductServiceCreationValidationException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
         }
 
         if (!ProductValidator.isNameValid(productCreateDTO.getName())) {
-            throw new ProductNameNotValidException("Product name not provided or it length is not between (3;255)");
+            throw new ProductServiceCreationValidationException("Product name not provided or it length is not between (3;255)");
         }
 
         if (!ProductValidator.isDescriptionValid(productCreateDTO.getDescription())) {
-            throw new ProductDescriptionNotValidException("Product description not provided or is whorter than 50 symbols");
+            throw new ProductServiceCreationValidationException("Product description not provided or is shorter than 50 symbols");
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.service.category;
 
 import com.netcracker.ncstore.dto.data.CategoryDTO;
-import com.netcracker.ncstore.exception.CategoryNotFoundException;
+import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.repository.CategoryRepository;
 import com.netcracker.ncstore.service.user.UserService;
@@ -25,11 +25,11 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public Category getCategoryEntityByName(final String name) throws CategoryNotFoundException {
+    public Category getCategoryEntityByName(final String name) throws CategoryServiceNotFoundException {
         Category category = categoryRepository.findByName(name);
 
         if (category == null) {
-            throw new CategoryNotFoundException("Unable to find category with name " + name);
+            throw new CategoryServiceNotFoundException("Unable to find category with name " + name);
         }
 
         return category;

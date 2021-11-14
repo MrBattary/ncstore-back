@@ -13,11 +13,13 @@ import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.service.category.ICategoryService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.product.IProductsService;
+import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.converter.ProductRequestConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +43,7 @@ public class ProductController {
     private final IProductsService productsService;
     private final IPricesService pricesService;
     private final ICategoryService categoryService;
+    private final IUserService userService;
 
     /**
      * Constructor
@@ -49,11 +52,13 @@ public class ProductController {
      */
     public ProductController(final IProductsService productsService,
                              final IPricesService pricesService,
-                             final ICategoryService categoryService) {
+                             final ICategoryService categoryService,
+                             final IUserService userService) {
         this.log = LoggerFactory.getLogger(ProductController.class);
         this.productsService = productsService;
         this.pricesService = pricesService;
         this.categoryService = categoryService;
+        this.userService = userService;
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
@@ -86,6 +91,8 @@ public class ProductController {
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> createProduct(@RequestBody CreateProductRequest request, Principal principal) {
+        log.info("REQUEST: to create product with name " + request.getProductName() + " for user with UUID: " + userService.loadUserByPrincipal(principal).getId());
+
         ProductCreateDTO productData = new ProductCreateDTO(
                 request.getProductName(),
                 request.getProductDescription(),
@@ -119,6 +126,7 @@ public class ProductController {
                 categoryNames
         );
 
+        log.info("RESPONSE: to create product with name " + request.getProductName() + " for user with UUID: " + userService.loadUserByPrincipal(principal).getId());
         return ResponseEntity.
                 ok().
                 contentType(MediaType.APPLICATION_JSON).

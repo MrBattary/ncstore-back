@@ -6,6 +6,7 @@ import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
+import com.netcracker.ncstore.dto.data.UserDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.exception.CategoryNotFoundException;
@@ -103,7 +104,7 @@ public class ProductsService implements IProductsService {
     @Override
     @Transactional
     public ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws ProductServiceCreationException {
-        User creator = userService.loadUserByPrincipal(productData.getPrincipal());
+        User creator = userService.loadUserEntityByPrincipal(productData.getPrincipal());
         log.info("Creation of new product for user with UUID " + creator.getId() + " begins");
 
         try {
@@ -155,7 +156,13 @@ public class ProductsService implements IProductsService {
     }
 
     private void validateProductCreationData(final ProductCreateDTO productCreateDTO) {
-        User creator = userService.loadUserByPrincipal(productCreateDTO.getPrincipal());
+        User creator = userService.loadUserEntityByPrincipal(productCreateDTO.getPrincipal());
+
+        boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
+        if (!isSupplier) {
+            throw new CreatorOfProductNotSupplierException("User with UUID " + creator.getId() + " tried to create product while not having SUPPLIER role");
+        }
+
 
         if (!ProductValidator.checkCategoriesNamesList(productCreateDTO.getCategoriesNames())) {
             throw new ProductCategoriesNotValidException("Categories list not provided or empty");
@@ -186,11 +193,6 @@ public class ProductsService implements IProductsService {
 
         if (!ProductValidator.isDescriptionValid(productCreateDTO.getDescription())) {
             throw new ProductDescriptionNotValidException("Product description not provided or is whorter than 50 symbols");
-        }
-
-        boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
-        if (!isSupplier) {
-            throw new CreatorOfProductNotSupplierException("User with UUID " + creator.getId() + " tried to create product while not having SUPPLIER role");
         }
     }
 }

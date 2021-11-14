@@ -9,6 +9,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Contains all information about real Product entity,
+ * as it is represented in database.
+ * <p>
+ * Used to safely transfer entity data between parts of the Program
+ */
 @Getter
 public class ProductDTO {
     private final UUID id;

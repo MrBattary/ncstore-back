@@ -25,7 +25,7 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public Category getCategoryEntityByName(String name) throws CategoryNotFoundException {
+    public Category getCategoryEntityByName(final String name) throws CategoryNotFoundException {
         Category category = categoryRepository.findByName(name);
 
         if (category == null) {
@@ -36,7 +36,7 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public List<CategoryDTO> getCategoriesForProduct(UUID productId) {
+    public List<CategoryDTO> getCategoriesForProduct(final UUID productId) {
         return categoryRepository.
                 findByProductId(productId).
                 stream().

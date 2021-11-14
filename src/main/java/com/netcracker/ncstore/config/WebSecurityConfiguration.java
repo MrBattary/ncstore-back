@@ -77,9 +77,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/products").permitAll()
                 .and()
-                .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
+                .authorizeRequests().anyRequest().authenticated()
                 .and()
-                .authorizeRequests().anyRequest().authenticated();
+                .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
     }
 
     @Override

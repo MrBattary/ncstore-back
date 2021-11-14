@@ -8,10 +8,10 @@ import java.util.Locale;
 import java.util.UUID;
 
 /**
- * Contains all information about real ProductPrice DTO,
+ * Contains all information about real ProductPrice entity,
  * as it is represented in database.
  * <p>
- * Used as return parameter for method which creates new entity
+ * Used to safely transfer entity data between parts of the Program
  */
 
 @AllArgsConstructor

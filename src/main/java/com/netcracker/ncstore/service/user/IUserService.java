@@ -1,6 +1,7 @@
 package com.netcracker.ncstore.service.user;
 
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
+import com.netcracker.ncstore.dto.data.UserDTO;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 import com.netcracker.ncstore.exception.UserServiceCreationException;
@@ -50,9 +51,18 @@ public interface IUserService {
     UserTypeEmailPasswordRolesDTO getUserAuthDataByEmail(String email) throws UserServiceRepositoryException;
 
     /**
-     * Returns User instance behind provided Principal
+     * Returns UserDTO instance behind provided Principal
      *
      * @param principal - Principal
      */
-    User loadUserByPrincipal(Principal principal);
+    UserDTO loadUserByPrincipal(Principal principal);
+
+    /**
+     * Returns User entity behind provided Principal.
+     * Should be used only when real entity is needed.
+     *
+     * @param principal - Principal
+     * @return User - real User entity
+     */
+    User loadUserEntityByPrincipal(Principal principal);
 }

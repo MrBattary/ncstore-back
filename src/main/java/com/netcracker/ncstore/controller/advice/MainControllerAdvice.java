@@ -47,11 +47,6 @@ public class MainControllerAdvice {
         return ResponseEntity.badRequest().build();
     }
 
-    @ExceptionHandler(value = { JwtAuthenticationProviderException.class })
-    public void commence(HttpServletRequest request, HttpServletResponse response, JwtAuthenticationProviderException e ) throws IOException {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-    }
-
 /*    //Should be activated only on production
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleAllUncaughtException(final RuntimeException e) {

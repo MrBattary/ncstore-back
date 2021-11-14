@@ -1,6 +1,7 @@
 package com.netcracker.ncstore.service.user;
 
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
+import com.netcracker.ncstore.dto.data.UserDTO;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 import com.netcracker.ncstore.exception.UserServiceCreationException;
@@ -129,7 +130,12 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User loadUserByPrincipal(Principal principal) {
+    public UserDTO loadUserByPrincipal(Principal principal) {
+        return new UserDTO(loadUserEntityByPrincipal(principal));
+    }
+
+    @Override
+    public User loadUserEntityByPrincipal(Principal principal) {
         return userRepository.findByEmail(principal.getName());
     }
 }

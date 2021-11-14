@@ -18,12 +18,12 @@ public interface ICategoryService {
      * @return Category
      * @throws CategoryNotFoundException - when no category with provided name exists
      */
-    Category getCategoryEntityByName(String name) throws CategoryNotFoundException;
+    Category getCategoryEntityByName(final String name) throws CategoryNotFoundException;
 
     /**
      * Return list of Categories DTOs for provided product
      * @param productId - the UUID of product
      * @return List of CategoryDTOs
      */
-    List<CategoryDTO> getCategoriesForProduct(UUID productId);
+    List<CategoryDTO> getCategoriesForProduct(final UUID productId);
 }

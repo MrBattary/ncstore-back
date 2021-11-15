@@ -64,7 +64,7 @@ public class ProductController {
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<ActualProductPriceWithCurrencySymbolDTO>> getProductsWithPagination(
-            @RequestParam(defaultValue = "", required = false) final String categoriesIds,
+            @RequestParam(defaultValue = "", required = false) final String categoryIds,
             @RequestParam(defaultValue = "", required = false) final String searchText,
             @RequestParam(defaultValue = "default", required = false) final String sort,
             @RequestParam(defaultValue = "asc") final String sortOrder,
@@ -75,7 +75,7 @@ public class ProductController {
 
         log.info("REQUEST: to get products by search text:" + searchText + " on: " + page + " page, with " + size + " size");
 
-        List<UUID> categories = ProductRequestConverter.convertCategoriesStringToList(categoriesIds);
+        List<UUID> categories = ProductRequestConverter.convertCategoriesStringToList(categoryIds);
 
         ProductsGetRequest productsGetRequest =
                 new ProductsGetRequest(categories, searchText, page, size, locale, sort, sortOrder, supplierId);

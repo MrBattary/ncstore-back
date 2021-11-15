@@ -66,6 +66,7 @@ public class ProductsService implements IProductsService {
 
     @Override
     public ProductsGetResponse getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
+        //JpaSort.unsafe(Sort.Direction.DESC, "pp.price - coalesce(d.discountPrice,0)") NEEDED
         Pageable productsPageRequest =
                 PageRequest.of(productsGetRequest.getPage(), productsGetRequest.getSize());
 
@@ -87,13 +88,15 @@ public class ProductsService implements IProductsService {
         }
 
         if (productsGetRequest.getCategoriesIds().size() != 0) {
-            productsPage = productRepository.findProductsByLikeNameAndCategories(
+            productsPage = productRepository.findProductsByLikeNameAndCategoriesAndLocale(
                     productsGetRequest.getSearchText(),
+                    productsGetRequest.getLocale(),
                     productsGetRequest.getCategoriesIds(),
                     productsPageRequest);
         } else {
-            productsPage = productRepository.findProductByLikeName(
+            productsPage = productRepository.findProductByLikeNameAndLocale(
                     productsGetRequest.getSearchText(),
+                    productsGetRequest.getLocale(),
                     productsPageRequest);
         }
 

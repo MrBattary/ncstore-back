@@ -1,6 +1,7 @@
 package com.netcracker.ncstore.dto.create;
 
 
+import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ public class ProductCreateDTO {
     private final Principal principal;
     private final EProductStatus status;
     private final List<PriceRegionDTO> prices;
+    private final List<DiscountPriceRegionDTO> discountPrices;
     private final UUID parentProductUUID;
     private final List<String> categoriesNames;
 }

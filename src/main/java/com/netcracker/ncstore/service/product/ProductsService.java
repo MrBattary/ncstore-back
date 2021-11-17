@@ -21,6 +21,7 @@ import com.netcracker.ncstore.service.category.ICategoryService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
+import com.netcracker.ncstore.util.validator.PriceValidator;
 import com.netcracker.ncstore.util.validator.ProductValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,7 +145,7 @@ public class ProductsService implements IProductsService {
         log.info("Creation of new product for user with UUID " + creator.getId() + " begins");
 
         try {
-            validateProductCreationData(productData);
+            validateProductData(productData);
 
             Product parentProduct = null;
             if (productData.getParentProductUUID() != null) {
@@ -186,7 +187,7 @@ public class ProductsService implements IProductsService {
         }
     }
 
-    private void validateProductCreationData(final ProductCreateDTO productCreateDTO) {
+    private void validateProductData(final ProductCreateDTO productCreateDTO) {
         User creator = userService.loadUserEntityByPrincipal(productCreateDTO.getPrincipal());
 
         boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
@@ -218,6 +219,10 @@ public class ProductsService implements IProductsService {
 
         if (!hasDefaultLocale) {
             throw new ProductServiceCreationValidationException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
+        }
+
+        if(!PriceValidator.validateDiscounts(productCreateDTO.getPrices(), productCreateDTO.getDiscountPrices())){
+            throw new ProductServiceCreationValidationException("Discount prices are invalid. Each discount price must have normal price in same region.");
         }
 
         if (!ProductValidator.isNameValid(productCreateDTO.getName())) {

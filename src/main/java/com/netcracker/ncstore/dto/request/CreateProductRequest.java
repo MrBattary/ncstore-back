@@ -1,6 +1,7 @@
 package com.netcracker.ncstore.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,8 @@ import java.util.UUID;
 public class CreateProductRequest {
     private final String productName;
     private final String productDescription;
-    private final List<PriceRegionDTO> regionalPrices;
+    private final List<PriceRegionDTO> normalPrices;
+    private final List<DiscountPriceRegionDTO> discountPrices;
     private final UUID parentProductId;
     private final List<String> categoriesNames;
 }

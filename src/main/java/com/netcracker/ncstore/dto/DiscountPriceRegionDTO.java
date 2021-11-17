@@ -6,17 +6,20 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
+import java.time.Instant;
 import java.util.Locale;
 
 /**
- * DTO Used to transfer price and Locale info
+ *
  */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class PriceRegionDTO {
-    private final double price;
+public class DiscountPriceRegionDTO {
+    private final double discountPrice;
     private final Locale region;
+    private final Instant startUtcTime;
+    private final Instant endUtcTime;
 }

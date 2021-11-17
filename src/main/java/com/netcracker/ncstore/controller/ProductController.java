@@ -100,7 +100,8 @@ public class ProductController {
                 request.getProductDescription(),
                 principal,
                 EProductStatus.IN_STOCK,
-                request.getRegionalPrices(),
+                request.getNormalPrices(),
+                request.getDiscountPrices(),
                 request.getParentProductId(),
                 request.getCategoriesNames()
         );

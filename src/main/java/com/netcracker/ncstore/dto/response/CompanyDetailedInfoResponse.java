@@ -11,12 +11,18 @@ import lombok.extern.jackson.Jacksonized;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Response on successful user info request
+ * with company data
+ */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class CompanyInfoResponse {
+public class CompanyDetailedInfoResponse {
+    private final String email;
+    private final double balance;
     private final EUserType userType;
     private final String companyName;
     private final String description;

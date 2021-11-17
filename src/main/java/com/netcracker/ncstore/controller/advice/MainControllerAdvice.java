@@ -3,6 +3,8 @@ package com.netcracker.ncstore.controller.advice;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
 import com.netcracker.ncstore.exception.RequestParametersInvalidException;
 import com.netcracker.ncstore.exception.AuthServiceException;
+import com.netcracker.ncstore.exception.UserServiceCompanyInfoException;
+import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.security.provider.JwtAuthenticationProviderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +47,20 @@ public class MainControllerAdvice {
         log.error(e.getMessage());
         log.info("RESPONSE: 400");
         return ResponseEntity.badRequest().build();
+    }
+
+    @ExceptionHandler(UserServiceCompanyInfoException.class)
+    public ResponseEntity<?> handleAuthServiceException(final UserServiceCompanyInfoException e) {
+        log.error(e.getMessage());
+        log.info("RESPONSE: 400");
+        return ResponseEntity.badRequest().build();
+    }
+
+    @ExceptionHandler(UserServiceNotFoundException.class)
+    public ResponseEntity<?> handleAuthServiceException(final UserServiceNotFoundException e) {
+        log.error(e.getMessage());
+        log.info("RESPONSE: 404");
+        return ResponseEntity.notFound().build();
     }
 
 /*    //Should be activated only on production

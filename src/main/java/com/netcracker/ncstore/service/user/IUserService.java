@@ -8,6 +8,8 @@ import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
 import com.netcracker.ncstore.dto.response.CompanyDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.CompanyInfoResponse;
+import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
+import com.netcracker.ncstore.dto.response.PersonInfoResponse;
 import com.netcracker.ncstore.exception.UserServiceCreationException;
 import com.netcracker.ncstore.exception.UserServiceRepositoryException;
 import com.netcracker.ncstore.exception.UserServiceValidationException;
@@ -92,7 +94,6 @@ public interface IUserService {
     /**
      * Returns detailed information about Company of principal.
      * Returns information only if principal requests self's company info.
-     * If someone else tries to access this method UserServiceForbiddenException is thrown
      *
      * @param principal principal of user willing to get info about one's company
      * @return CompanyDetailedInfoResponse
@@ -106,4 +107,19 @@ public interface IUserService {
      */
     CompanyInfoResponse getBasisCompanyInfo(UUID userId);
 
+    /**
+     * Returns detailed information about Person of principal.
+     * Returns information only if principal requests personal info.
+     *
+     * @param principal principal of user willing to get personal info
+     * @return PersonDetailedInfoResponse
+     */
+    PersonDetailedInfoResponse getDetailedPersonInfo(Principal principal);
+
+    /**
+     * Returns information about Person of user with provided ID
+     *
+     * @return PersonInfoResponse
+     */
+    PersonInfoResponse getBasisPersonInfo(UUID userId);
 }

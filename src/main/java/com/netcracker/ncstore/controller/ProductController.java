@@ -1,16 +1,21 @@
 package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.CategoryDTO;
+import com.netcracker.ncstore.dto.data.DiscountDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
+import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.CreateProductRequest;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.CreateProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.service.category.ICategoryService;
+import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.product.IProductsService;
 import com.netcracker.ncstore.service.user.IUserService;
@@ -28,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -43,6 +49,7 @@ public class ProductController {
     private final IPricesService pricesService;
     private final ICategoryService categoryService;
     private final IUserService userService;
+    private final IDiscountsService discountsService;
 
     /**
      * Constructor
@@ -52,12 +59,14 @@ public class ProductController {
     public ProductController(final IProductsService productsService,
                              final IPricesService pricesService,
                              final ICategoryService categoryService,
-                             final IUserService userService) {
+                             final IUserService userService,
+                             final IDiscountsService discountsService) {
         this.log = LoggerFactory.getLogger(ProductController.class);
         this.productsService = productsService;
         this.pricesService = pricesService;
         this.categoryService = categoryService;
         this.userService = userService;
+        this.discountsService = discountsService;
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
@@ -67,7 +76,7 @@ public class ProductController {
             @RequestParam(defaultValue = "", required = false) final String categoryIds,
             @RequestParam(defaultValue = "", required = false) final String searchText,
             @RequestParam(defaultValue = "default", required = false) final String sort,
-            @RequestParam(defaultValue = "asc") final String sortOrder,
+            @RequestParam(defaultValue = "asc", required = false) final String sortOrder,
             @RequestParam(required = false) final UUID supplierId,
             @RequestParam final int page,
             @RequestParam final int size,
@@ -108,11 +117,22 @@ public class ProductController {
 
         ProductDTO productDTO = productsService.createNewProductInStore(productData);
 
-        List<PriceRegionDTO> priceRegionDTOS = pricesService.
-                getPricesForProduct(productDTO.getId())
-                .stream()
-                .map(e -> new PriceRegionDTO(e.getPrice(), e.getLocale()))
-                .collect(Collectors.toList());
+        List<PriceRegionDTO> priceRegionDTOS = new ArrayList<>();
+        List<DiscountPriceRegionDTO> discountPriceRegionDTOS = new ArrayList<>();
+
+        for(ProductPriceDTO p : pricesService.getPricesForProduct(productDTO.getId())){
+            priceRegionDTOS.add(new PriceRegionDTO(p.getPrice(), p.getLocale()));
+
+            try {
+                DiscountDTO discountDTO = discountsService.getDiscountForPrice(p.getId());
+                discountPriceRegionDTOS.add(new DiscountPriceRegionDTO(
+                        discountDTO.getDiscountPrice(),
+                        p.getLocale(),
+                        discountDTO.getStartUtcTime(),
+                        discountDTO.getEndUtcTime()));
+
+            }catch (DiscountServiceNotFoundException ignored){}
+        }
 
         List<String> categoryNames = categoryService.
                 getCategoriesForProduct(productDTO.getId()).
@@ -125,6 +145,7 @@ public class ProductController {
                 productDTO.getName(),
                 productDTO.getDescription(),
                 priceRegionDTOS,
+                discountPriceRegionDTOS,
                 productDTO.getParentProductId(),
                 categoryNames
         );

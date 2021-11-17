@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * This DTO stores information needed for creating new ProductPrice
@@ -20,5 +21,5 @@ import java.util.Locale;
 public class ProductPriceCreateDTO {
     private final double price;
     private final Locale region;
-    private final Product product;
+    private final UUID productId;
 }

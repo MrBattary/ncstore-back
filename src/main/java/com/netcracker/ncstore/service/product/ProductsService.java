@@ -1,10 +1,13 @@
 package com.netcracker.ncstore.service.product;
 
 import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
+import com.netcracker.ncstore.dto.data.DiscountDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
+import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
@@ -18,6 +21,7 @@ import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
 import com.netcracker.ncstore.repository.projections.ProductWithPriceInfo;
 import com.netcracker.ncstore.service.category.ICategoryService;
+import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
@@ -36,8 +40,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -54,16 +61,19 @@ public class ProductsService implements IProductsService {
     private final IPricesService pricesService;
     private final IUserService userService;
     private final ICategoryService categoryService;
+    private final IDiscountsService discountsService;
 
     public ProductsService(final ProductRepository productRepository,
                            final IPricesService pricesService,
                            final IUserService userService,
-                           final ICategoryService categoryService) {
+                           final ICategoryService categoryService,
+                           final IDiscountsService discountsService) {
         this.log = LoggerFactory.getLogger(ProductsService.class);
         this.productRepository = productRepository;
         this.pricesService = pricesService;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.discountsService = discountsService;
     }
 
     @Override
@@ -90,7 +100,7 @@ public class ProductsService implements IProductsService {
                         productsGetRequest.getSize(),
                         JpaSort.unsafe(direction, "pp.price - coalesce(d.discountPrice,0)"));
                 break;
-            case "new":
+            case "date":
                 productsPageRequest = PageRequest.of(
                         productsGetRequest.getPage(),
                         productsGetRequest.getSize(),
@@ -170,10 +180,27 @@ public class ProductsService implements IProductsService {
                     categories));
 
 
-            productData.getPrices().
+            List<ProductPriceDTO> createdPricesDTOs = productData.getPrices().
                     stream().
-                    map(e -> new ProductPriceCreateDTO(e.getPrice(), e.getRegion(), product)).
-                    forEach(pricesService::createProductPrice);
+                    map(e -> new ProductPriceCreateDTO(e.getPrice(), e.getRegion(), product.getId())).
+                    map(pricesService::createProductPrice).
+                    collect(Collectors.toList());
+
+            Map<Locale, UUID> localeProductPriceUUIDMap =
+                    createdPricesDTOs.
+                            stream().
+                            collect(Collectors.toMap(ProductPriceDTO::getLocale, ProductPriceDTO::getId));
+
+            if(productData.getDiscountPrices()!=null) {
+                productData.getDiscountPrices().
+                        stream().
+                        map(e -> new DiscountCreateDTO(
+                                e.getPrice(),
+                                e.getStartUtcTime(),
+                                e.getEndUtcTime(),
+                                localeProductPriceUUIDMap.get(e.getRegion()))).
+                        forEach(discountsService::createNewDiscountForPrice);
+            }
 
             log.info("New Product with UUID " + product.getId() + " for user with UUID " + creator.getId() + " created successfully");
             return new ProductDTO(product);
@@ -221,8 +248,10 @@ public class ProductsService implements IProductsService {
             throw new ProductServiceCreationValidationException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
         }
 
-        if(!PriceValidator.validateDiscounts(productCreateDTO.getPrices(), productCreateDTO.getDiscountPrices())){
-            throw new ProductServiceCreationValidationException("Discount prices are invalid. Each discount price must have normal price in same region.");
+        if(productCreateDTO.getDiscountPrices()!=null) {
+            if (!PriceValidator.validateDiscounts(productCreateDTO.getPrices(), productCreateDTO.getDiscountPrices())) {
+                throw new ProductServiceCreationValidationException("Discount prices are invalid. Each discount price must have normal price in same region.");
+            }
         }
 
         if (!ProductValidator.isNameValid(productCreateDTO.getName())) {

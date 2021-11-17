@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.Locale;
 
 /**
- *
+ * DTO used for transferring information about discount
  */
 @Jacksonized
 @Builder
@@ -18,7 +18,7 @@ import java.util.Locale;
 @AllArgsConstructor
 @Getter
 public class DiscountPriceRegionDTO {
-    private final double discountPrice;
+    private final double price;
     private final Locale region;
     private final Instant startUtcTime;
     private final Instant endUtcTime;

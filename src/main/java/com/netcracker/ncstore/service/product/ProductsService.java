@@ -2,7 +2,6 @@ package com.netcracker.ncstore.service.product;
 
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
-import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
@@ -17,9 +16,11 @@ import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
+import com.netcracker.ncstore.repository.projections.ProductWithPriceInfo;
 import com.netcracker.ncstore.service.category.ICategoryService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.user.IUserService;
+import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import com.netcracker.ncstore.util.validator.ProductValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -66,24 +67,39 @@ public class ProductsService implements IProductsService {
 
     @Override
     public ProductsGetResponse getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
-        //JpaSort.unsafe(Sort.Direction.DESC, "pp.price - coalesce(d.discountPrice,0)") NEEDED
-        Pageable productsPageRequest =
-                PageRequest.of(productsGetRequest.getPage(), productsGetRequest.getSize());
+        Pageable productsPageRequest;
+        Page<ProductWithPriceInfo> productsPage;
 
-        Page<Product> productsPage;
+        Sort.Direction direction = productsGetRequest.getSortOrderString().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 
-        switch (productsGetRequest.getSortString()){
+
+        switch (productsGetRequest.getSortString()) {
             default:
             case "default":
+            case "popular"://TODO separate and make when rating will be
             case "rating"://TODO separate and make when rating will be
+                productsPageRequest = PageRequest.of(
+                        productsGetRequest.getPage(),
+                        productsGetRequest.getSize(),
+                        JpaSort.unsafe(direction, "name"));
                 break;
             case "price":
+                productsPageRequest = PageRequest.of(
+                        productsGetRequest.getPage(),
+                        productsGetRequest.getSize(),
+                        JpaSort.unsafe(direction, "pp.price - coalesce(d.discountPrice,0)"));
                 break;
             case "new":
-                break;
-            case "popular":
+                productsPageRequest = PageRequest.of(
+                        productsGetRequest.getPage(),
+                        productsGetRequest.getSize(),
+                        JpaSort.unsafe(direction, "creationUtcTime"));
                 break;
             case "discount":
+                productsPageRequest = PageRequest.of(
+                        productsGetRequest.getPage(),
+                        productsGetRequest.getSize(),
+                        JpaSort.unsafe(Sort.Direction.ASC, "coalesce(d.discountPrice,pp.price)/pp.price"));
                 break;
         }
 
@@ -97,18 +113,23 @@ public class ProductsService implements IProductsService {
             productsPage = productRepository.findProductByLikeNameAndLocale(
                     productsGetRequest.getSearchText(),
                     productsGetRequest.getLocale(),
+                    Locale.forLanguageTag(defaultLocaleCode),
                     productsPageRequest);
         }
 
         List<ActualProductPriceWithCurrencySymbolDTO> productPriceInRegionDTOS =
                 new ArrayList<>();
 
-        for (Product product : productsPage.getContent()) {
-            ProductLocaleDTO productLocaleDTO =
-                    new ProductLocaleDTO(product.getId(), productsGetRequest.getLocale());
+        for (ProductWithPriceInfo productInfo : productsPage.getContent()) {
+            ProductWithPriceInfo.ProductPriceInfo firstPrice = productInfo.getProductPrices().get(0);
 
-            ActualProductPriceWithCurrencySymbolDTO priceInRegion =
-                    pricesService.getActualPriceForProductInRegion(productLocaleDTO);
+            ActualProductPriceWithCurrencySymbolDTO priceInRegion = new ActualProductPriceWithCurrencySymbolDTO(
+                    productInfo.getId(),
+                    productInfo.getName(),
+                    firstPrice.getPrice(),
+                    firstPrice.getDiscount() == null ? null : firstPrice.getDiscount().getDiscountPrice(),
+                    LocaleToCurrencyConverter.getCurrencySymbolByLocale(firstPrice.getLocale())
+            );
 
             productPriceInRegionDTOS.add(priceInRegion);
         }

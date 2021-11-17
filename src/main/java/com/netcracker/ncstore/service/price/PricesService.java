@@ -8,6 +8,7 @@ import com.netcracker.ncstore.exception.PricesServiceValidationException;
 import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.ProductPriceRepository;
+import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import com.netcracker.ncstore.util.validator.LocaleValidator;
 import com.netcracker.ncstore.util.validator.PriceValidator;
 import org.slf4j.Logger;
@@ -62,8 +63,9 @@ public class PricesService implements IPricesService {
                 productPrice.getProduct().getName(),
                 productPrice.getPrice(),
                 discountPrice,
-                Currency.getInstance(productLocale.getLocale()).
-                        getSymbol(productLocale.getLocale()));
+                LocaleToCurrencyConverter.
+                        getCurrencySymbolByLocale(productLocale.getLocale())
+        );
     }
 
     @Override

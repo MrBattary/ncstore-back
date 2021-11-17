@@ -114,18 +114,40 @@ public class ProductsService implements IProductsService {
                 break;
         }
 
-        if (productsGetRequest.getCategoriesIds().size() != 0) {
-            productsPage = productRepository.findProductsByLikeNameAndCategoriesAndLocale(
-                    productsGetRequest.getSearchText(),
-                    productsGetRequest.getLocale(),
-                    productsGetRequest.getCategoriesIds(),
-                    productsPageRequest);
-        } else {
-            productsPage = productRepository.findProductByLikeNameAndLocale(
-                    productsGetRequest.getSearchText(),
-                    productsGetRequest.getLocale(),
-                    Locale.forLanguageTag(defaultLocaleCode),
-                    productsPageRequest);
+        if(productsGetRequest.getSupplierId()!=null){
+            if (productsGetRequest.getCategoriesIds().size() != 0) {
+                productsPage = productRepository.findProductsUserIdAndByLikeNameAndCategoriesAndLocale(
+                        productsGetRequest.getSupplierId(),
+                        productsGetRequest.getSearchText(),
+                        productsGetRequest.getLocale(),
+                        Locale.forLanguageTag(defaultLocaleCode),
+                        productsGetRequest.getCategoriesIds(),
+                        productsPageRequest);
+            } else {
+                productsPage = productRepository.findProductByUserIdAndByLikeNameAndLocale(
+                        productsGetRequest.getSupplierId(),
+                        productsGetRequest.getSearchText(),
+                        productsGetRequest.getLocale(),
+                        Locale.forLanguageTag(defaultLocaleCode),
+                        productsPageRequest);
+            }
+
+        }else {
+
+            if (productsGetRequest.getCategoriesIds().size() != 0) {
+                productsPage = productRepository.findProductsByLikeNameAndCategoriesAndLocale(
+                        productsGetRequest.getSearchText(),
+                        productsGetRequest.getLocale(),
+                        Locale.forLanguageTag(defaultLocaleCode),
+                        productsGetRequest.getCategoriesIds(),
+                        productsPageRequest);
+            } else {
+                productsPage = productRepository.findProductByLikeNameAndLocale(
+                        productsGetRequest.getSearchText(),
+                        productsGetRequest.getLocale(),
+                        Locale.forLanguageTag(defaultLocaleCode),
+                        productsPageRequest);
+            }
         }
 
         List<ActualProductPriceWithCurrencySymbolDTO> productPriceInRegionDTOS =

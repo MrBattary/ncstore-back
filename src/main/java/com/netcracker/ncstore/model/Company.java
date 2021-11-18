@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import java.time.LocalDate;
@@ -26,6 +28,8 @@ public class Company {
     @Id
     private UUID userId;
     private String companyName;
+    @Lob
+    @Type(type = "org.hibernate.type.TextType")
     private String description;
     private LocalDate foundationDate;
 

@@ -1,25 +1,25 @@
-package com.netcracker.ncstore.dto.create;
+package com.netcracker.ncstore.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.netcracker.ncstore.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
+import java.time.Instant;
 import java.util.Locale;
-import java.util.UUID;
 
 /**
- * This DTO stores information needed for creating new ProductPrice
+ * DTO used for transferring information about discount
  */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class ProductPriceCreateDTO {
+public class DiscountPriceRegionDTO {
     private final double price;
     private final Locale region;
-    private final UUID productId;
+    private final Instant startUtcTime;
+    private final Instant endUtcTime;
 }

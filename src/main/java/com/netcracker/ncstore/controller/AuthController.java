@@ -43,7 +43,7 @@ public class AuthController {
         log.info("REQUEST: to signup " + request.getEmail() + " person");
         authService.signUpPerson(request);
         log.info("RESPONSE REQUEST: to signup " + request.getEmail() + " person");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -59,7 +59,7 @@ public class AuthController {
         log.info("REQUEST: to signup " + request.getEmail() + " company");
         authService.signUpCompany(request);
         log.info("RESPONSE REQUEST: to signup " + request.getEmail() + " company");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**

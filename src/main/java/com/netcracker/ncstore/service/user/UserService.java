@@ -10,14 +10,12 @@ import com.netcracker.ncstore.dto.response.CompanyDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.CompanyInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonInfoResponse;
-import com.netcracker.ncstore.exception.UserServiceCompanyInfoException;
 import com.netcracker.ncstore.exception.UserServiceCreationException;
 import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServiceRepositoryException;
 import com.netcracker.ncstore.exception.UserServiceValidationException;
 import com.netcracker.ncstore.model.Company;
 import com.netcracker.ncstore.model.Person;
-import com.netcracker.ncstore.model.Role;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.model.enumerations.EUserType;
@@ -34,7 +32,6 @@ import org.springframework.stereotype.Service;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
@@ -124,6 +121,7 @@ public class UserService implements IUserService {
         Person foundPerson = personRepository.findPersonByUserEmail(email);
         if (foundPerson != null) {
             return new UserTypeEmailPasswordRolesDTO(
+                    foundPerson.getUserId(),
                     EUserType.PERSON,
                     foundPerson.getUser().getEmail(),
                     foundPerson.getUser().getPassword(),
@@ -134,6 +132,7 @@ public class UserService implements IUserService {
         Company foundCompany = companyRepository.findCompanyByUserEmail(email);
         if (foundCompany != null) {
             return new UserTypeEmailPasswordRolesDTO(
+                    foundCompany.getUserId(),
                     EUserType.COMPANY,
                     foundCompany.getUser().getEmail(),
                     foundCompany.getUser().getPassword(),

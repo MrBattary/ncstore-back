@@ -1,8 +1,6 @@
 package com.netcracker.ncstore.repository.projections;
 
 import com.netcracker.ncstore.model.Discount;
-import com.netcracker.ncstore.model.Product;
-import com.netcracker.ncstore.model.ProductPrice;
 
 import java.util.List;
 import java.util.Locale;

@@ -1,11 +1,9 @@
 package com.netcracker.ncstore.service.price;
 
-import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
-import com.netcracker.ncstore.dto.data.DiscountDTO;
-import com.netcracker.ncstore.dto.data.ProductPriceDTO;
-import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
-import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
+import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
+import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
 import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.Product;

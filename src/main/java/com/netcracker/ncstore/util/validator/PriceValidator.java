@@ -16,7 +16,9 @@ public abstract class PriceValidator {
     }
 
     public static boolean validateDiscounts(List<PriceRegionDTO> normalPrices, List<DiscountPriceRegionDTO> discounts) {
-        if (discounts.size() > normalPrices.size()) return false;
+        if (discounts.size() > normalPrices.size()) {
+            return false;
+        }
 
         Predicate<DiscountPriceRegionDTO> checkDiscountRegionForExistenceInPrices =
                 o -> normalPrices.stream().anyMatch(e -> e.getRegion().equals(o.getRegion()));

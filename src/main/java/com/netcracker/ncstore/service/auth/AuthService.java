@@ -82,6 +82,7 @@ public class AuthService implements IAuthService {
             }
 
             return new SignInResponse(
+                    userDTO.getUserId(),
                     userDTO.getType(),
                     userDTO.getRoles(),
                     jwtTokenService.createToken(

@@ -1,6 +1,5 @@
 package com.netcracker.ncstore.security;
 
-import com.netcracker.ncstore.service.product.ProductsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;

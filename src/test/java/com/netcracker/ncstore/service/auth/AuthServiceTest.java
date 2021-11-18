@@ -22,6 +22,8 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -110,7 +112,7 @@ class AuthServiceTest {
     @Test
     void signIn() {
         SignInRequest signInRequest = new SignInRequest("email", "p");
-        UserTypeEmailPasswordRolesDTO dto = new UserTypeEmailPasswordRolesDTO(EUserType.PERSON, "email", "eEncoded", null);
+        UserTypeEmailPasswordRolesDTO dto = new UserTypeEmailPasswordRolesDTO(UUID.randomUUID(), EUserType.PERSON, "email", "eEncoded", null);
 
         Mockito.doReturn(dto).when(userServiceMocked).getUserAuthDataByEmail(Mockito.anyString());
         Mockito.doReturn(true).when(passwordEncoderMocked).matches(Mockito.anyString(), Mockito.anyString());
@@ -141,7 +143,7 @@ class AuthServiceTest {
     @Test
     void signInPasswordIncorrect() {
         SignInRequest signInRequest = new SignInRequest("email", "p");
-        UserTypeEmailPasswordRolesDTO dto = new UserTypeEmailPasswordRolesDTO(EUserType.PERSON, "email", "eEncoded", null);
+        UserTypeEmailPasswordRolesDTO dto = new UserTypeEmailPasswordRolesDTO(UUID.randomUUID(), EUserType.PERSON, "email", "eEncoded", null);
 
         Mockito.doReturn(dto).when(userServiceMocked).getUserAuthDataByEmail(Mockito.anyString());
         Mockito.doReturn(false).when(passwordEncoderMocked).matches(Mockito.anyString(), Mockito.anyString());

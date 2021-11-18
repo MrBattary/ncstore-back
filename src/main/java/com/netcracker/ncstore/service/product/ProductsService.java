@@ -1,19 +1,18 @@
 package com.netcracker.ncstore.service.product;
 
+import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
-import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
-import com.netcracker.ncstore.dto.data.DiscountDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
-import com.netcracker.ncstore.exception.ProductServiceCreationValidationException;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
+import com.netcracker.ncstore.exception.ProductServiceCreationValidationException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.User;
@@ -39,12 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -114,7 +108,7 @@ public class ProductsService implements IProductsService {
                 break;
         }
 
-        if(productsGetRequest.getSupplierId()!=null){
+        if (productsGetRequest.getSupplierId() != null) {
             if (productsGetRequest.getCategoriesIds().size() != 0) {
                 productsPage = productRepository.findProductsUserIdAndByLikeNameAndCategoriesAndLocale(
                         productsGetRequest.getSupplierId(),
@@ -132,7 +126,7 @@ public class ProductsService implements IProductsService {
                         productsPageRequest);
             }
 
-        }else {
+        } else {
 
             if (productsGetRequest.getCategoriesIds().size() != 0) {
                 productsPage = productRepository.findProductsByLikeNameAndCategoriesAndLocale(
@@ -213,7 +207,7 @@ public class ProductsService implements IProductsService {
                             stream().
                             collect(Collectors.toMap(ProductPriceDTO::getLocale, ProductPriceDTO::getId));
 
-            if(productData.getDiscountPrices()!=null) {
+            if (productData.getDiscountPrices() != null) {
                 productData.getDiscountPrices().
                         stream().
                         map(e -> new DiscountCreateDTO(
@@ -258,7 +252,7 @@ public class ProductsService implements IProductsService {
 
 
         if (productCreateDTO.getPrices() == null) {
-            throw new ProductServiceCreationValidationException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
+            throw new ProductServiceCreationValidationException("No prices was provided. Could not create product.");
         }
 
         boolean hasDefaultLocale = ProductValidator.hasProvidedLocale(
@@ -270,7 +264,7 @@ public class ProductsService implements IProductsService {
             throw new ProductServiceCreationValidationException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
         }
 
-        if(productCreateDTO.getDiscountPrices()!=null) {
+        if (productCreateDTO.getDiscountPrices() != null) {
             if (!PriceValidator.validateDiscounts(productCreateDTO.getPrices(), productCreateDTO.getDiscountPrices())) {
                 throw new ProductServiceCreationValidationException("Discount prices are invalid. Each discount price must have normal price in same region.");
             }

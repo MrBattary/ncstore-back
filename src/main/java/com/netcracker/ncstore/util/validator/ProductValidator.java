@@ -26,12 +26,7 @@ public abstract class ProductValidator {
     }
 
     public static boolean checkCategoriesNamesList(List<String> categories) {
-        boolean isValid;
-        isValid = categories != null;
-        if (isValid) {
-            isValid = categories.size() > 0;
-        }
-        return isValid;
+        return categories != null;
     }
 
     public static boolean hasProvidedLocale(List<Locale> locales, String defaultLocaleCode) {

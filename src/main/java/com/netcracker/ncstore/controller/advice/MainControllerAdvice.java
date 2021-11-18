@@ -1,21 +1,11 @@
 package com.netcracker.ncstore.controller.advice;
 
-import com.netcracker.ncstore.exception.ProductServiceCreationException;
-import com.netcracker.ncstore.exception.RequestParametersInvalidException;
-import com.netcracker.ncstore.exception.AuthServiceException;
-import com.netcracker.ncstore.exception.UserServiceCompanyInfoException;
-import com.netcracker.ncstore.exception.UserServiceNotFoundException;
-import com.netcracker.ncstore.security.provider.JwtAuthenticationProviderException;
+import com.netcracker.ncstore.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * This class is primary @ControllerAdvice.

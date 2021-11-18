@@ -1,26 +1,40 @@
 package com.netcracker.ncstore.service.user;
 
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
+import com.netcracker.ncstore.dto.data.CompanyDTO;
+import com.netcracker.ncstore.dto.data.PersonDTO;
 import com.netcracker.ncstore.dto.data.UserDTO;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
+import com.netcracker.ncstore.dto.response.CompanyDetailedInfoResponse;
+import com.netcracker.ncstore.dto.response.CompanyInfoResponse;
+import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
+import com.netcracker.ncstore.dto.response.PersonInfoResponse;
+import com.netcracker.ncstore.exception.UserServiceCompanyInfoException;
 import com.netcracker.ncstore.exception.UserServiceCreationException;
+import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServiceRepositoryException;
 import com.netcracker.ncstore.exception.UserServiceValidationException;
 import com.netcracker.ncstore.model.Company;
 import com.netcracker.ncstore.model.Person;
+import com.netcracker.ncstore.model.Role;
 import com.netcracker.ncstore.model.User;
+import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.model.enumerations.EUserType;
 import com.netcracker.ncstore.repository.CompanyRepository;
 import com.netcracker.ncstore.repository.PersonRepository;
 import com.netcracker.ncstore.repository.UserRepository;
 import com.netcracker.ncstore.service.role.IRoleService;
+import com.netcracker.ncstore.util.converter.RolesConverter;
 import com.netcracker.ncstore.util.validator.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
@@ -137,5 +151,113 @@ public class UserService implements IUserService {
     @Override
     public User loadUserEntityByPrincipal(Principal principal) {
         return userRepository.findByEmail(principal.getName());
+    }
+
+    @Override
+    public CompanyDTO getCompanyData(UUID userId) {
+        Company company = companyRepository.findById(userId).orElse(null);
+
+        if (company == null) {
+            return null;
+        } else {
+            return new CompanyDTO(company);
+        }
+    }
+
+    @Override
+    public PersonDTO getPersonData(UUID userId) {
+        Person person = personRepository.findById(userId).orElse(null);
+
+        if (person == null) {
+            return null;
+        } else {
+            return new PersonDTO(person);
+        }
+    }
+
+    @Override
+    public CompanyDetailedInfoResponse getDetailedCompanyInfo(Principal principal) {
+        User user = loadUserEntityByPrincipal(principal);
+
+        CompanyDTO companyData = getCompanyData(user.getId());
+        if (companyData == null) {
+            throw new UserServiceNotFoundException("User requested information about company while not being a company.");
+        }
+
+        return new CompanyDetailedInfoResponse(
+                user.getEmail(),
+                user.getBalance(),
+                EUserType.COMPANY,
+                companyData.getCompanyName(),
+                companyData.getDescription(),
+                companyData.getFoundationDate(),
+                RolesConverter.rolesListToRoleNamesList(user.getRoles()));
+    }
+
+    @Override
+    public CompanyInfoResponse getBasisCompanyInfo(UUID userId) {
+        CompanyDTO companyDTO = getCompanyData(userId);
+        User user = userRepository.findById(userId).orElse(null);
+        if (companyDTO == null || user == null) {
+            throw new UserServiceNotFoundException("No Company info found for provided user UUID " + userId);
+        }
+
+        return new CompanyInfoResponse(EUserType.COMPANY,
+                companyDTO.getCompanyName(),
+                companyDTO.getDescription(),
+                companyDTO.getFoundationDate(),
+                RolesConverter.rolesListToRoleNamesList(user.getRoles()));
+    }
+
+    @Override
+    public PersonDetailedInfoResponse getDetailedPersonInfo(Principal principal) {
+        User user = loadUserEntityByPrincipal(principal);
+
+        PersonDTO personData = getPersonData(user.getId());
+        if (personData == null) {
+            throw new UserServiceNotFoundException("User requested information about person while not being a person.");
+        }
+
+        return new PersonDetailedInfoResponse(
+                user.getEmail(),
+                user.getBalance(),
+                EUserType.PERSON,
+                personData.getNickName(),
+                personData.getFirstName(),
+                personData.getLastName(),
+                personData.getBirthday(),
+                RolesConverter.rolesListToRoleNamesList(user.getRoles()));
+    }
+
+    @Override
+    public PersonInfoResponse getBasisPersonInfo(UUID userId) {
+        PersonDTO personData = getPersonData(userId);
+        User user = userRepository.findById(userId).orElse(null);
+        if (personData == null || user == null) {
+            throw new UserServiceNotFoundException("No Person info found for provided user UUID " + userId);
+        }
+
+        String firstName, lastName;
+        LocalDate birthday;
+
+        //Made for security reason because giving personal data of regular user is illegal
+        boolean isSupplier = user.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
+        if (isSupplier) {
+            firstName = personData.getFirstName();
+            lastName = personData.getLastName();
+            birthday = personData.getBirthday();
+        } else {
+            firstName = "";
+            lastName = "";
+            birthday = LocalDate.MIN;
+        }
+
+        return new PersonInfoResponse(
+                EUserType.PERSON,
+                personData.getNickName(),
+                firstName,
+                lastName,
+                birthday,
+                RolesConverter.rolesListToRoleNamesList(user.getRoles()));
     }
 }

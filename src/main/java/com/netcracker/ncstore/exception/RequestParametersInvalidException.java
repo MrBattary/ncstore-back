@@ -5,8 +5,14 @@ package com.netcracker.ncstore.exception;
  * and server can not process the request.
  */
 public class RequestParametersInvalidException extends RuntimeException {
-    @Override
-    public String getMessage() {
-        return "Request parameters are invalid. Check API for making a correct request.";
+    public RequestParametersInvalidException() {
+    }
+
+    public RequestParametersInvalidException(String message) {
+        super(message);
+    }
+
+    public RequestParametersInvalidException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

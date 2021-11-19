@@ -24,6 +24,7 @@ import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
+import com.netcracker.ncstore.util.enumeration.ESortOrder;
 import com.netcracker.ncstore.util.validator.PriceValidator;
 import com.netcracker.ncstore.util.validator.ProductValidator;
 import org.slf4j.Logger;
@@ -75,32 +76,32 @@ public class ProductsService implements IProductsService {
         Pageable productsPageRequest;
         Page<ProductWithPriceInfo> productsPage;
 
-        Sort.Direction direction = productsGetRequest.getSortOrderString().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort.Direction direction = productsGetRequest.getSortOrder().equals(ESortOrder.ASC) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
 
-        switch (productsGetRequest.getSortString()) {
+        switch (productsGetRequest.getSort()) {
             default:
-            case "default":
-            case "popular"://TODO separate and make when rating will be
-            case "rating"://TODO separate and make when rating will be
+            case DEFAULT:
+            case POPULAR://TODO separate and make when rating will be
+            case RATING://TODO separate and make when rating will be
                 productsPageRequest = PageRequest.of(
                         productsGetRequest.getPage(),
                         productsGetRequest.getSize(),
                         JpaSort.unsafe(direction, "name"));
                 break;
-            case "price":
+            case PRICE:
                 productsPageRequest = PageRequest.of(
                         productsGetRequest.getPage(),
                         productsGetRequest.getSize(),
                         JpaSort.unsafe(direction, "pp.price - coalesce(d.discountPrice,0)"));
                 break;
-            case "date":
+            case DATE:
                 productsPageRequest = PageRequest.of(
                         productsGetRequest.getPage(),
                         productsGetRequest.getSize(),
                         JpaSort.unsafe(direction, "creationUtcTime"));
                 break;
-            case "discount":
+            case DISCOUNT:
                 productsPageRequest = PageRequest.of(
                         productsGetRequest.getPage(),
                         productsGetRequest.getSize(),

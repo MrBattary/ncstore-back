@@ -20,6 +20,8 @@ import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.product.IProductsService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.converter.ProductRequestConverter;
+import com.netcracker.ncstore.util.enumeration.ESortOrder;
+import com.netcracker.ncstore.util.enumeration.ESortRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -84,10 +86,13 @@ public class ProductController {
 
         log.info("REQUEST: to get products by search text:" + searchText + " on: " + page + " page, with " + size + " size");
 
+        ESortRule sortEnum = ProductRequestConverter.convertSortRuleStringToEnum(sort);
+        ESortOrder sortOrderEnum = ProductRequestConverter.convertSortOrderStringToEnum(sortOrder);
+
         List<UUID> categories = ProductRequestConverter.convertCategoriesStringToList(categoryIds);
 
         ProductsGetRequest productsGetRequest =
-                new ProductsGetRequest(categories, searchText, page, size, locale, sort, sortOrder, supplierId);
+                new ProductsGetRequest(categories, searchText, page, size, locale, sortEnum, sortOrderEnum, supplierId);
 
         ProductsGetResponse response = productsService.getPageOfProductsUsingFilterAndSortParameters(productsGetRequest);
 

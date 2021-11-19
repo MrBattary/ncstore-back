@@ -31,7 +31,7 @@ public class DiscountService implements IDiscountsService {
 
     @Override
     public DiscountDTO createNewDiscountForPrice(DiscountCreateDTO discountCreateDTO) throws DiscountServiceValidationException{
-        if (!PriceValidator.validatePricesValue(discountCreateDTO.getDiscountPrice())) {
+        if (!PriceValidator.isPriceValid(discountCreateDTO.getDiscountPrice())) {
             throw new DiscountServiceValidationException("Provided price is not valid");
         }
 

@@ -57,14 +57,7 @@ public class PricesService implements IPricesService {
                     Locale.forLanguageTag(defaultLocaleCode));
         }
 
-        Double discountPrice = null;
-        if (productPrice.getDiscount() != null) {
-            Discount discount = productPrice.getDiscount();
-            if ((discount.getStartUtcTime().compareTo(Instant.now()) <= 0) &&
-                    (discount.getEndUtcTime().compareTo(Instant.now()) >= 0)) {
-                discountPrice = discount.getDiscountPrice();
-            }
-        }
+        Double discountPrice = PriceValidator.getActualDiscountPrice(productPrice.getDiscount());
 
         return new ActualProductPriceWithCurrencySymbolDTO(
                 productLocale.getProductId(),
@@ -78,7 +71,7 @@ public class PricesService implements IPricesService {
 
     @Override
     public ProductPriceDTO createProductPrice(ProductPriceCreateDTO productPriceCreateDTO) {
-        if (!PriceValidator.validatePricesValue(productPriceCreateDTO.getPrice())) {
+        if (!PriceValidator.isPriceValid(productPriceCreateDTO.getPrice())) {
             throw new PricesServiceValidationException("Provided price is not valid");
         }
         if (!LocaleValidator.isLocaleValid(productPriceCreateDTO.getRegion())) {

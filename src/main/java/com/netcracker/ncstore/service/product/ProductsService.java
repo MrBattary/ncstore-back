@@ -154,7 +154,7 @@ public class ProductsService implements IProductsService {
                     productInfo.getId(),
                     productInfo.getName(),
                     firstPrice.getPrice(),
-                    firstPrice.getDiscount() == null ? null : firstPrice.getDiscount().getDiscountPrice(),
+                    PriceValidator.getActualDiscountPrice(firstPrice.getDiscount()),
                     LocaleToCurrencyConverter.getCurrencySymbolByLocale(firstPrice.getLocale())
             );
 
@@ -265,7 +265,7 @@ public class ProductsService implements IProductsService {
         }
 
         if (productCreateDTO.getDiscountPrices() != null) {
-            if (!PriceValidator.validateDiscounts(productCreateDTO.getPrices(), productCreateDTO.getDiscountPrices())) {
+            if (!PriceValidator.isDiscountsValid(productCreateDTO.getPrices(), productCreateDTO.getDiscountPrices())) {
                 throw new ProductServiceCreationValidationException("Discount prices are invalid. Each discount price must have normal price in same region.");
             }
         }

@@ -2,6 +2,7 @@ package com.netcracker.ncstore.util.validator;
 
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.model.Discount;
 
 import java.time.Instant;
@@ -29,14 +30,32 @@ public abstract class PriceValidator {
     }
 
     public static Double getActualDiscountPrice(Discount discount){
-        if(discount==null){
+        if(discount==null) {
             return null;
-        }else if(discount.getStartUtcTime().compareTo(Instant.now()) > 0){
+        }
+        return getActualDiscountPrice(discount.getStartUtcTime(), discount.getEndUtcTime(), discount.getDiscountPrice());
+    }
+    public static Double getActualDiscountPrice(DiscountCreateDTO discountCreateDTO){
+        if(discountCreateDTO==null) {
             return null;
-        }else if(discount.getEndUtcTime().compareTo(Instant.now()) < 0){
+        }
+        return getActualDiscountPrice(discountCreateDTO.getStartUtcTime(), discountCreateDTO.getEndUtcTime(), discountCreateDTO.getDiscountPrice());
+    }
+
+    public static Double getActualDiscountPrice(Instant startUtcTime, Instant endUtcTime, double price){
+        if(startUtcTime.compareTo(Instant.now()) > 0){
+            return null;
+        }else if(endUtcTime.compareTo(Instant.now()) < 0){
             return null;
         }else {
-            return discount.getDiscountPrice();
+            return price;
         }
+    }
+
+    public static boolean isPriceDuplicates(List<PriceRegionDTO> prices){
+        Predicate<PriceRegionDTO> checkPriceDuplicate =
+                priceRegionDTO -> prices.stream().filter(e->e.getRegion().equals(priceRegionDTO.getRegion())).count() > 1;
+
+        return prices.stream().noneMatch(checkPriceDuplicate);
     }
 }

@@ -250,7 +250,6 @@ public class ProductsService implements IProductsService {
             }
         }
 
-
         if (productCreateDTO.getPrices() == null) {
             throw new ProductServiceCreationValidationException("No prices was provided. Could not create product.");
         }
@@ -262,6 +261,10 @@ public class ProductsService implements IProductsService {
 
         if (!hasDefaultLocale) {
             throw new ProductServiceCreationValidationException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
+        }
+
+        if(!PriceValidator.isPriceDuplicates(productCreateDTO.getPrices())){
+            throw new ProductServiceCreationValidationException("Price duplicates (with same locale) found.");
         }
 
         if (productCreateDTO.getDiscountPrices() != null) {

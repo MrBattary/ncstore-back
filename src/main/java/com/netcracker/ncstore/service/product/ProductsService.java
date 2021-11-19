@@ -37,6 +37,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
 import java.util.*;
@@ -109,8 +110,23 @@ public class ProductsService implements IProductsService {
                 break;
         }
 
-        if (productsGetRequest.getSupplierId() != null) {
-            if (productsGetRequest.getCategoriesIds().size() != 0) {
+        if(CollectionUtils.isEmpty(productsGetRequest.getCategoriesIds())){
+            if(productsGetRequest.getSupplierId()!=null){
+                productsPage = productRepository.findProductByUserIdAndByLikeNameAndLocale(
+                        productsGetRequest.getSupplierId(),
+                        productsGetRequest.getSearchText(),
+                        productsGetRequest.getLocale(),
+                        Locale.forLanguageTag(defaultLocaleCode),
+                        productsPageRequest);
+            }else {
+                productsPage = productRepository.findProductByLikeNameAndLocale(
+                        productsGetRequest.getSearchText(),
+                        productsGetRequest.getLocale(),
+                        Locale.forLanguageTag(defaultLocaleCode),
+                        productsPageRequest);
+            }
+        }else{
+            if(productsGetRequest.getSupplierId()!=null){
                 productsPage = productRepository.findProductsUserIdAndByLikeNameAndCategoriesAndLocale(
                         productsGetRequest.getSupplierId(),
                         productsGetRequest.getSearchText(),
@@ -118,29 +134,12 @@ public class ProductsService implements IProductsService {
                         Locale.forLanguageTag(defaultLocaleCode),
                         productsGetRequest.getCategoriesIds(),
                         productsPageRequest);
-            } else {
-                productsPage = productRepository.findProductByUserIdAndByLikeNameAndLocale(
-                        productsGetRequest.getSupplierId(),
-                        productsGetRequest.getSearchText(),
-                        productsGetRequest.getLocale(),
-                        Locale.forLanguageTag(defaultLocaleCode),
-                        productsPageRequest);
-            }
-
-        } else {
-
-            if (productsGetRequest.getCategoriesIds().size() != 0) {
+            }else{
                 productsPage = productRepository.findProductsByLikeNameAndCategoriesAndLocale(
                         productsGetRequest.getSearchText(),
                         productsGetRequest.getLocale(),
                         Locale.forLanguageTag(defaultLocaleCode),
                         productsGetRequest.getCategoriesIds(),
-                        productsPageRequest);
-            } else {
-                productsPage = productRepository.findProductByLikeNameAndLocale(
-                        productsGetRequest.getSearchText(),
-                        productsGetRequest.getLocale(),
-                        Locale.forLanguageTag(defaultLocaleCode),
                         productsPageRequest);
             }
         }

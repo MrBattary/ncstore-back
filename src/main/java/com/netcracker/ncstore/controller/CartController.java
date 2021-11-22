@@ -44,12 +44,13 @@ public class CartController {
         Map<UUID, Integer> cartItems = cartService.getCartItems();
 
 
-        List<AddOrUpdateProductInCartResponse> responses =
-                cartItems.entrySet().
-                        stream().
-                        map(e -> createResponseDTO(e.getKey(), e.getValue(), locale)).
-                        sorted(Comparator.comparing(AddOrUpdateProductInCartResponse::getProductName)).
-                        collect(Collectors.toList());
+        List<AddOrUpdateProductInCartResponse> responses = new ArrayList<>();
+
+        responses = cartItems.entrySet().
+                stream().
+                map(e -> createResponseDTO(e.getKey(), e.getValue(), locale)).
+                sorted(Comparator.comparing(AddOrUpdateProductInCartResponse::getProductName)).
+                collect(Collectors.toList());
 
         return ResponseEntity.ok().body(responses);
     }

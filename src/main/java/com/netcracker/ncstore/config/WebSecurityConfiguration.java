@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -45,8 +46,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.formLogin().disable();
-        http.logout().disable();
-        http.sessionManagement().disable();
+        http.logout().logoutUrl("/signout").invalidateHttpSession(true).deleteCookies("JSESSIONID"); //logoutSuccessHandler() and implement LogoutSuccessHandler
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.requestCache().disable();
         http.anonymous();
 
@@ -72,7 +73,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
          * .authorizeRequests().antMatchers("/request/**").permitAll()
          */
 
-        http
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/signup/**", "/signin").permitAll()
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/products").permitAll()

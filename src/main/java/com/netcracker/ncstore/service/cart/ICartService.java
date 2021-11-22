@@ -21,10 +21,10 @@ public interface ICartService {
      * Adds or updates product with specified UUID to cart with provided count
      *
      * @param productId - UUID of product
-     * @param count - count or how many products of that type we would like to place in cart
+     * @param count     - count or how many products of that type we would like to place in cart
      * @throws CartServiceValidationException - when provided parameters are invalid
      */
-    void addOrUpdateProduct(UUID productId, int count) throws CartServiceValidationException;
+    void addOrUpdateProduct(UUID productId, Integer count) throws CartServiceValidationException;
 
     /**
      * Deletes product with provided UUID from cart

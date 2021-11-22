@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Service
 @SessionScope
-public class CartService implements ICartService{
+public class CartService implements ICartService {
     private final IProductsService productsService;
 
     private final Map<UUID, Integer> cart;
@@ -28,11 +28,11 @@ public class CartService implements ICartService{
     }
 
     @Override
-    public void addOrUpdateProduct(UUID productId, int count) {
-        if(count<1){
+    public void addOrUpdateProduct(UUID productId, Integer count) {
+        if (count < 1) {
             throw new CartServiceValidationException("Product count must be non-zero positive integer.");
         }
-        if(!productsService.doesProductExist(productId)){
+        if (!productsService.doesProductExist(productId)) {
             throw new CartServiceValidationException("Product with provided UUID does not exist.");
         }
 
@@ -41,6 +41,6 @@ public class CartService implements ICartService{
 
     @Override
     public boolean deleteProduct(UUID productId) {
-        return cart.remove(productId)!=null;
+        return cart.remove(productId) != null;
     }
 }

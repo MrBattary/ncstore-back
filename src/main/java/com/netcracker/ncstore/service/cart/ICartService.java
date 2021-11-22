@@ -1,7 +1,6 @@
 package com.netcracker.ncstore.service.cart;
 
 import com.netcracker.ncstore.exception.CartServiceValidationException;
-import org.springframework.data.util.Pair;
 
 import java.util.Map;
 import java.util.UUID;

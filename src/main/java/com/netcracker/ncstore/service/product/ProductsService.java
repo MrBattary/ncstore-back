@@ -230,6 +230,11 @@ public class ProductsService implements IProductsService {
         }
     }
 
+    @Override
+    public boolean doesProductExist(UUID id) {
+        return productRepository.existsById(id);
+    }
+
     private void validateProductData(final ProductCreateDTO productCreateDTO) {
         User creator = userService.loadUserEntityByPrincipal(productCreateDTO.getPrincipal());
 

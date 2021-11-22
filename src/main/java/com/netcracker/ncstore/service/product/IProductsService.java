@@ -6,6 +6,8 @@ import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
 
+import java.util.UUID;
+
 /**
  * Interface.
  * Useless, but we need it because interfaces are needed in SOLID.
@@ -29,4 +31,12 @@ public interface IProductsService {
      * @throws ProductServiceCreationException - when product could not be created
      */
     ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws ProductServiceCreationException;
+
+    /**
+     * Checks if product with provided UUID exists.
+     *
+     * @param id - UUID of product
+     * @return true if products exists
+     */
+    boolean doesProductExist(UUID id);
 }

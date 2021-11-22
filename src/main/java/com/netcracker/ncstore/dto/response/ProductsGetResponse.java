@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
 import java.util.List;
+import java.util.UUID;
 
 @Jacksonized
 @Builder
@@ -15,5 +16,11 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class ProductsGetResponse {
-    private final List<ActualProductPriceWithCurrencySymbolDTO> productsWithPrices;
+    private final UUID productId;
+    private final String productName;
+    private final UUID supplierId;
+    private final String supplierName;
+    private final double normalPrice;
+    private final Double discountPrice;
+    private final String priceCurrency;
 }

@@ -5,6 +5,7 @@ import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
+import com.netcracker.ncstore.dto.data.CompanyDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
@@ -73,7 +74,7 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public ProductsGetResponse getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
+    public List<ProductsGetResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
         Pageable productsPageRequest;
         Page<ProductWithPriceInfo> productsPage;
 
@@ -144,24 +145,25 @@ public class ProductsService implements IProductsService {
             }
         }
 
-        List<ActualProductPriceWithCurrencySymbolDTO> productPriceInRegionDTOS =
-                new ArrayList<>();
+
+        List<ProductsGetResponse> responsesList = new ArrayList<>();
 
         for (ProductWithPriceInfo productInfo : productsPage.getContent()) {
             ProductWithPriceInfo.ProductPriceInfo firstPrice = productInfo.getProductPrices().get(0);
 
-            ActualProductPriceWithCurrencySymbolDTO priceInRegion = new ActualProductPriceWithCurrencySymbolDTO(
+            ProductsGetResponse response = new ProductsGetResponse(
                     productInfo.getId(),
                     productInfo.getName(),
+                    productInfo.getUserId(),
+                    userService.getCompanyData(productInfo.getUserId()).getCompanyName(),
                     firstPrice.getPrice(),
                     PriceValidator.getActualDiscountPrice(firstPrice.getDiscount()),
-                    LocaleToCurrencyConverter.getCurrencySymbolByLocale(firstPrice.getLocale())
-            );
+                    LocaleToCurrencyConverter.getCurrencySymbolByLocale(firstPrice.getLocale()));
 
-            productPriceInRegionDTOS.add(priceInRegion);
+            responsesList.add(response);
         }
 
-        return new ProductsGetResponse(productPriceInRegionDTOS);
+        return responsesList;
     }
 
     @Override

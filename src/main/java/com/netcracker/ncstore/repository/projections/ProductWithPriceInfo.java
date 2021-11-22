@@ -9,6 +9,8 @@ import java.util.UUID;
 public interface ProductWithPriceInfo {
     UUID getId();
 
+    UUID getUserId();
+
     String getName();
 
     List<ProductPriceInfo> getProductPrices();

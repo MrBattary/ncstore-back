@@ -28,7 +28,7 @@ public class PersonController {
     public ResponseEntity<PersonDetailedInfoResponse> getPersonInfo(Principal principal) {
         log.info("REQUEST: to get Person detailed info for user " + principal.getName());
 
-        PersonDetailedInfoResponse response = userService.getDetailedPersonInfo(principal);
+        PersonDetailedInfoResponse response = userService.getDetailedPersonInfo(principal.getName());
 
         log.info("RESPONSE: to get Person detailed info for user " + principal.getName());
 

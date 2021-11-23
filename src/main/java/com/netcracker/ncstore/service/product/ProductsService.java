@@ -167,7 +167,7 @@ public class ProductsService implements IProductsService {
     @Override
     @Transactional
     public ProductDTO createNewProductInStore(final ProductCreateDTO productData) throws ProductServiceCreationException {
-        User creator = userService.loadUserEntityByPrincipal(productData.getPrincipal());
+        User creator = userService.loadUserEntityByEmail(productData.getPrincipal().getName());
         log.info("Creation of new product for user with UUID " + creator.getId() + " begins");
 
         try {
@@ -236,7 +236,7 @@ public class ProductsService implements IProductsService {
     }
 
     private void validateProductData(final ProductCreateDTO productCreateDTO) {
-        User creator = userService.loadUserEntityByPrincipal(productCreateDTO.getPrincipal());
+        User creator = userService.loadUserEntityByEmail(productCreateDTO.getPrincipal().getName());
 
         boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
         if (!isSupplier) {

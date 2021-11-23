@@ -60,9 +60,10 @@ public interface IUserService {
     /**
      * Returns UserDTO instance behind provided Principal
      *
-     * @param principal - Principal
+     * @param email - email of user
+     * @return UserDTO - DTO containing all info about user entity
      */
-    UserDTO loadUserByPrincipal(Principal principal);
+    UserDTO loadUserByEmail(String email);
 
     /**
      * Returns User entity behind provided Principal.
@@ -71,7 +72,7 @@ public interface IUserService {
      * @param principal - Principal
      * @return User - real User entity
      */
-    User loadUserEntityByPrincipal(Principal principal);
+    User loadUserEntityByEmail(String email);
 
     /**
      * Returns Company entity data based on provided UserId
@@ -98,7 +99,7 @@ public interface IUserService {
      * @param principal principal of user willing to get info about one's company
      * @return CompanyDetailedInfoResponse
      */
-    CompanyDetailedInfoResponse getDetailedCompanyInfo(Principal principal);
+    CompanyDetailedInfoResponse getDetailedCompanyInfo(String email);
 
     /**
      * Returns information about Company of user with provided ID
@@ -114,7 +115,7 @@ public interface IUserService {
      * @param principal principal of user willing to get personal info
      * @return PersonDetailedInfoResponse
      */
-    PersonDetailedInfoResponse getDetailedPersonInfo(Principal principal);
+    PersonDetailedInfoResponse getDetailedPersonInfo(String email);
 
     /**
      * Returns information about Person of user with provided ID

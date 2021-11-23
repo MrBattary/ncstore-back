@@ -102,7 +102,7 @@ public class ProductController {
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> createProduct(@RequestBody CreateProductRequest request, Principal principal) {
-        log.info("REQUEST: to create product with name " + request.getProductName() + " for user with UUID: " + userService.loadUserByPrincipal(principal).getId());
+        log.info("REQUEST: to create product with name " + request.getProductName() + " for user with UUID: " + userService.loadUserByEmail(principal.getName()).getId());
 
         ProductCreateDTO productData = new ProductCreateDTO(
                 request.getProductName(),
@@ -150,7 +150,7 @@ public class ProductController {
                 categoryNames
         );
 
-        log.info("RESPONSE: to create product with name " + request.getProductName() + " for user with UUID: " + userService.loadUserByPrincipal(principal).getId());
+        log.info("RESPONSE: to create product with name " + request.getProductName() + " for user with UUID: " + userService.loadUserByEmail(principal.getName()).getId());
         return ResponseEntity.
                 ok().
                 contentType(MediaType.APPLICATION_JSON).

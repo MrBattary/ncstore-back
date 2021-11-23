@@ -142,14 +142,15 @@ public class UserService implements IUserService {
         throw new UserServiceRepositoryException("Unable to find a user with email: " + email);
     }
 
+
     @Override
-    public UserDTO loadUserByPrincipal(Principal principal) {
-        return new UserDTO(loadUserEntityByPrincipal(principal));
+    public UserDTO loadUserByEmail(String email) {
+        return new UserDTO(loadUserEntityByEmail(email));
     }
 
     @Override
-    public User loadUserEntityByPrincipal(Principal principal) {
-        return userRepository.findByEmail(principal.getName());
+    public User loadUserEntityByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
@@ -175,8 +176,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public CompanyDetailedInfoResponse getDetailedCompanyInfo(Principal principal) {
-        User user = loadUserEntityByPrincipal(principal);
+    public CompanyDetailedInfoResponse getDetailedCompanyInfo(String email) {
+        User user = loadUserEntityByEmail(email);
 
         CompanyDTO companyData = getCompanyData(user.getId());
         if (companyData == null) {
@@ -209,8 +210,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public PersonDetailedInfoResponse getDetailedPersonInfo(Principal principal) {
-        User user = loadUserEntityByPrincipal(principal);
+    public PersonDetailedInfoResponse getDetailedPersonInfo(String email) {
+        User user = loadUserEntityByEmail(email);
 
         PersonDTO personData = getPersonData(user.getId());
         if (personData == null) {

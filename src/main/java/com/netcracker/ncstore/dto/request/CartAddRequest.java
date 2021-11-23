@@ -18,7 +18,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class CartAddOrUpdateRequest {
+public class CartAddRequest {
     private final UUID productId;
     private final Integer productCount;
 }

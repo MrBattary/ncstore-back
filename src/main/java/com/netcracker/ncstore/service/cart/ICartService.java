@@ -1,6 +1,5 @@
 package com.netcracker.ncstore.service.cart;
 
-import com.netcracker.ncstore.dto.response.CartAddOrUpdateResponse;
 import com.netcracker.ncstore.exception.CartServiceValidationException;
 
 import java.util.Map;

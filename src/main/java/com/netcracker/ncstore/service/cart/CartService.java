@@ -1,6 +1,5 @@
 package com.netcracker.ncstore.service.cart;
 
-import com.netcracker.ncstore.dto.response.CartAddOrUpdateResponse;
 import com.netcracker.ncstore.exception.CartServiceValidationException;
 import com.netcracker.ncstore.model.Cart;
 import com.netcracker.ncstore.model.CartItem;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.SessionScope;
 
-import javax.annotation.PreDestroy;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;

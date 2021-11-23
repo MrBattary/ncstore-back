@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.service.cart;
 
+import com.netcracker.ncstore.dto.response.CartAddOrUpdateResponse;
 import com.netcracker.ncstore.exception.CartServiceValidationException;
 import com.netcracker.ncstore.model.Cart;
 import com.netcracker.ncstore.model.CartItem;
@@ -88,13 +89,6 @@ public class CartService implements ICartService {
         }
     }
 
-    @Transactional
-    @PreDestroy
-    public void preDestroy() {
-
-    }
-
-
     @Override
     public Map<UUID, Integer> getCartItems() {
         return new HashMap<>(cartMap);
@@ -113,7 +107,8 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public boolean deleteProduct(UUID productId) {
-        return cartMap.remove(productId) != null;
+    public Integer deleteProduct(UUID productId) {
+        Integer count = cartMap.remove(productId);
+        return count == null ? 0 : count;
     }
 }

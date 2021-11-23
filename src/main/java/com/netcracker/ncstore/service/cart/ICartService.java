@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.service.cart;
 
+import com.netcracker.ncstore.dto.response.CartAddOrUpdateResponse;
 import com.netcracker.ncstore.exception.CartServiceValidationException;
 
 import java.util.Map;
@@ -29,7 +30,7 @@ public interface ICartService {
      * Deletes product with provided UUID from cart
      *
      * @param productId - UUID of product
-     * @return true if product was deleted or false when was not (does not exist in cart structure)
+     * @return Integer representing the count of deleted product. 0 if product was not in cart
      */
-    boolean deleteProduct(UUID productId);
+    Integer deleteProduct(UUID productId);
 }

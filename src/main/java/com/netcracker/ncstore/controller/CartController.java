@@ -2,8 +2,8 @@ package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
-import com.netcracker.ncstore.dto.request.AddOrUpdateProductInCartRequest;
-import com.netcracker.ncstore.dto.response.AddOrUpdateProductInCartResponse;
+import com.netcracker.ncstore.dto.request.CartAddOrUpdateRequest;
+import com.netcracker.ncstore.dto.response.CartAddOrUpdateResponse;
 import com.netcracker.ncstore.service.cart.ICartService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import lombok.extern.slf4j.Slf4j;
@@ -39,28 +39,28 @@ public class CartController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AddOrUpdateProductInCartResponse>> getShoppingCartProducts(final Locale locale) {
+    public ResponseEntity<List<CartAddOrUpdateResponse>> getShoppingCartProducts(final Locale locale) {
         Map<UUID, Integer> cartItems = cartService.getCartItems();
 
 
-        List<AddOrUpdateProductInCartResponse> responses = new ArrayList<>();
+        List<CartAddOrUpdateResponse> responses = new ArrayList<>();
 
         responses = cartItems.entrySet().
                 stream().
                 map(e -> createResponseDTO(e.getKey(), e.getValue(), locale)).
-                sorted(Comparator.comparing(AddOrUpdateProductInCartResponse::getProductName)).
+                sorted(Comparator.comparing(CartAddOrUpdateResponse::getProductName)).
                 collect(Collectors.toList());
 
         return ResponseEntity.ok().body(responses);
     }
 
     @PutMapping
-    public ResponseEntity<AddOrUpdateProductInCartResponse> addProductToShoppingCart(@RequestBody AddOrUpdateProductInCartRequest request,
-                                                                                     final Locale locale) {
+    public ResponseEntity<CartAddOrUpdateResponse> addProductToShoppingCart(@RequestBody final CartAddOrUpdateRequest request,
+                                                                            final Locale locale) {
 
         cartService.addOrUpdateProduct(request.getProductId(), request.getProductCount());
 
-        AddOrUpdateProductInCartResponse response = createResponseDTO(
+        CartAddOrUpdateResponse response = createResponseDTO(
                 request.getProductId(),
                 request.getProductCount(),
                 locale);
@@ -75,19 +75,27 @@ public class CartController {
     }
 
     @DeleteMapping(value = "/{productId}")
-    public ResponseEntity<?> deleteProductFromCart(@PathVariable final UUID productId) {
-        cartService.deleteProduct(productId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteProductFromCart(@PathVariable final UUID productId,
+                                                   final Locale locale) {
+        Integer count = cartService.deleteProduct(productId);
+        if (count == 0) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.
+                    ok().
+                    body(createResponseDTO(productId, count, locale));
+        }
+
     }
 
     /**
      * Private function used to prevent code duplication and to get response DTO
      */
-    private AddOrUpdateProductInCartResponse createResponseDTO(UUID productId, Integer productCount, Locale locale) {
+    private CartAddOrUpdateResponse createResponseDTO(UUID productId, Integer productCount, Locale locale) {
         ActualProductPriceWithCurrencySymbolDTO priceForProduct =
                 pricesService.getActualPriceForProductInRegion(new ProductLocaleDTO(productId, locale));
 
-        return new AddOrUpdateProductInCartResponse(
+        return new CartAddOrUpdateResponse(
                 productId,
                 productCount,
                 priceForProduct.getProductName(),

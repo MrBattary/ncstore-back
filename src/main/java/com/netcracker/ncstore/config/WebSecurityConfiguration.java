@@ -46,7 +46,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.formLogin().disable();
-        http.logout().logoutUrl("/signout").invalidateHttpSession(true).deleteCookies("JSESSIONID"); //logoutSuccessHandler() and implement LogoutSuccessHandler
+        //logoutSuccessHandler() and implement LogoutSuccessHandler
+        http.logout().logoutUrl("/signout").invalidateHttpSession(true).deleteCookies("JSESSIONID");
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.requestCache().disable();
         http.anonymous();

@@ -21,7 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * @param pageable - pageable
      * @return page of products
      */
-    @Query("select p.id as id, p.name as name, pp as productPrices " +
+    @Query("select p.id as id, p.supplier.id as userId, p.name as name, pp as productPrices " +
             " from Product p " +
             " left join p.productPrices pp " +
             " left join pp.discount d" +
@@ -41,7 +41,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * @param pageable - pageable
      * @return page of products
      */
-    @Query("select p.id as id, p.name as name, pp as productPrices " +
+    @Query("select p.id as id, p.supplier.id as userId, p.name as name, pp as productPrices " +
             " from Product p " +
             " join p.categories categories" +
             " left join p.productPrices pp" +
@@ -66,7 +66,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * @param pageable - pageable
      * @return page of products
      */
-    @Query("select p.id as id, p.name as name, pp as productPrices " +
+    @Query("select p.id as id, p.supplier.id as userId, p.name as name, pp as productPrices " +
             " from Product p " +
             " left join p.productPrices pp " +
             " left join pp.discount d" +
@@ -90,7 +90,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * @param pageable - pageable
      * @return page of products
      */
-    @Query("select p.id as id, p.name as name, pp as productPrices " +
+    @Query("select p.id as id, p.supplier.id as userId, p.name as name, pp as productPrices " +
             " from Product p " +
             " join p.categories categories" +
             " left join p.productPrices pp" +

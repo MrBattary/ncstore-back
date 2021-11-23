@@ -5,7 +5,6 @@ import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
-import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.DiscountRepository;
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -57,14 +55,7 @@ public class PricesService implements IPricesService {
                     Locale.forLanguageTag(defaultLocaleCode));
         }
 
-        Double discountPrice = null;
-        if (productPrice.getDiscount() != null) {
-            Discount discount = productPrice.getDiscount();
-            if ((discount.getStartUtcTime().compareTo(Instant.now()) <= 0) &&
-                    (discount.getEndUtcTime().compareTo(Instant.now()) >= 0)) {
-                discountPrice = discount.getDiscountPrice();
-            }
-        }
+        Double discountPrice = PriceValidator.getActualDiscountPrice(productPrice.getDiscount());
 
         return new ActualProductPriceWithCurrencySymbolDTO(
                 productLocale.getProductId(),
@@ -78,7 +69,7 @@ public class PricesService implements IPricesService {
 
     @Override
     public ProductPriceDTO createProductPrice(ProductPriceCreateDTO productPriceCreateDTO) {
-        if (!PriceValidator.validatePricesValue(productPriceCreateDTO.getPrice())) {
+        if (!PriceValidator.isPriceValid(productPriceCreateDTO.getPrice())) {
             throw new PricesServiceValidationException("Provided price is not valid");
         }
         if (!LocaleValidator.isLocaleValid(productPriceCreateDTO.getRegion())) {

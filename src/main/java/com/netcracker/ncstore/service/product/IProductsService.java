@@ -6,6 +6,8 @@ import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
 
+import java.util.List;
+
 /**
  * Interface.
  * Useless, but we need it because interfaces are needed in SOLID.
@@ -16,10 +18,10 @@ public interface IProductsService {
      * Returns list of DTOs containing information about
      * product(name, price, discount, currency) and paging data.
      *
-     * @param productsGetRequest dto containing needed information
+     * @param List<ProductsGetResponse> list containing DTOs which contains needed information
      * @return list of DTOs
      */
-    ProductsGetResponse getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest);
+    List<ProductsGetResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest);
 
     /**
      * Create new product in store with given data.

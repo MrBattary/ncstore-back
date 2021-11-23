@@ -1,5 +1,7 @@
 package com.netcracker.ncstore.dto.request;
 
+import com.netcracker.ncstore.util.enumeration.ESortOrder;
+import com.netcracker.ncstore.util.enumeration.ESortRule;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,7 +17,7 @@ public class ProductsGetRequest {
     private final int page;
     private final int size;
     private final Locale locale;
-    private final String sortString;
-    private final String sortOrderString;
+    private final ESortRule sort;
+    private final ESortOrder sortOrder;
     private final UUID supplierId;
 }

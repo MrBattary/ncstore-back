@@ -1,6 +1,5 @@
 package com.netcracker.ncstore.controller;
 
-import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
@@ -20,6 +19,8 @@ import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.product.IProductsService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.converter.ProductRequestConverter;
+import com.netcracker.ncstore.util.enumeration.ESortOrder;
+import com.netcracker.ncstore.util.enumeration.ESortRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -72,7 +73,7 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<List<ActualProductPriceWithCurrencySymbolDTO>> getProductsWithPagination(
+    public ResponseEntity<List<ProductsGetResponse>> getProductsWithPagination(
             @RequestParam(defaultValue = "", required = false) final String categoryIds,
             @RequestParam(defaultValue = "", required = false) final String searchText,
             @RequestParam(defaultValue = "default", required = false) final String sort,
@@ -84,18 +85,21 @@ public class ProductController {
 
         log.info("REQUEST: to get products by search text:" + searchText + " on: " + page + " page, with " + size + " size");
 
+        ESortRule sortEnum = ProductRequestConverter.convertSortRuleStringToEnum(sort);
+        ESortOrder sortOrderEnum = ProductRequestConverter.convertSortOrderStringToEnum(sortOrder);
+
         List<UUID> categories = ProductRequestConverter.convertCategoriesStringToList(categoryIds);
 
         ProductsGetRequest productsGetRequest =
-                new ProductsGetRequest(categories, searchText, page, size, locale, sort, sortOrder, supplierId);
+                new ProductsGetRequest(categories, searchText, page, size, locale, sortEnum, sortOrderEnum, supplierId);
 
-        ProductsGetResponse response = productsService.getPageOfProductsUsingFilterAndSortParameters(productsGetRequest);
+        List<ProductsGetResponse> response = productsService.getPageOfProductsUsingFilterAndSortParameters(productsGetRequest);
 
         log.info("RESPONSE: to get products by search text:" + searchText + " on: " + page + " page, with " + size + " size");
         return ResponseEntity.
                 ok().
                 contentType(MediaType.APPLICATION_JSON).
-                body(response.getProductsWithPrices());
+                body(response);
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/createProduct

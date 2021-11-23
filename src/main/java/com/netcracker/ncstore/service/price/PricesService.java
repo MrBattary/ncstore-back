@@ -86,7 +86,7 @@ public class PricesService implements IPricesService {
         }
 
         Product product = productRepository.findById(productPriceCreateDTO.getProductId()).orElse(null);
-        if(productPriceCreateDTO.getProductId()==null){
+        if (productPriceCreateDTO.getProductId() == null) {
             throw new PricesServiceValidationException("Provided product does not exist");
         }
 

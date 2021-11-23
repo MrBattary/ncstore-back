@@ -60,7 +60,7 @@ public class CartService implements ICartService {
 
     @Transactional
     @EventListener(SessionDestroyedEvent.class)
-    public void saveCart(){
+    public void saveCart() {
         if (userId != null && cartMap.size() != 0) {
             Cart savedCart;
 

@@ -15,7 +15,6 @@ import com.netcracker.ncstore.exception.UserServiceRepositoryException;
 import com.netcracker.ncstore.exception.UserServiceValidationException;
 import com.netcracker.ncstore.model.User;
 
-import java.security.Principal;
 import java.util.UUID;
 
 /**
@@ -87,7 +86,7 @@ public interface IUserService {
      * Returns Company entity data based on provided UserId
      * Returns null if there is no company info for that user
      *
-     * @param id the id of user whose company data is needed
+     * @param userId the id of user whose company data is needed
      * @return CompanyDTO or null if no data for that user
      */
     CompanyDTO getCompanyData(UUID userId);
@@ -96,7 +95,7 @@ public interface IUserService {
      * Returns Person entity data based on provided UserId
      * Returns null if there is no person info for that user
      *
-     * @param id the id of user whose company data is needed
+     * @param userId the id of user whose company data is needed
      * @return PersonDTO or null if no data for that user
      */
     PersonDTO getPersonData(UUID userId);
@@ -105,7 +104,7 @@ public interface IUserService {
      * Returns detailed information about Company of principal.
      * Returns information only if principal requests self's company info.
      *
-     * @param principal principal of user willing to get info about one's company
+     * @param email principal of user willing to get info about one's company
      * @return CompanyDetailedInfoResponse
      */
     CompanyDetailedInfoResponse getDetailedCompanyInfo(String email);
@@ -121,7 +120,7 @@ public interface IUserService {
      * Returns detailed information about Person of principal.
      * Returns information only if principal requests personal info.
      *
-     * @param principal principal of user willing to get personal info
+     * @param email principal of user willing to get personal info
      * @return PersonDetailedInfoResponse
      */
     PersonDetailedInfoResponse getDetailedPersonInfo(String email);

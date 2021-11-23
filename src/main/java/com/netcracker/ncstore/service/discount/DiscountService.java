@@ -25,23 +25,23 @@ public class DiscountService implements IDiscountsService {
     public DiscountService(DiscountRepository discountRepository, ProductPriceRepository productPriceRepository) {
         this.discountRepository = discountRepository;
         this.productPriceRepository = productPriceRepository;
-        this.log =  LoggerFactory.getLogger(DiscountService.class);
+        this.log = LoggerFactory.getLogger(DiscountService.class);
     }
 
 
     @Override
-    public DiscountDTO createNewDiscountForPrice(DiscountCreateDTO discountCreateDTO) throws DiscountServiceValidationException{
-        if (!PriceValidator.isPriceValid(discountCreateDTO.getDiscountPrice())) {
+    public DiscountDTO createNewDiscountForPrice(DiscountCreateDTO discountCreateDTO) throws DiscountServiceValidationException {
+        if (!PriceValidator.validatePricesValue(discountCreateDTO.getDiscountPrice())) {
             throw new DiscountServiceValidationException("Provided price is not valid");
         }
 
         ProductPrice productPrice = productPriceRepository.findById(discountCreateDTO.getProductPriceId()).orElse(null);
 
-        if(productPrice==null){
+        if (productPrice == null) {
             throw new DiscountServiceValidationException("Provided product price does not exist");
         }
-        if(productPrice.getDiscount()!=null){
-            if(productPrice.getDiscount().getEndUtcTime().compareTo(Instant.now())>=0){
+        if (productPrice.getDiscount() != null) {
+            if (productPrice.getDiscount().getEndUtcTime().compareTo(Instant.now()) >= 0) {
                 throw new DiscountServiceValidationException("Discount for this product already exists and is active.");
             }
         }
@@ -57,9 +57,9 @@ public class DiscountService implements IDiscountsService {
     }
 
     @Override
-    public DiscountDTO getDiscountForPrice(UUID productPriceId) throws DiscountServiceNotFoundException{
+    public DiscountDTO getDiscountForPrice(UUID productPriceId) throws DiscountServiceNotFoundException {
         Discount discount = discountRepository.findById(productPriceId).orElse(null);
-        if(discount==null){
+        if (discount == null) {
             throw new DiscountServiceNotFoundException();
         }
         return new DiscountDTO(discount);

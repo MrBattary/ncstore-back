@@ -28,7 +28,7 @@ public class CompanyController {
     public ResponseEntity<CompanyDetailedInfoResponse> getCompanyInfo(Principal principal) {
         log.info("REQUEST: to get Company detailed info for user " + principal.getName());
 
-        CompanyDetailedInfoResponse response = userService.getDetailedCompanyInfo(principal);
+        CompanyDetailedInfoResponse response = userService.getDetailedCompanyInfo(principal.getName());
 
         log.info("RESPONSE: to get Company detailed info for user " + principal.getName());
 
@@ -42,11 +42,11 @@ public class CompanyController {
 
     @GetMapping(value = "/info/{userId}")
     public ResponseEntity<CompanyInfoResponse> getConcreteCompanyInfo(@PathVariable final UUID userId) {
-        log.info("REQUEST: to get Company info of user with UUID " + userId);
+        log.info("REQUEST: to get Company info about user with UUID " + userId);
 
         CompanyInfoResponse response = userService.getBasisCompanyInfo(userId);
 
-        log.info("RESPONSE: to get Company info of user with UUID " + userId);
+        log.info("RESPONSE: to get Company info about user with UUID " + userId);
 
         return ResponseEntity.ok(response);
     }

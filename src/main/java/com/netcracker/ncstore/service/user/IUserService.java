@@ -15,7 +15,6 @@ import com.netcracker.ncstore.exception.UserServiceRepositoryException;
 import com.netcracker.ncstore.exception.UserServiceValidationException;
 import com.netcracker.ncstore.model.User;
 
-import java.security.Principal;
 import java.util.UUID;
 
 /**
@@ -58,26 +57,36 @@ public interface IUserService {
     UserTypeEmailPasswordRolesDTO getUserAuthDataByEmail(String email) throws UserServiceRepositoryException;
 
     /**
-     * Returns UserDTO instance behind provided Principal
+     * Returns UserDTO instance by using email
      *
-     * @param principal - Principal
+     * @param email - email of user
+     * @return UserDTO - DTO containing all info about user entity
      */
-    UserDTO loadUserByPrincipal(Principal principal);
+    UserDTO loadUserByEmail(String email);
 
     /**
-     * Returns User entity behind provided Principal.
+     * Returns User entity by using email.
      * Should be used only when real entity is needed.
      *
-     * @param principal - Principal
+     * @param email - email of user
      * @return User - real User entity
      */
-    User loadUserEntityByPrincipal(Principal principal);
+    User loadUserEntityByEmail(String email);
+
+    /**
+     * Returns User entity by using UUID.
+     * Should be used only when real entity is needed.
+     *
+     * @param id - UUID pf user
+     * @return User - real User entity
+     */
+    User loadUserEntityById(UUID id);
 
     /**
      * Returns Company entity data based on provided UserId
      * Returns null if there is no company info for that user
      *
-     * @param id the id of user whose company data is needed
+     * @param userId the id of user whose company data is needed
      * @return CompanyDTO or null if no data for that user
      */
     CompanyDTO getCompanyData(UUID userId);
@@ -86,7 +95,7 @@ public interface IUserService {
      * Returns Person entity data based on provided UserId
      * Returns null if there is no person info for that user
      *
-     * @param id the id of user whose company data is needed
+     * @param userId the id of user whose company data is needed
      * @return PersonDTO or null if no data for that user
      */
     PersonDTO getPersonData(UUID userId);
@@ -95,10 +104,10 @@ public interface IUserService {
      * Returns detailed information about Company of principal.
      * Returns information only if principal requests self's company info.
      *
-     * @param principal principal of user willing to get info about one's company
+     * @param email principal of user willing to get info about one's company
      * @return CompanyDetailedInfoResponse
      */
-    CompanyDetailedInfoResponse getDetailedCompanyInfo(Principal principal);
+    CompanyDetailedInfoResponse getDetailedCompanyInfo(String email);
 
     /**
      * Returns information about Company of user with provided ID
@@ -111,10 +120,10 @@ public interface IUserService {
      * Returns detailed information about Person of principal.
      * Returns information only if principal requests personal info.
      *
-     * @param principal principal of user willing to get personal info
+     * @param email principal of user willing to get personal info
      * @return PersonDetailedInfoResponse
      */
-    PersonDetailedInfoResponse getDetailedPersonInfo(Principal principal);
+    PersonDetailedInfoResponse getDetailedPersonInfo(String email);
 
     /**
      * Returns information about Person of user with provided ID

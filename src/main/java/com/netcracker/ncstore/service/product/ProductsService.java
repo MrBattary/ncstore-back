@@ -111,23 +111,23 @@ public class ProductsService implements IProductsService {
                 break;
         }
 
-        if(CollectionUtils.isEmpty(productsGetRequest.getCategoriesIds())){
-            if(productsGetRequest.getSupplierId()!=null){
+        if (CollectionUtils.isEmpty(productsGetRequest.getCategoriesIds())) {
+            if (productsGetRequest.getSupplierId() != null) {
                 productsPage = productRepository.findProductByUserIdAndByLikeNameAndLocale(
                         productsGetRequest.getSupplierId(),
                         productsGetRequest.getSearchText(),
                         productsGetRequest.getLocale(),
                         Locale.forLanguageTag(defaultLocaleCode),
                         productsPageRequest);
-            }else {
+            } else {
                 productsPage = productRepository.findProductByLikeNameAndLocale(
                         productsGetRequest.getSearchText(),
                         productsGetRequest.getLocale(),
                         Locale.forLanguageTag(defaultLocaleCode),
                         productsPageRequest);
             }
-        }else{
-            if(productsGetRequest.getSupplierId()!=null){
+        } else {
+            if (productsGetRequest.getSupplierId() != null) {
                 productsPage = productRepository.findProductsUserIdAndByLikeNameAndCategoriesAndLocale(
                         productsGetRequest.getSupplierId(),
                         productsGetRequest.getSearchText(),
@@ -135,7 +135,7 @@ public class ProductsService implements IProductsService {
                         Locale.forLanguageTag(defaultLocaleCode),
                         productsGetRequest.getCategoriesIds(),
                         productsPageRequest);
-            }else{
+            } else {
                 productsPage = productRepository.findProductsByLikeNameAndCategoriesAndLocale(
                         productsGetRequest.getSearchText(),
                         productsGetRequest.getLocale(),
@@ -151,11 +151,18 @@ public class ProductsService implements IProductsService {
         for (ProductWithPriceInfo productInfo : productsPage.getContent()) {
             ProductWithPriceInfo.ProductPriceInfo firstPrice = productInfo.getProductPrices().get(0);
 
+            String supplierName =
+                    userService.getCompanyData(productInfo.getUserId()) == null
+                            ?
+                            userService.getPersonData(productInfo.getUserId()).getFirstName() + " " + userService.getPersonData(productInfo.getUserId()).getLastName()
+                            :
+                            userService.getCompanyData(productInfo.getUserId()).getCompanyName();
+
             ProductsGetResponse response = new ProductsGetResponse(
                     productInfo.getId(),
                     productInfo.getName(),
                     productInfo.getUserId(),
-                    userService.getCompanyData(productInfo.getUserId()).getCompanyName(),
+                    supplierName,
                     firstPrice.getPrice(),
                     PriceValidator.getActualDiscountPrice(firstPrice.getDiscount()),
                     LocaleToCurrencyConverter.getCurrencySymbolByLocale(firstPrice.getLocale()));
@@ -265,7 +272,7 @@ public class ProductsService implements IProductsService {
             throw new ProductServiceCreationValidationException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
         }
 
-        if(!PriceValidator.isPriceDuplicates(productCreateDTO.getPrices())){
+        if (!PriceValidator.isPriceDuplicates(productCreateDTO.getPrices())) {
             throw new ProductServiceCreationValidationException("Price duplicates (with same locale) found.");
         }
 

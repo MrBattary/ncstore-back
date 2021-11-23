@@ -1,6 +1,5 @@
 package com.netcracker.ncstore.controller;
 
-import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;

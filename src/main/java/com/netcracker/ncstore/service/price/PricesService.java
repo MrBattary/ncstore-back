@@ -5,7 +5,6 @@ import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
-import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.DiscountRepository;
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;

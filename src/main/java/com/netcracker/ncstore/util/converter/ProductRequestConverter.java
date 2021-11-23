@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * and there is no need to create instance of it
  */
 public abstract class ProductRequestConverter {
-    public static List<UUID> convertCategoriesStringToList(String stringOfCategoriesIDs){
+    public static List<UUID> convertCategoriesStringToList(String stringOfCategoriesIDs) {
         if (!stringOfCategoriesIDs.equals("")) {
             try {
                 return Arrays.stream(stringOfCategoriesIDs.split("\\|")).
@@ -31,18 +31,18 @@ public abstract class ProductRequestConverter {
         }
     }
 
-    public static ESortRule convertSortRuleStringToEnum(String sortRuleString){
+    public static ESortRule convertSortRuleStringToEnum(String sortRuleString) {
         try {
             return ESortRule.valueOf(sortRuleString.toUpperCase(Locale.ROOT));
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new RequestParametersInvalidException("Provided sort rule not supported.");
         }
     }
 
-    public static ESortOrder convertSortOrderStringToEnum(String sortOrderString){
+    public static ESortOrder convertSortOrderStringToEnum(String sortOrderString) {
         try {
             return ESortOrder.valueOf(sortOrderString.toUpperCase(Locale.ROOT));
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new RequestParametersInvalidException("Provided sort order not supported.");
         }
     }

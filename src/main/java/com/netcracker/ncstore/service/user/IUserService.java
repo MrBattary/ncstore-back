@@ -58,7 +58,7 @@ public interface IUserService {
     UserTypeEmailPasswordRolesDTO getUserAuthDataByEmail(String email) throws UserServiceRepositoryException;
 
     /**
-     * Returns UserDTO instance behind provided Principal
+     * Returns UserDTO instance by using email
      *
      * @param email - email of user
      * @return UserDTO - DTO containing all info about user entity
@@ -66,13 +66,22 @@ public interface IUserService {
     UserDTO loadUserByEmail(String email);
 
     /**
-     * Returns User entity behind provided Principal.
+     * Returns User entity by using email.
      * Should be used only when real entity is needed.
      *
-     * @param principal - Principal
+     * @param email - email of user
      * @return User - real User entity
      */
     User loadUserEntityByEmail(String email);
+
+    /**
+     * Returns User entity by using UUID.
+     * Should be used only when real entity is needed.
+     *
+     * @param id - UUID pf user
+     * @return User - real User entity
+     */
+    User loadUserEntityById(UUID id);
 
     /**
      * Returns Company entity data based on provided UserId

@@ -1,30 +1,103 @@
 package com.netcracker.ncstore.service.cart;
 
 import com.netcracker.ncstore.exception.CartServiceValidationException;
+import com.netcracker.ncstore.model.Cart;
+import com.netcracker.ncstore.model.CartItem;
+import com.netcracker.ncstore.repository.CartItemRepository;
+import com.netcracker.ncstore.repository.CartRepository;
 import com.netcracker.ncstore.service.product.IProductsService;
+import com.netcracker.ncstore.service.user.IUserService;
+import org.springframework.context.event.EventListener;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionDestroyedEvent;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.SessionScope;
 
+import javax.annotation.PreDestroy;
+import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @SessionScope
 public class CartService implements ICartService {
     private final IProductsService productsService;
+    private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
+    private final IUserService userService;
+    private UUID userId;
 
-    private final Map<UUID, Integer> cart;
+    private final Map<UUID, Integer> cartMap;
 
-    public CartService(final IProductsService productsService) {
+    public CartService(final IProductsService productsService,
+                       final CartRepository cartRepository,
+                       final CartItemRepository cartItemRepository,
+                       final IUserService userService) {
         this.productsService = productsService;
-        cart = new HashMap<>();
+        this.cartRepository = cartRepository;
+        this.cartItemRepository = cartItemRepository;
+        this.userService = userService;
+
+        if (SecurityContextHolder.getContext() != null) {
+            userId = userService.loadUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
+
+            Cart cartEntity = cartRepository.findById(userId).orElse(null);
+
+            if (cartEntity != null) {
+                cartMap = cartEntity.getCartItems().stream().collect(Collectors.toMap(CartItem::getProductId, CartItem::getCount));
+            } else {
+                cartMap = new HashMap<>();
+            }
+        } else {
+            userId = null;
+            cartMap = new HashMap<>();
+        }
+    }
+
+    @Transactional
+    @EventListener(SessionDestroyedEvent.class)
+    public void saveCart(){
+        if (userId != null && cartMap.size() != 0) {
+            Cart savedCart;
+
+            if (!cartRepository.existsById(userId)) {
+                Cart cartToSave = new Cart(
+                        null,
+                        Instant.now(),
+                        userService.loadUserEntityById(userId),
+                        null);
+
+                savedCart = cartRepository.save(cartToSave);
+
+
+            } else {
+                savedCart = cartRepository.getById(userId);
+                cartItemRepository.deleteByCartId(userId);
+            }
+
+            List<CartItem> items = cartMap.entrySet().
+                    stream().
+                    map(e -> new CartItem(null, e.getKey(), e.getValue(), savedCart)).
+                    collect(Collectors.toList());
+
+            cartItemRepository.saveAll(items);
+        }
+    }
+
+    @Transactional
+    @PreDestroy
+    public void preDestroy() {
+
     }
 
 
     @Override
     public Map<UUID, Integer> getCartItems() {
-        return new HashMap<>(cart);
+        return new HashMap<>(cartMap);
     }
 
     @Override
@@ -36,11 +109,11 @@ public class CartService implements ICartService {
             throw new CartServiceValidationException("Product with provided UUID does not exist.");
         }
 
-        cart.put(productId, count);
+        cartMap.put(productId, count);
     }
 
     @Override
     public boolean deleteProduct(UUID productId) {
-        return cart.remove(productId) != null;
+        return cartMap.remove(productId) != null;
     }
 }

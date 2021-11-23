@@ -31,6 +31,6 @@ public class Cart {
     @MapsId
     private User user;
 
-    @OneToMany(fetch = javax.persistence.FetchType.EAGER, mappedBy = "cart")
+    @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems;
 }

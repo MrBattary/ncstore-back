@@ -154,6 +154,11 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public User loadUserEntityById(UUID id) {
+        return userRepository.getById(id);
+    }
+
+    @Override
     public CompanyDTO getCompanyData(UUID userId) {
         Company company = companyRepository.findById(userId).orElse(null);
 

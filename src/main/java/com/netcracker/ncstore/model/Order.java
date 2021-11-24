@@ -38,7 +38,7 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(fetch = javax.persistence.FetchType.EAGER, mappedBy = "order")
     private List<OrderItem> products;
 
     @Enumerated(EnumType.STRING)

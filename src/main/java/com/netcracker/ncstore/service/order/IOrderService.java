@@ -2,7 +2,10 @@ package com.netcracker.ncstore.service.order;
 
 import com.netcracker.ncstore.dto.CartCheckoutDetails;
 import com.netcracker.ncstore.dto.data.OrderDTO;
+import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.exception.OrderServiceOrderCreationException;
+
+import java.util.UUID;
 
 /**
  * Interface for service which works with Orders
@@ -16,4 +19,12 @@ public interface IOrderService {
      * @throws OrderServiceOrderCreationException when order can not be created
      */
     OrderDTO checkoutUserCart(CartCheckoutDetails details) throws OrderServiceOrderCreationException;
+
+    /**
+     * Returns OrderInfoResponse DTO containing info about order
+     *
+     * @param orderId - UUID of order
+     * @return DTO containing information about response
+     */
+    OrderInfoResponse getOrderInfoResponse(UUID orderId);
 }

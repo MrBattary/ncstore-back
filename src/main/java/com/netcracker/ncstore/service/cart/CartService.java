@@ -2,6 +2,7 @@ package com.netcracker.ncstore.service.cart;
 
 import com.netcracker.ncstore.dto.CartCheckoutDetails;
 import com.netcracker.ncstore.dto.data.OrderDTO;
+import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.exception.CartServiceCheckoutException;
 import com.netcracker.ncstore.exception.CartServiceValidationException;
 import com.netcracker.ncstore.exception.OrderServiceOrderCreationException;
@@ -124,7 +125,7 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public OrderDTO checkout(Locale locale) throws CartServiceCheckoutException {
+    public OrderInfoResponse checkout(Locale locale) throws CartServiceCheckoutException {
         if (userId == null) {
             throw new CartServiceCheckoutException("Cant checkout anonymous user");
         } else if (CollectionUtils.isEmpty(cartMap)) {
@@ -133,7 +134,8 @@ public class CartService implements ICartService {
             try {
                 OrderDTO orderDTO = orderService.checkoutUserCart(new CartCheckoutDetails(new HashMap<>(cartMap), userId, locale));
                 //cartMap.clear();
-                return orderDTO;
+                return orderService.getOrderInfoResponse(orderDTO.getId());
+
             } catch (OrderServiceOrderCreationException e) {
                 log.error(e.getMessage());
                 throw new CartServiceCheckoutException("Can not checkout due to order creation problem.", e);

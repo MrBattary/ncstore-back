@@ -6,6 +6,7 @@ import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.data.OrderDTO;
 import com.netcracker.ncstore.dto.request.CartAddRequest;
 import com.netcracker.ncstore.dto.response.CartItemChangedResponse;
+import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.repository.ProductRepository;
 import com.netcracker.ncstore.service.cart.ICartService;
 import com.netcracker.ncstore.service.price.IPricesService;
@@ -80,8 +81,8 @@ public class CartController {
 
     @PostMapping
     public ResponseEntity<?> checkout(Locale locale) {
-        OrderDTO orderDTO = cartService.checkout(locale);
-        return ResponseEntity.noContent().build();
+        OrderInfoResponse response = cartService.checkout(locale);
+        return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping(value = "/{productId}")

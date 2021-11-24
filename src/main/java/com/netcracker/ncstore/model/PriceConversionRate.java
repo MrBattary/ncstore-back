@@ -30,9 +30,10 @@ public class PriceConversionRate {
     @Column(unique = true)
     private Locale region;
     /**
-     * Defines how much money in this locale costs 1 unit UC
+     * Defines how much money in this locale costs 1 unit of UC
      * Ex. №1 if 1 $ = 1 UC, then 1 should be here.
-     * Ex. №2 if 1 € = 0.9 UC, then 0.9 should be here.
+     * Ex. №2 if 1 € = 1.1 UC, then 1.1 should be here.
+     * Ex. №3 if 1 ₽ = 0.013 UC, then 0.013 should be here
      */
     private double universalPriceValue;
 

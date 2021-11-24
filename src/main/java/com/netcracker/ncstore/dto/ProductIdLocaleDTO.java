@@ -7,7 +7,7 @@ import java.util.Locale;
 
 @AllArgsConstructor
 @Getter
-public class GetProductDTO {
+public class ProductIdLocaleDTO {
     private final String productId;
     private final Locale locale;
 }

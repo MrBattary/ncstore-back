@@ -1,7 +1,8 @@
 package com.netcracker.ncstore.service.product;
 
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
-import com.netcracker.ncstore.dto.GetProductDTO;
+import com.netcracker.ncstore.dto.ProductIdAuthDTO;
+import com.netcracker.ncstore.dto.ProductIdLocaleDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
@@ -241,12 +242,13 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public GetProductResponse getProductByProductId(final GetProductDTO getProductDTO) throws ProductServiceNotFoundException {
+    public GetProductResponse getProductByProductId(final ProductIdLocaleDTO productIdLocaleDTO)
+            throws ProductServiceNotFoundException {
         try {
             Product productFromRepository = productRepository
-                    .findById(UUID.fromString(getProductDTO.getProductId()))
+                    .findById(UUID.fromString(productIdLocaleDTO.getProductId()))
                     .orElseThrow(() ->
-                            new ProductServiceNotFoundException("Unable to get product with UUID" + getProductDTO.getProductId())
+                            new ProductServiceNotFoundException("Unable to get product with UUID" + productIdLocaleDTO.getProductId())
                     );
 
             UUID idOfSupplierOfProductFromRepository = productFromRepository.getSupplier().getId();
@@ -258,7 +260,7 @@ public class ProductsService implements IProductsService {
             ProductPrice regionProductPrice = null;
             ProductPrice defaultProductPrice = new ProductPrice();
             for (ProductPrice productPriceOfProductFromRepository : productFromRepository.getProductPrices()) {
-                if (productPriceOfProductFromRepository.getLocale() == getProductDTO.getLocale()) {
+                if (productPriceOfProductFromRepository.getLocale() == productIdLocaleDTO.getLocale()) {
                     regionProductPrice = productPriceOfProductFromRepository;
                     break;
                 }
@@ -309,8 +311,57 @@ public class ProductsService implements IProductsService {
             );
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage());
-            throw new ProductServiceNotFoundException("Unable to get product with UUID" + getProductDTO.getProductId(), e);
+            throw new ProductServiceNotFoundException("Unable to get product with UUID" + productIdLocaleDTO.getProductId(), e);
         }
+    }
+
+    @Override
+    public GetProductResponse getProductDetailedByProductId(final ProductIdAuthDTO productIdAuthDTO)
+            throws ProductServiceNotFoundException, ProductServiceNotAllowedException {
+        Product productFromRepository = productRepository
+                .findById(UUID.fromString(productIdAuthDTO.getProductId()))
+                .orElseThrow(() ->
+                        new ProductServiceNotFoundException("Unable to get product with UUID" + productIdAuthDTO.getProductId())
+                );
+
+        String emailOfSupplierOfProductFromRepository = productFromRepository.getSupplier().getEmail();
+        if (!Objects.equals(emailOfSupplierOfProductFromRepository, productIdAuthDTO.getUserEmailAndRolesDTO().getEmail())) {
+            throw new ProductServiceNotAllowedException("Unable to find product with UUID" + productIdAuthDTO.getProductId());
+        }
+        UUID idOfSupplierOfProductFromRepository = productFromRepository.getSupplier().getId();
+        String supplierName = userService.getCompanyData(idOfSupplierOfProductFromRepository).getCompanyName();
+        if (supplierName == null) {
+            supplierName = userService.getPersonData(idOfSupplierOfProductFromRepository).getNickName();
+        }
+
+        List<PriceRegionDTO> normalPrices = new ArrayList<>();
+        List<DiscountPriceRegionDTO> discountPrices = new ArrayList<>();
+        for (ProductPrice productPrice : productFromRepository.getProductPrices()) {
+            normalPrices.add(new PriceRegionDTO(productPrice.getPrice(), productPrice.getLocale()));
+            if (PriceValidator.getActualDiscountPrice(productPrice.getDiscount()) != null) {
+                Discount discount = productPrice.getDiscount();
+                discountPrices.add(
+                        new DiscountPriceRegionDTO(
+                                discount.getDiscountPrice(),
+                                productPrice.getLocale(),
+                                discount.getStartUtcTime(),
+                                discount.getEndUtcTime()
+                        )
+                );
+            }
+        }
+
+        return new GetProductResponse(
+                productFromRepository.getId(),
+                productFromRepository.getName(),
+                idOfSupplierOfProductFromRepository,
+                supplierName,
+                productFromRepository.getDescription(),
+                normalPrices,
+                discountPrices,
+                productFromRepository.getParentProduct() != null ? productFromRepository.getParentProduct().getId() : null,
+                productFromRepository.getCategories().stream().map(Category::getName).collect(Collectors.toList())
+        );
     }
 
     private void validateProductData(final ProductCreateDTO productCreateDTO) {

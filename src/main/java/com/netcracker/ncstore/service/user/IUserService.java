@@ -131,4 +131,6 @@ public interface IUserService {
      * @return PersonInfoResponse
      */
     PersonInfoResponse getBasisPersonInfo(UUID userId);
+
+
 }

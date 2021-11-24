@@ -1,8 +1,6 @@
 package com.netcracker.ncstore.controller;
 
-import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
-import com.netcracker.ncstore.dto.GetProductDTO;
-import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.*;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.CategoryDTO;
 import com.netcracker.ncstore.dto.data.DiscountDTO;
@@ -27,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -165,13 +165,33 @@ public class ProductController {
                 body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProduct
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.3#/Product/getProduct
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<GetProductResponse> getProduct(@PathVariable final String productId, final Locale locale) {
         log.info("REQUEST: to get product data by id: " + productId);
-        GetProductResponse response = productsService.getProductByProductId(new GetProductDTO(productId, locale));
+        GetProductResponse response = productsService.getProductByProductId(new ProductIdLocaleDTO(productId, locale));
         log.info("RESPONSE: to get product data by id: " + productId);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
+    }
+
+    @RequestMapping(value = "/products/{productId}/detailed", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<GetProductResponse> getProductDetailed(@PathVariable final String productId) {
+        log.info("REQUEST: to get product detailed data by id: " + productId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        GetProductResponse response = productsService.getProductDetailedByProductId(
+                new ProductIdAuthDTO(
+                        productId,
+                        new UserEmailAndRolesDTO(authentication)
+                )
+        );
+
+        log.info("RESPONSE: to get product detailed data by id: " + productId);
         return ResponseEntity.
                 ok().
                 contentType(MediaType.APPLICATION_JSON).

@@ -1,12 +1,14 @@
 package com.netcracker.ncstore.service.product;
 
-import com.netcracker.ncstore.dto.GetProductDTO;
+import com.netcracker.ncstore.dto.ProductIdAuthDTO;
+import com.netcracker.ncstore.dto.ProductIdLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
+import com.netcracker.ncstore.exception.ProductServiceNotAllowedException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
 
 import java.util.List;
@@ -51,5 +53,15 @@ public interface IProductsService {
      * @return - Product's data as response
      * @throws ProductServiceNotFoundException - if product was not found
      */
-    GetProductResponse getProductByProductId(GetProductDTO getProductDTO) throws ProductServiceNotFoundException;
+    GetProductResponse getProductByProductId(ProductIdLocaleDTO getProductDTO) throws ProductServiceNotFoundException;
+
+    /**
+     * Returns product detailed data for supllier
+     * @param productIdAuthDTO - DTO
+     * @return - Product's data as response
+     * @throws ProductServiceNotFoundException - if product was not found
+     * @throws ProductServiceNotAllowedException - if product does not belong to requesting supplier
+     */
+    GetProductResponse getProductDetailedByProductId(ProductIdAuthDTO productIdAuthDTO)
+            throws ProductServiceNotFoundException, ProductServiceNotAllowedException;
 }

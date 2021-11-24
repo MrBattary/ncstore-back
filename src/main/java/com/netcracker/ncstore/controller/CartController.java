@@ -1,11 +1,13 @@
 package com.netcracker.ncstore.controller;
 
-import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
+import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.request.CartAddRequest;
 import com.netcracker.ncstore.dto.response.CartItemChangedResponse;
 import com.netcracker.ncstore.service.cart.ICartService;
 import com.netcracker.ncstore.service.price.IPricesService;
+import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,11 +33,14 @@ import java.util.stream.Collectors;
 public class CartController {
     private final ICartService cartService;
     private final IPricesService pricesService;
+    private final IPriceConversionService priceConversionService;
 
     public CartController(final ICartService cartService,
-                          final IPricesService pricesService) {
+                          final IPricesService pricesService,
+                          final IPriceConversionService priceConversionService) {
         this.cartService = cartService;
         this.pricesService = pricesService;
+        this.priceConversionService = priceConversionService;
     }
 
     @GetMapping
@@ -92,15 +97,18 @@ public class CartController {
      * Private function used to prevent code duplication and to get response DTO
      */
     private CartItemChangedResponse createResponseDTO(UUID productId, Integer productCount, Locale locale) {
-        ActualProductPriceWithCurrencySymbolDTO priceForProduct =
+        ActualProductPriceInRegionDTO priceForProduct =
                 pricesService.getActualPriceForProductInRegion(new ProductLocaleDTO(productId, locale));
+
+        ActualProductPriceConvertedForRegionDTO regionalPriceForProduct =
+                priceConversionService.convertActualUCPriceForRealPrice(priceForProduct);
 
         return new CartItemChangedResponse(
                 productId,
                 productCount,
-                priceForProduct.getProductName(),
-                priceForProduct.getNormalPrice(),
-                priceForProduct.getDiscountPrice(),
-                priceForProduct.getPriceCurrency());
+                regionalPriceForProduct.getProductName(),
+                regionalPriceForProduct.getNormalConvertedPrice(),
+                regionalPriceForProduct.getDiscountConvertedPrice(),
+                regionalPriceForProduct.getCurrencySymbol());
     }
 }

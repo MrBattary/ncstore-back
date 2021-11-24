@@ -1,10 +1,13 @@
 package com.netcracker.ncstore.service.product;
 
+import com.netcracker.ncstore.dto.GetProductDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
+import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
+import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
 
 import java.util.List;
 
@@ -41,4 +44,12 @@ public interface IProductsService {
      * @return true if products exists
      */
     boolean doesProductExist(UUID id);
+
+    /**
+     * Returns product public data
+     * @param getProductDTO - DTO
+     * @return - Product's data as response
+     * @throws ProductServiceNotFoundException - if product was not found
+     */
+    GetProductResponse getProductByProductId(GetProductDTO getProductDTO) throws ProductServiceNotFoundException;
 }

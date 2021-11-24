@@ -1,6 +1,7 @@
 package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
+import com.netcracker.ncstore.dto.GetProductDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.CategoryDTO;
@@ -10,6 +11,7 @@ import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.CreateProductRequest;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.CreateProductResponse;
+import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
@@ -124,7 +126,7 @@ public class ProductController {
         List<PriceRegionDTO> priceRegionDTOS = new ArrayList<>();
         List<DiscountPriceRegionDTO> discountPriceRegionDTOS = new ArrayList<>();
 
-        for(ProductPriceDTO p : pricesService.getPricesForProduct(productDTO.getId())){
+        for (ProductPriceDTO p : pricesService.getPricesForProduct(productDTO.getId())) {
             priceRegionDTOS.add(new PriceRegionDTO(p.getPrice(), p.getLocale()));
 
             try {
@@ -135,7 +137,9 @@ public class ProductController {
                         discountDTO.getStartUtcTime(),
                         discountDTO.getEndUtcTime()));
 
-            }catch (DiscountServiceNotFoundException ignored){}
+            } catch (DiscountServiceNotFoundException ignored) {
+                log.warn("Discount was not found for " + p.getLocale().toString());
+            }
         }
 
         List<String> categoryNames = categoryService.
@@ -164,8 +168,14 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProduct
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getProduct(@PathVariable final String productId) {
-        return null;
+    public ResponseEntity<GetProductResponse> getProduct(@PathVariable final String productId, final Locale locale) {
+        log.info("REQUEST: to get product data by id: " + productId);
+        GetProductResponse response = productsService.getProductByProductId(new GetProductDTO(productId, locale));
+        log.info("RESPONSE: to get product data by id: " + productId);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/updateProduct

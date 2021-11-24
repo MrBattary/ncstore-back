@@ -60,6 +60,13 @@ public class MainControllerAdvice {
         return ResponseEntity.badRequest().build();
     }
 
+    @ExceptionHandler(ProductServiceNotFoundException.class)
+    public ResponseEntity<?> handleProductServiceNotFoundException(final ProductServiceNotFoundException e) {
+        log.error(e.getMessage());
+        log.info("RESPONSE: 404");
+        return ResponseEntity.notFound().build();
+    }
+
 /*    //Should be activated only on production
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleAllUncaughtException(final RuntimeException e) {

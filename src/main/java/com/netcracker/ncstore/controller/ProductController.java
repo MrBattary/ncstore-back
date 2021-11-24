@@ -124,7 +124,7 @@ public class ProductController {
         List<PriceRegionDTO> priceRegionDTOS = new ArrayList<>();
         List<DiscountPriceRegionDTO> discountPriceRegionDTOS = new ArrayList<>();
 
-        for(ProductPriceDTO p : pricesService.getPricesForProduct(productDTO.getId())){
+        for (ProductPriceDTO p : pricesService.getPricesForProduct(productDTO.getId())) {
             priceRegionDTOS.add(new PriceRegionDTO(p.getPrice(), p.getLocale()));
 
             try {
@@ -135,7 +135,8 @@ public class ProductController {
                         discountDTO.getStartUtcTime(),
                         discountDTO.getEndUtcTime()));
 
-            }catch (DiscountServiceNotFoundException ignored){}
+            } catch (DiscountServiceNotFoundException ignored) {
+            }
         }
 
         List<String> categoryNames = categoryService.

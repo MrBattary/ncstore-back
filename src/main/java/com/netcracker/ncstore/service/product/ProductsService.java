@@ -19,6 +19,7 @@ import com.netcracker.ncstore.exception.ProductServiceCreationValidationExceptio
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.User;
+import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
 import com.netcracker.ncstore.repository.projections.ProductWithPriceInfo;
@@ -150,8 +151,7 @@ public class ProductsService implements IProductsService {
 
         List<ProductsGetResponse> responsesList = new ArrayList<>();
 
-
-        for(Product p : productsPage.getContent()){
+        for (Product p : productsPage.getContent()) {
             String supplierName =
                     userService.getCompanyData(p.getSupplier().getId()) == null
                             ?
@@ -178,28 +178,6 @@ public class ProductsService implements IProductsService {
 
             responsesList.add(item);
         }
-
-/*        for (ProductWithPriceInfo productInfo : productsPage.getContent()) {
-            ProductWithPriceInfo.ProductPriceInfo firstPrice = productInfo.getProductPrices().get(0);
-
-            String supplierName =
-                    userService.getCompanyData(productInfo.getUserId()) == null
-                            ?
-                            userService.getPersonData(productInfo.getUserId()).getFirstName() + " " + userService.getPersonData(productInfo.getUserId()).getLastName()
-                            :
-                            userService.getCompanyData(productInfo.getUserId()).getCompanyName();
-
-            ProductsGetResponse response = new ProductsGetResponse(
-                    productInfo.getId(),
-                    productInfo.getName(),
-                    productInfo.getUserId(),
-                    supplierName,
-                    firstPrice.getPrice(),
-                    PriceValidator.getActualDiscountPrice(firstPrice.getDiscount()),
-                    LocaleToCurrencyConverter.getCurrencySymbolByLocale(firstPrice.getLocale()));
-
-            responsesList.add(response);
-        }*/
 
         return responsesList;
     }
@@ -273,6 +251,16 @@ public class ProductsService implements IProductsService {
     @Override
     public boolean doesProductExist(UUID id) {
         return productRepository.existsById(id);
+    }
+
+    @Override
+    public boolean checkIfProductIsOnSale(UUID id) {
+        return doesProductExist(id) && productRepository.getById(id).getProductStatus().equals(EProductStatus.IN_STOCK);
+    }
+
+    @Override
+    public Product loadProductEntityById(UUID id) {
+        return productRepository.getById(id);
     }
 
     private void validateProductData(final ProductCreateDTO productCreateDTO) {

@@ -33,7 +33,6 @@ public class Order {
     @GeneratedValue
     private UUID id;
     private Instant creationUtcTime;
-    private String bankData;
 
     @OneToOne
     @JoinColumn(name = "user_id")

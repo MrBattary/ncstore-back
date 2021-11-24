@@ -3,8 +3,10 @@ package com.netcracker.ncstore.controller;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
+import com.netcracker.ncstore.dto.data.OrderDTO;
 import com.netcracker.ncstore.dto.request.CartAddRequest;
 import com.netcracker.ncstore.dto.response.CartItemChangedResponse;
+import com.netcracker.ncstore.repository.ProductRepository;
 import com.netcracker.ncstore.service.cart.ICartService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
@@ -35,12 +37,15 @@ public class CartController {
     private final IPricesService pricesService;
     private final IPriceConversionService priceConversionService;
 
+    private final ProductRepository productRepository;
+
     public CartController(final ICartService cartService,
                           final IPricesService pricesService,
-                          final IPriceConversionService priceConversionService) {
+                          final IPriceConversionService priceConversionService, ProductRepository productRepository) {
         this.cartService = cartService;
         this.pricesService = pricesService;
         this.priceConversionService = priceConversionService;
+        this.productRepository = productRepository;
     }
 
     @GetMapping
@@ -74,9 +79,9 @@ public class CartController {
     }
 
     @PostMapping
-    public ResponseEntity<?> checkout() {
-
-        return null;
+    public ResponseEntity<?> checkout(Locale locale) {
+        OrderDTO orderDTO = cartService.checkout(locale);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(value = "/{productId}")

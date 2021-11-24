@@ -9,6 +9,7 @@ import java.util.Locale;
 
 /**
  * Interface for all services that convert universal coins (UC) to regional price.
+ * Methods of this service must be used only for creating responses, as all prices in backend should be in UC
  */
 public interface IPriceConversionService {
 

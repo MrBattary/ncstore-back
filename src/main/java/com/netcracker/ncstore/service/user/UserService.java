@@ -141,6 +141,17 @@ public class UserService implements IUserService {
         throw new UserServiceRepositoryException("Unable to find a user with email: " + email);
     }
 
+    @Override
+    public String getUserEmailById(UUID id) {
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user==null){
+            return null;
+        }else{
+            return user.getEmail();
+        }
+    }
+
 
     @Override
     public UserDTO loadUserByEmail(String email) {

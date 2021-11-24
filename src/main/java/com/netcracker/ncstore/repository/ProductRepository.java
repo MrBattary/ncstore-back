@@ -15,7 +15,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     /**
      * Finds all product by name using LIKE on provided string
      *
-     * @param name - string with must be in product name
+     * @param name     - string with must be in product name
      * @param pageable - pageable
      * @return page of products
      */
@@ -31,9 +31,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * Finds all product by name using LIKE on provided string
      * and by provided Categories list
      *
-     * @param name - string with must be in product name
+     * @param name          - string with must be in product name
      * @param categoriesIDs - list of UUIDs of categories
-     * @param pageable - pageable
+     * @param pageable      - pageable
      * @return page of products
      */
     @Query("select p " +
@@ -52,7 +52,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * Finds all products created by user with provided ID,
      * by name using LIKE on provided string
      *
-     * @param name - string with must be in product name
+     * @param name     - string with must be in product name
      * @param pageable - pageable
      * @return page of products
      */
@@ -71,9 +71,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
      * by name using LIKE on provided string
      * and by provided Categories list
      *
-     * @param name - string with must be in product name
+     * @param name          - string with must be in product name
      * @param categoriesIDs - list of UUIDs of categories
-     * @param pageable - pageable
+     * @param pageable      - pageable
      * @return page of products
      */
     @Query("select p " +

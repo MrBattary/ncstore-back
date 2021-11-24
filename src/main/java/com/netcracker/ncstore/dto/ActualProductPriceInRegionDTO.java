@@ -25,5 +25,6 @@ public class ActualProductPriceInRegionDTO {
     private final double normalPrice;
     //should be null when no discount found
     private final Double discountPrice;
-    private final Locale region;
+    private final Locale requestedRegion;
+    private final Locale actualRegion;
 }

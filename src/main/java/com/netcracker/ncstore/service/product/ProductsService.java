@@ -1,6 +1,10 @@
 package com.netcracker.ncstore.service.product;
 
+import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
+import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
+import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
@@ -21,6 +25,7 @@ import com.netcracker.ncstore.repository.projections.ProductWithPriceInfo;
 import com.netcracker.ncstore.service.category.ICategoryService;
 import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
+import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import com.netcracker.ncstore.util.enumeration.ESortOrder;
@@ -61,24 +66,27 @@ public class ProductsService implements IProductsService {
     private final IUserService userService;
     private final ICategoryService categoryService;
     private final IDiscountsService discountsService;
+    private final IPriceConversionService priceConversionService;
 
     public ProductsService(final ProductRepository productRepository,
                            final IPricesService pricesService,
                            final IUserService userService,
                            final ICategoryService categoryService,
-                           final IDiscountsService discountsService) {
+                           final IDiscountsService discountsService,
+                           final IPriceConversionService priceConversionService) {
         this.log = LoggerFactory.getLogger(ProductsService.class);
         this.productRepository = productRepository;
         this.pricesService = pricesService;
         this.userService = userService;
         this.categoryService = categoryService;
         this.discountsService = discountsService;
+        this.priceConversionService = priceConversionService;
     }
 
     @Override
     public List<ProductsGetResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
         Pageable productsPageRequest;
-        Page<ProductWithPriceInfo> productsPage;
+        Page<Product> productsPage;
 
         Sort.Direction direction = productsGetRequest.getSortOrder().equals(ESortOrder.ASC) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
@@ -118,14 +126,10 @@ public class ProductsService implements IProductsService {
                 productsPage = productRepository.findProductByUserIdAndByLikeNameAndLocale(
                         productsGetRequest.getSupplierId(),
                         productsGetRequest.getSearchText(),
-                        productsGetRequest.getLocale(),
-                        Locale.forLanguageTag(defaultLocaleCode),
                         productsPageRequest);
             } else {
                 productsPage = productRepository.findProductByLikeNameAndLocale(
                         productsGetRequest.getSearchText(),
-                        productsGetRequest.getLocale(),
-                        Locale.forLanguageTag(defaultLocaleCode),
                         productsPageRequest);
             }
         } else {
@@ -133,15 +137,11 @@ public class ProductsService implements IProductsService {
                 productsPage = productRepository.findProductsUserIdAndByLikeNameAndCategoriesAndLocale(
                         productsGetRequest.getSupplierId(),
                         productsGetRequest.getSearchText(),
-                        productsGetRequest.getLocale(),
-                        Locale.forLanguageTag(defaultLocaleCode),
                         productsGetRequest.getCategoriesIds(),
                         productsPageRequest);
             } else {
                 productsPage = productRepository.findProductsByLikeNameAndCategoriesAndLocale(
                         productsGetRequest.getSearchText(),
-                        productsGetRequest.getLocale(),
-                        Locale.forLanguageTag(defaultLocaleCode),
                         productsGetRequest.getCategoriesIds(),
                         productsPageRequest);
             }
@@ -150,7 +150,36 @@ public class ProductsService implements IProductsService {
 
         List<ProductsGetResponse> responsesList = new ArrayList<>();
 
-        for (ProductWithPriceInfo productInfo : productsPage.getContent()) {
+
+        for(Product p : productsPage.getContent()){
+            String supplierName =
+                    userService.getCompanyData(p.getSupplier().getId()) == null
+                            ?
+                            userService.getPersonData(p.getSupplier().getId()).getFirstName() + " " + userService.getPersonData(p.getSupplier().getId()).getLastName()
+                            :
+                            userService.getCompanyData(p.getSupplier().getId()).getCompanyName();
+
+            ActualProductPriceInRegionDTO actualPrice =
+                    pricesService.getActualPriceForProductInRegion(
+                            new ProductLocaleDTO(p.getId(), productsGetRequest.getLocale())
+                    );
+
+            ActualProductPriceConvertedForRegionDTO actualPriceConverted =
+                    priceConversionService.convertActualUCPriceForRealPrice(actualPrice);
+
+            ProductsGetResponse item = new ProductsGetResponse(
+                    p.getId(),
+                    p.getName(),
+                    p.getSupplier().getId(),
+                    supplierName,
+                    actualPriceConverted.getNormalConvertedPrice(),
+                    actualPriceConverted.getDiscountConvertedPrice(),
+                    actualPriceConverted.getCurrencySymbol());
+
+            responsesList.add(item);
+        }
+
+/*        for (ProductWithPriceInfo productInfo : productsPage.getContent()) {
             ProductWithPriceInfo.ProductPriceInfo firstPrice = productInfo.getProductPrices().get(0);
 
             String supplierName =
@@ -170,7 +199,7 @@ public class ProductsService implements IProductsService {
                     LocaleToCurrencyConverter.getCurrencySymbolByLocale(firstPrice.getLocale()));
 
             responsesList.add(response);
-        }
+        }*/
 
         return responsesList;
     }

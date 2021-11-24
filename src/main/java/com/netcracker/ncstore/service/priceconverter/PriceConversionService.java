@@ -54,7 +54,7 @@ public class PriceConversionService implements IPriceConversionService {
 
     @Override
     public ActualProductPriceConvertedForRegionDTO convertActualUCPriceForRealPrice(ActualProductPriceInRegionDTO actualProductPriceInRegionDTO) {
-        Locale preferLocale = actualProductPriceInRegionDTO.getRegion();
+        Locale preferLocale = actualProductPriceInRegionDTO.getRequestedRegion();
         Double discountPrice = actualProductPriceInRegionDTO.getDiscountPrice();
 
         if(discountPrice!=null){

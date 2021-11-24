@@ -65,6 +65,7 @@ public class PricesService implements IPricesService {
                 productPrice.getProduct().getName(),
                 productPrice.getPrice(),
                 discountPrice,
+                productLocale.getLocale(),
                 locale
         );
     }

@@ -414,6 +414,7 @@ public class ProductsService implements IProductsService {
                     newProductData.getCategoriesNames()
             );
         } catch (ProductServiceValidationException |
+                IllegalArgumentException |
                 CategoryServiceNotFoundException |
                 PricesServiceValidationException e) {
 
@@ -458,7 +459,7 @@ public class ProductsService implements IProductsService {
             log.info("The deletion of the product completed for the request of the user with email: "
                     + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());
             return response;
-        } catch (ProductServiceValidationException | ProductServiceNotFoundException e) {
+        } catch (ProductServiceValidationException | ProductServiceNotFoundException | IllegalArgumentException e) {
             log.info(e.getMessage());
             throw new ProductServiceNotFoundExpectedException("Unable to delete product for user with email: "
                     + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail(), e);

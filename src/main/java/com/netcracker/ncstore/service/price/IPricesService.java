@@ -1,6 +1,8 @@
 package com.netcracker.ncstore.service.price;
 
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
+import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
@@ -42,6 +44,22 @@ public interface IPricesService {
      * @return ProductPriceDTO
      */
     List<ProductPriceDTO> getPricesForProduct(UUID productId);
+
+    /**
+     * Returns list of PriceRegionDTO
+     *
+     * @param productPrices - list of prices
+     * @return list of PriceRegionDTO
+     */
+    List<PriceRegionDTO> getListOfPriceRegionDtoByListOfPrices(List<ProductPrice> productPrices);
+
+    /**
+     * Returns list of DiscountPriceRegionDTO
+     *
+     * @param productPrices - list of prices
+     * @return list of DiscountPriceRegionDTO
+     */
+    List<DiscountPriceRegionDTO> getListOfDiscountPriceRegionDtoByListOfPrices(List<ProductPrice> productPrices);
 
     /**
      * Deletes all prices and related discount prices

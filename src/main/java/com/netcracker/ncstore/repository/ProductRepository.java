@@ -105,4 +105,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
             " (categories.id in ?5)")
     Page<ProductWithPriceInfo> findProductsUserIdAndByLikeNameAndCategoriesAndLocale(UUID userID, String name, Locale locale, Locale defaultLocale, Collection<UUID> categoriesIDs, Pageable pageable);
 
+    void deleteProductById(UUID id);
 }

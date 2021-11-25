@@ -8,6 +8,7 @@ import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.request.UpdateProductRequest;
+import com.netcracker.ncstore.dto.response.DeleteProductResponse;
 import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.dto.response.UpdateProductResponse;
@@ -246,7 +247,7 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public GetProductResponse getProductByProductId(final ProductIdLocaleDTO productIdLocaleDTO)
+    public GetProductResponse getProduct(final ProductIdLocaleDTO productIdLocaleDTO)
             throws ProductServiceNotFoundException {
         try {
             Product productFromRepository = findProductById(productIdLocaleDTO.getProductId());
@@ -265,35 +266,19 @@ public class ProductsService implements IProductsService {
                     defaultProductPrice = productPriceOfProductFromRepository;
                 }
             }
-
             ProductPrice foundProductPriceOfProductFromRepository =
                     regionProductPrice == null
                             ?
                             defaultProductPrice
                             :
                             regionProductPrice;
+            List<ProductPrice> requiredProductPriceList =
+                    new ArrayList<>(Collections.singletonList(foundProductPriceOfProductFromRepository));
 
-            List<PriceRegionDTO> normalPrices = new ArrayList<>(
-                    Collections.singletonList(
-                            new PriceRegionDTO(
-                                    foundProductPriceOfProductFromRepository.getPrice(),
-                                    foundProductPriceOfProductFromRepository.getLocale()
-                            )
-                    )
-            );
-            List<DiscountPriceRegionDTO> discountPrices = new ArrayList<>();
-            boolean isDiscount = PriceValidator.getActualDiscountPrice(foundProductPriceOfProductFromRepository.getDiscount()) != null;
-            if (isDiscount) {
-                Discount discount = foundProductPriceOfProductFromRepository.getDiscount();
-                discountPrices.add(
-                        new DiscountPriceRegionDTO(
-                                discount.getDiscountPrice(),
-                                foundProductPriceOfProductFromRepository.getLocale(),
-                                discount.getStartUtcTime(),
-                                discount.getEndUtcTime()
-                        )
-                );
-            }
+            List<PriceRegionDTO> normalPrices =
+                    pricesService.getListOfPriceRegionDtoByListOfPrices(requiredProductPriceList);
+            List<DiscountPriceRegionDTO> discountPrices =
+                    pricesService.getListOfDiscountPriceRegionDtoByListOfPrices(requiredProductPriceList);
 
             return new GetProductResponse(
                     productFromRepository.getId(),
@@ -313,7 +298,7 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public GetProductResponse getProductDetailedByProductId(final ProductIdAuthDTO productIdAuthDTO)
+    public GetProductResponse getProductDetailed(final ProductIdAuthDTO productIdAuthDTO)
             throws ProductServiceNotFoundException, ProductServiceNotAllowedException {
         try {
             log.info("The receipt of detailed information about product has begun for user with email: "
@@ -328,22 +313,11 @@ public class ProductsService implements IProductsService {
             UUID idOfSupplierOfProductFromRepository = productFromRepository.getSupplier().getId();
             String supplierName = getSupplierNameByUserId(idOfSupplierOfProductFromRepository);
 
-            List<PriceRegionDTO> normalPrices = new ArrayList<>();
-            List<DiscountPriceRegionDTO> discountPrices = new ArrayList<>();
-            for (ProductPrice productPrice : productFromRepository.getProductPrices()) {
-                normalPrices.add(new PriceRegionDTO(productPrice.getPrice(), productPrice.getLocale()));
-                if (PriceValidator.getActualDiscountPrice(productPrice.getDiscount()) != null) {
-                    Discount discount = productPrice.getDiscount();
-                    discountPrices.add(
-                            new DiscountPriceRegionDTO(
-                                    discount.getDiscountPrice(),
-                                    productPrice.getLocale(),
-                                    discount.getStartUtcTime(),
-                                    discount.getEndUtcTime()
-                            )
-                    );
-                }
-            }
+            List<PriceRegionDTO> normalPrices =
+                    pricesService.getListOfPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
+            List<DiscountPriceRegionDTO> discountPrices =
+                    pricesService.getListOfDiscountPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
+
             log.info("The receipt of detailed information about product has ended for user with email: "
                     + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());
             return new GetProductResponse(
@@ -368,7 +342,7 @@ public class ProductsService implements IProductsService {
     public UpdateProductResponse updateProduct(ProductIdUpdateRequestAuthDTO productIdUpdateRequestAuthDTO)
             throws ProductServiceNotFoundException, ProductServiceNotAllowedException, ProductServiceValidationException {
         try {
-            log.info("The update of the product information started at the request of the user with email: "
+            log.info("The update of the product information started by the request of the user with email: "
                     + productIdUpdateRequestAuthDTO.getUserEmailAndRolesDTO().getEmail());
             Product productFromRepository = findProductById(productIdUpdateRequestAuthDTO.getProductId());
 
@@ -446,6 +420,48 @@ public class ProductsService implements IProductsService {
             log.error(e.getMessage());
             throw new ProductServiceCreationException("Unable to create new product for user with email: "
                     + productIdUpdateRequestAuthDTO.getUserEmailAndRolesDTO().getEmail(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public DeleteProductResponse deleteProduct(ProductIdAuthDTO productIdAuthDTO)
+            throws ProductServiceNotFoundExpectedException, ProductServiceNotAllowedException {
+        try {
+            log.info("The deletion of the product started by the request of the user with email: "
+                    + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());
+            Product productFromRepository = findProductById(productIdAuthDTO.getProductId());
+
+            validateSupplierByEmail(
+                    productFromRepository.getSupplier().getEmail(),
+                    productIdAuthDTO.getUserEmailAndRolesDTO()
+            );
+
+            List<PriceRegionDTO> normalPrices =
+                    pricesService.getListOfPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
+            List<DiscountPriceRegionDTO> discountPrices =
+                    pricesService.getListOfDiscountPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
+
+            DeleteProductResponse response = new DeleteProductResponse(
+                    productFromRepository.getId(),
+                    productFromRepository.getName(),
+                    productFromRepository.getDescription(),
+                    normalPrices,
+                    discountPrices,
+                    productFromRepository.getParentProduct() != null ? productFromRepository.getParentProduct().getId() : null,
+                    productFromRepository.getCategories().stream().map(Category::getName).collect(Collectors.toList())
+            );
+
+            pricesService.deleteAllProvidedPrices(productFromRepository.getProductPrices());
+            productRepository.deleteProductById(productFromRepository.getId());
+
+            log.info("The deletion of the product completed for the request of the user with email: "
+                    + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());
+            return response;
+        } catch (ProductServiceValidationException | ProductServiceNotFoundException e) {
+            log.info(e.getMessage());
+            throw new ProductServiceNotFoundExpectedException("Unable to delete product for user with email: "
+                    + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail(), e);
         }
     }
 

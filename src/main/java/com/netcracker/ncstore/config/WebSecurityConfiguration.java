@@ -85,6 +85,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.PUT, "/products/{\\d+}").hasAuthority("SUPPLIER")
                 .and()
+                .authorizeRequests().antMatchers(HttpMethod.DELETE, "/products/{\\d+}").hasAuthority("SUPPLIER")
+                .and()
                 .authorizeRequests().anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler);

@@ -8,13 +8,11 @@ import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.request.UpdateProductRequest;
+import com.netcracker.ncstore.dto.response.DeleteProductResponse;
 import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.dto.response.UpdateProductResponse;
-import com.netcracker.ncstore.exception.ProductServiceCreationException;
-import com.netcracker.ncstore.exception.ProductServiceNotAllowedException;
-import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
-import com.netcracker.ncstore.exception.ProductServiceValidationException;
+import com.netcracker.ncstore.exception.*;
 
 import java.util.List;
 
@@ -58,7 +56,7 @@ public interface IProductsService {
      * @return - Product's data as response
      * @throws ProductServiceNotFoundException - if product was not found
      */
-    GetProductResponse getProductByProductId(ProductIdLocaleDTO getProductDTO) throws ProductServiceNotFoundException;
+    GetProductResponse getProduct(ProductIdLocaleDTO getProductDTO) throws ProductServiceNotFoundException;
 
     /**
      * Returns product detailed data for supllier
@@ -67,17 +65,27 @@ public interface IProductsService {
      * @throws ProductServiceNotFoundException - if product was not found
      * @throws ProductServiceNotAllowedException - if product does not belong to requesting supplier
      */
-    GetProductResponse getProductDetailedByProductId(ProductIdAuthDTO productIdAuthDTO)
+    GetProductResponse getProductDetailed(ProductIdAuthDTO productIdAuthDTO)
             throws ProductServiceNotFoundException, ProductServiceNotAllowedException;
 
     /**
      * Update existing product
      * @param productIdUpdateRequestAuthDTO - DTO
      * @return - UpdateProductResponse
-     * @throws ProductServiceNotFoundException  - if product was not found
-     * @throws ProductServiceNotAllowedException  - if product does not belong to requesting supplier
+     * @throws ProductServiceNotFoundException - if product was not found
+     * @throws ProductServiceNotAllowedException - if product does not belong to requesting supplier
      * @throws ProductServiceValidationException - if new data was corrupted
      */
     UpdateProductResponse updateProduct(ProductIdUpdateRequestAuthDTO productIdUpdateRequestAuthDTO)
             throws ProductServiceNotFoundException, ProductServiceNotAllowedException, ProductServiceValidationException;
+
+    /**
+     *
+     * @param productIdAuthDTO - DTO
+     * @return - DeleteProductResponse
+     * @throws ProductServiceNotFoundExpectedException - if product was not found
+     * @throws ProductServiceNotAllowedException - if product does not belong to requesting supplier
+     */
+    DeleteProductResponse deleteProduct(ProductIdAuthDTO productIdAuthDTO)
+            throws ProductServiceNotFoundExpectedException, ProductServiceNotAllowedException;
 }

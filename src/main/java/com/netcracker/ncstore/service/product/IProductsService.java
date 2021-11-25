@@ -2,14 +2,19 @@ package com.netcracker.ncstore.service.product;
 
 import com.netcracker.ncstore.dto.ProductIdAuthDTO;
 import com.netcracker.ncstore.dto.ProductIdLocaleDTO;
+import com.netcracker.ncstore.dto.ProductIdUpdateRequestAuthDTO;
+import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
+import com.netcracker.ncstore.dto.request.UpdateProductRequest;
 import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.dto.response.UpdateProductResponse;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
 import com.netcracker.ncstore.exception.ProductServiceNotAllowedException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
+import com.netcracker.ncstore.exception.ProductServiceValidationException;
 
 import java.util.List;
 
@@ -64,4 +69,15 @@ public interface IProductsService {
      */
     GetProductResponse getProductDetailedByProductId(ProductIdAuthDTO productIdAuthDTO)
             throws ProductServiceNotFoundException, ProductServiceNotAllowedException;
+
+    /**
+     * Update existing product
+     * @param productIdUpdateRequestAuthDTO - DTO
+     * @return - UpdateProductResponse
+     * @throws ProductServiceNotFoundException  - if product was not found
+     * @throws ProductServiceNotAllowedException  - if product does not belong to requesting supplier
+     * @throws ProductServiceValidationException - if new data was corrupted
+     */
+    UpdateProductResponse updateProduct(ProductIdUpdateRequestAuthDTO productIdUpdateRequestAuthDTO)
+            throws ProductServiceNotFoundException, ProductServiceNotAllowedException, ProductServiceValidationException;
 }

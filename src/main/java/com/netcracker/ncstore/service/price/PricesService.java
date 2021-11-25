@@ -97,4 +97,14 @@ public class PricesService implements IPricesService {
                 map(ProductPriceDTO::new).
                 collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteAllProvidedPrices(final List<ProductPrice> productPrices) {
+        for (ProductPrice productPrice : productPrices) {
+            if (productPrice.getDiscount() != null) {
+                discountRepository.deleteDiscountById(productPrice.getDiscount().getId());
+            }
+            productPriceRepository.deleteProductPriceById(productPrice.getId());
+        }
+    }
 }

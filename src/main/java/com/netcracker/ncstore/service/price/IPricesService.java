@@ -5,6 +5,7 @@ import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
+import com.netcracker.ncstore.model.ProductPrice;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,4 +42,10 @@ public interface IPricesService {
      * @return ProductPriceDTO
      */
     List<ProductPriceDTO> getPricesForProduct(UUID productId);
+
+    /**
+     * Deletes all prices and related discount prices
+     * @param productPrices - list of ProductPrice
+     */
+    void deleteAllProvidedPrices(List<ProductPrice> productPrices);
 }

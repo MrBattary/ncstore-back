@@ -8,9 +8,11 @@ import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.CreateProductRequest;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
+import com.netcracker.ncstore.dto.request.UpdateProductRequest;
 import com.netcracker.ncstore.dto.response.CreateProductResponse;
 import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.dto.response.UpdateProductResponse;
 import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.service.category.ICategoryService;
@@ -107,7 +109,8 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/createProduct
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> createProduct(@RequestBody CreateProductRequest request, Principal principal) {
+    public ResponseEntity<CreateProductResponse> createProduct(@RequestBody final CreateProductRequest request,
+                                                               final Principal principal) {
         log.info("REQUEST: to create product with name " + request.getProductName() + " for user with UUID: " + userService.loadUserByEmail(principal.getName()).getId());
 
         ProductCreateDTO productData = new ProductCreateDTO(
@@ -201,8 +204,24 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/updateProduct
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<?> updateProduct(@PathVariable final String productId) {
-        return null;
+    public ResponseEntity<UpdateProductResponse> updateProduct(@PathVariable final String productId,
+                                                               @RequestBody final UpdateProductRequest request) {
+        log.info("REQUEST: to update product with id: " + productId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UpdateProductResponse response = productsService.updateProduct(
+                new ProductIdUpdateRequestAuthDTO(
+                        productId,
+                        request,
+                        new UserEmailAndRolesDTO(authentication)
+                )
+        );
+
+        log.info("RESPONSE: to update product with id: " + productId);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/deleteProduct

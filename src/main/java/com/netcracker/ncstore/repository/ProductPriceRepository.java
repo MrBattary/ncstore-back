@@ -15,5 +15,5 @@ public interface ProductPriceRepository extends JpaRepository<ProductPrice, UUID
     @Query("select p from ProductPrice p where p.product.id = ?1")
     List<ProductPrice> findByProductId(UUID id);
 
-
+    void deleteProductPriceById(UUID id);
 }

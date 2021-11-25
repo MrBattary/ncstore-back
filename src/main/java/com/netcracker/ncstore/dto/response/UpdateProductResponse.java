@@ -4,7 +4,6 @@ package com.netcracker.ncstore.dto.response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
-import com.netcracker.ncstore.dto.request.UpdateProductRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

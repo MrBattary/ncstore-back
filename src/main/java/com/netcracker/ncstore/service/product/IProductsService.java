@@ -3,19 +3,20 @@ package com.netcracker.ncstore.service.product;
 import com.netcracker.ncstore.dto.ProductIdAuthDTO;
 import com.netcracker.ncstore.dto.ProductIdLocaleDTO;
 import com.netcracker.ncstore.dto.ProductIdUpdateRequestAuthDTO;
-import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
-import com.netcracker.ncstore.dto.request.UpdateProductRequest;
 import com.netcracker.ncstore.dto.response.DeleteProductResponse;
 import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.dto.response.UpdateProductResponse;
-import com.netcracker.ncstore.exception.*;
+import com.netcracker.ncstore.exception.ProductServiceCreationException;
+import com.netcracker.ncstore.exception.ProductServiceNotAllowedException;
+import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
+import com.netcracker.ncstore.exception.ProductServiceNotFoundExpectedException;
+import com.netcracker.ncstore.exception.ProductServiceValidationException;
 
 import java.util.List;
-
 import java.util.UUID;
 
 /**

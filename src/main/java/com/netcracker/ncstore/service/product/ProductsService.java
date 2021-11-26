@@ -260,7 +260,7 @@ public class ProductsService implements IProductsService {
 
     @Override
     public Product loadProductEntityById(UUID id) {
-        return productRepository.getById(id);
+        return productRepository.findById(id).orElse(null);
     }
 
     private void validateProductData(final ProductCreateDTO productCreateDTO) {

@@ -74,8 +74,18 @@ public class OrderService implements IOrderService {
 
         double sum = 0;
         Map<UUID, Double> productPricesMap = new HashMap<>();
+        Map<UUID, Product> productsToBuyMap = new HashMap<>();
 
         for (Map.Entry<UUID, Integer> e : details.getProductsToBuyWithCount().entrySet()) {
+            Product product = productsService.loadProductEntityById(e.getKey());
+            if(product==null){
+                throw new OrderServiceOrderCreationException("User with UUID " + user.getId() + " cant checkout because product with UUID " + e.getKey() + " does not exist");
+            }
+            if (!product.getProductStatus().equals(EProductStatus.IN_STOCK)) {
+                throw new OrderServiceOrderCreationException("User with UUID " + user.getId() + " cant checkout because product with UUID " + e.getKey() + " has status " + product.getProductStatus().toString());
+            }
+            productsToBuyMap.put(e.getKey(), product);
+
             ActualProductPriceInRegionDTO actualPrice = pricesService.getActualPriceForProductInRegion(
                     new ProductLocaleDTO(e.getKey(),
                             details.getRegion())
@@ -109,13 +119,17 @@ public class OrderService implements IOrderService {
                     priceConversionService.convertUCPriceToRealPriceWithSymbol(price, details.getRegion()
                     );
 
-            Product product = productsService.loadProductEntityById(e.getKey());
-            if (!product.getProductStatus().equals(EProductStatus.IN_STOCK)) {
-                throw new OrderServiceOrderCreationException("User with UUID " + user.getId() + " cant checkout because product with UUID " + e.getKey() + " has status " + product.getProductStatus().toString());
-            }
-
             for (int i = 0; i < e.getValue(); i++) {
-                OrderItem orderItem = new OrderItem(null, convertedPrice.getPrice(), convertedPrice.getLocale(), UUID.randomUUID().toString(), order, product, EOrderItemStatus.COMPLETED);
+                OrderItem orderItem = new OrderItem(
+                        null,
+                        convertedPrice.getPrice(),
+                        convertedPrice.getLocale(),
+                        UUID.randomUUID().toString(),
+                        order,
+                        productsToBuyMap.get(e.getKey()),
+                        EOrderItemStatus.COMPLETED
+                );
+
                 orderItemList.add(orderItem);
             }
         }

@@ -133,7 +133,7 @@ public class CartService implements ICartService {
         } else {
             try {
                 OrderDTO orderDTO = orderService.checkoutUserCart(new CartCheckoutDetails(new HashMap<>(cartMap), userId, locale));
-                //cartMap.clear();
+                cartMap.clear();
                 return orderService.getOrderInfoResponse(orderDTO.getId());
 
             } catch (OrderServiceOrderCreationException e) {

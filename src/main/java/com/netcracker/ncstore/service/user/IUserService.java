@@ -57,6 +57,14 @@ public interface IUserService {
     UserTypeEmailPasswordRolesDTO getUserAuthDataByEmail(String email) throws UserServiceRepositoryException;
 
     /**
+     * Returns email of user with provided UUID
+     *
+     * @param id - UUID of user
+     * @return email of user
+     */
+    String getUserEmailById(UUID id);
+
+    /**
      * Returns UserDTO instance by using email
      *
      * @param email - email of user

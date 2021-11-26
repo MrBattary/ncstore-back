@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.service.price;
 
-import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
@@ -46,24 +46,27 @@ public class PricesService implements IPricesService {
     }
 
     @Override
-    public ActualProductPriceWithCurrencySymbolDTO getActualPriceForProductInRegion(final ProductLocaleDTO productLocale) {
+    public ActualProductPriceInRegionDTO getActualPriceForProductInRegion(final ProductLocaleDTO productLocale) {
+        Locale locale = productLocale.getLocale();
+
         ProductPrice productPrice = productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
-                productLocale.getLocale());
+                locale);
 
         if (productPrice == null) {
+            locale = Locale.forLanguageTag(defaultLocaleCode);
             productPrice = productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
-                    Locale.forLanguageTag(defaultLocaleCode));
+                    locale);
         }
 
         Double discountPrice = PriceValidator.getActualDiscountPrice(productPrice.getDiscount());
 
-        return new ActualProductPriceWithCurrencySymbolDTO(
+        return new ActualProductPriceInRegionDTO(
                 productLocale.getProductId(),
                 productPrice.getProduct().getName(),
                 productPrice.getPrice(),
                 discountPrice,
-                LocaleToCurrencyConverter.
-                        getCurrencySymbolByLocale(productLocale.getLocale())
+                productLocale.getLocale(),
+                locale
         );
     }
 

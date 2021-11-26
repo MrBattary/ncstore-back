@@ -57,7 +57,7 @@ public class PriceConversionService implements IPriceConversionService {
         Locale preferLocale = actualProductPriceInRegionDTO.getRequestedRegion();
         Double discountPrice = actualProductPriceInRegionDTO.getDiscountPrice();
 
-        if(discountPrice!=null){
+        if (discountPrice != null) {
             discountPrice = convertUCPriceToRealPriceWithSymbol(actualProductPriceInRegionDTO.getDiscountPrice(), preferLocale).getPrice();
         }
 

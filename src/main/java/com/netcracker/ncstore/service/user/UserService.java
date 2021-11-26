@@ -145,9 +145,9 @@ public class UserService implements IUserService {
     public String getUserEmailById(UUID id) {
         User user = userRepository.findById(id).orElse(null);
 
-        if (user==null){
+        if (user == null) {
             return null;
-        }else{
+        } else {
             return user.getEmail();
         }
     }

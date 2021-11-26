@@ -78,7 +78,7 @@ public class OrderService implements IOrderService {
 
         for (Map.Entry<UUID, Integer> e : details.getProductsToBuyWithCount().entrySet()) {
             Product product = productsService.loadProductEntityById(e.getKey());
-            if(product==null){
+            if (product == null) {
                 throw new OrderServiceOrderCreationException("User with UUID " + user.getId() + " cant checkout because product with UUID " + e.getKey() + " does not exist");
             }
             if (!product.getProductStatus().equals(EProductStatus.IN_STOCK)) {

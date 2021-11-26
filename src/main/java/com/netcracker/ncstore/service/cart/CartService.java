@@ -74,7 +74,7 @@ public class CartService implements ICartService {
     @Transactional
     @EventListener(SessionDestroyedEvent.class)
     public void saveCart() {
-        if (userId != null && !CollectionUtils.isEmpty(cartMap)) {
+        if (userId != null && cartMap!=null) {
             Cart savedCart;
 
             if (!cartRepository.existsById(userId)) {

@@ -13,7 +13,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @AllArgsConstructor
-public class ProductsGetResponse {
+public class ProductsGetPaginationResponse {
     private final UUID productId;
     private final String productName;
     private final UUID supplierId;

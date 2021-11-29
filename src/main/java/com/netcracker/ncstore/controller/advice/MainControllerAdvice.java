@@ -60,6 +60,20 @@ public class MainControllerAdvice {
         return ResponseEntity.badRequest().build();
     }
 
+    @ExceptionHandler(ProductServiceNotFoundExpectedException.class)
+    public ResponseEntity<?> handleProductServiceNotFoundExpectedException(final ProductServiceNotFoundExpectedException e) {
+        log.error(e.getMessage());
+        log.info("RESPONSE: 204");
+        return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(ProductServiceNotFoundException.class)
+    public ResponseEntity<?> handleProductServiceNotFoundException(final ProductServiceNotFoundException e) {
+        log.error(e.getMessage());
+        log.info("RESPONSE: 404");
+        return ResponseEntity.notFound().build();
+    }
+
     @ExceptionHandler(CartServiceCheckoutException.class)
     public ResponseEntity<?> handleCartServiceValidationException(final CartServiceCheckoutException e) {
         log.error(e.getMessage());

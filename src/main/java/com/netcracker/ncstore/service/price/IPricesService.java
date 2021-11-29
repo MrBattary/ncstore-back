@@ -1,10 +1,13 @@
 package com.netcracker.ncstore.service.price;
 
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
+import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
+import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
+import com.netcracker.ncstore.model.ProductPrice;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,4 +44,26 @@ public interface IPricesService {
      * @return ProductPriceDTO
      */
     List<ProductPriceDTO> getPricesForProduct(UUID productId);
+
+    /**
+     * Returns list of PriceRegionDTO
+     *
+     * @param productPrices - list of prices
+     * @return list of PriceRegionDTO
+     */
+    List<PriceRegionDTO> getListOfPriceRegionDtoByListOfPrices(List<ProductPrice> productPrices);
+
+    /**
+     * Returns list of DiscountPriceRegionDTO
+     *
+     * @param productPrices - list of prices
+     * @return list of DiscountPriceRegionDTO
+     */
+    List<DiscountPriceRegionDTO> getListOfDiscountPriceRegionDtoByListOfPrices(List<ProductPrice> productPrices);
+
+    /**
+     * Deletes all prices and related discount prices
+     * @param productPrices - list of ProductPrice
+     */
+    void deleteAllProvidedPrices(List<ProductPrice> productPrices);
 }

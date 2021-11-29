@@ -1,16 +1,18 @@
 package com.netcracker.ncstore.service.price;
 
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
+import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
+import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
+import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.DiscountRepository;
 import com.netcracker.ncstore.repository.ProductPriceRepository;
 import com.netcracker.ncstore.repository.ProductRepository;
-import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import com.netcracker.ncstore.util.validator.LocaleValidator;
 import com.netcracker.ncstore.util.validator.PriceValidator;
 import org.slf4j.Logger;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -66,7 +69,9 @@ public class PricesService implements IPricesService {
                 productPrice.getPrice(),
                 discountPrice,
                 productLocale.getLocale(),
-                locale
+                locale,
+                discountPrice != null ? productPrice.getDiscount().getStartUtcTime() : null,
+                discountPrice != null ? productPrice.getDiscount().getEndUtcTime() : null
         );
     }
 
@@ -99,5 +104,45 @@ public class PricesService implements IPricesService {
                 stream().
                 map(ProductPriceDTO::new).
                 collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PriceRegionDTO> getListOfPriceRegionDtoByListOfPrices(List<ProductPrice> productPrices) {
+        List<PriceRegionDTO> priceRegionDTOList = new ArrayList<>();
+
+        for (ProductPrice productPrice : productPrices) {
+            priceRegionDTOList.add(new PriceRegionDTO(productPrice.getPrice(), productPrice.getLocale()));
+        }
+        return priceRegionDTOList;
+    }
+
+    @Override
+    public List<DiscountPriceRegionDTO> getListOfDiscountPriceRegionDtoByListOfPrices(List<ProductPrice> productPrices) {
+        List<DiscountPriceRegionDTO> discountPriceRegionDTOList = new ArrayList<>();
+
+        for (ProductPrice productPrice : productPrices) {
+            Discount discountPrice = productPrice.getDiscount();
+            if (discountPrice != null) {
+                discountPriceRegionDTOList.add(
+                        new DiscountPriceRegionDTO(
+                                discountPrice.getDiscountPrice(),
+                                productPrice.getLocale(),
+                                discountPrice.getStartUtcTime(),
+                                discountPrice.getEndUtcTime()
+                        )
+                );
+            }
+        }
+        return discountPriceRegionDTOList;
+    }
+
+    @Override
+    public void deleteAllProvidedPrices(final List<ProductPrice> productPrices) {
+        for (ProductPrice productPrice : productPrices) {
+            if (productPrice.getDiscount() != null) {
+                discountRepository.deleteDiscountById(productPrice.getDiscount().getId());
+            }
+            productPriceRepository.deleteProductPriceById(productPrice.getId());
+        }
     }
 }

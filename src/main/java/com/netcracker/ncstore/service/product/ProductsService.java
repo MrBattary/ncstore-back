@@ -2,33 +2,42 @@ package com.netcracker.ncstore.service.product;
 
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
-import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.ProductIdAuthDTO;
+import com.netcracker.ncstore.dto.ProductIdUpdateRequestAuthDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
+import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
-import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.dto.request.UpdateProductRequest;
+import com.netcracker.ncstore.dto.response.DeleteProductResponse;
+import com.netcracker.ncstore.dto.response.GetProductResponse;
+import com.netcracker.ncstore.dto.response.ProductGetResponse;
+import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
+import com.netcracker.ncstore.dto.response.UpdateProductResponse;
 import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
-import com.netcracker.ncstore.exception.ProductServiceCreationValidationException;
+import com.netcracker.ncstore.exception.ProductServiceNotAllowedException;
+import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
+import com.netcracker.ncstore.exception.ProductServiceNotFoundExpectedException;
+import com.netcracker.ncstore.exception.ProductServiceValidationException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
-import com.netcracker.ncstore.repository.projections.ProductWithPriceInfo;
 import com.netcracker.ncstore.service.category.ICategoryService;
 import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.user.IUserService;
-import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import com.netcracker.ncstore.util.enumeration.ESortOrder;
 import com.netcracker.ncstore.util.validator.PriceValidator;
 import com.netcracker.ncstore.util.validator.ProductValidator;
@@ -44,11 +53,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.security.Principal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -85,7 +96,7 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public List<ProductsGetResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
+    public List<ProductsGetPaginationResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
         Pageable productsPageRequest;
         Page<Product> productsPage;
 
@@ -149,7 +160,7 @@ public class ProductsService implements IProductsService {
         }
 
 
-        List<ProductsGetResponse> responsesList = new ArrayList<>();
+        List<ProductsGetPaginationResponse> responsesList = new ArrayList<>();
 
         for (Product p : productsPage.getContent()) {
             String supplierName =
@@ -167,7 +178,7 @@ public class ProductsService implements IProductsService {
             ActualProductPriceConvertedForRegionDTO actualPriceConverted =
                     priceConversionService.convertActualUCPriceForRealPrice(actualPrice);
 
-            ProductsGetResponse item = new ProductsGetResponse(
+            ProductsGetPaginationResponse item = new ProductsGetPaginationResponse(
                     p.getId(),
                     p.getName(),
                     p.getSupplier().getId(),
@@ -189,7 +200,12 @@ public class ProductsService implements IProductsService {
         log.info("Creation of new product for user with UUID " + creator.getId() + " begins");
 
         try {
-            validateProductData(productData);
+            validateProductName(productData.getName());
+            validateProductDescription(productData.getDescription());
+            validateSupplierRoleByPrincipal(productData.getPrincipal());
+            validateCategoriesNamesList(productData.getCategoriesNames());
+            validateParentProductId(productData.getParentProductUUID());
+            validateProductPrices(productData.getPrices(), productData.getDiscountPrices());
 
             Product parentProduct = null;
             if (productData.getParentProductUUID() != null) {
@@ -212,7 +228,6 @@ public class ProductsService implements IProductsService {
                     productData.getStatus(),
                     null,
                     categories));
-
 
             List<ProductPriceDTO> createdPricesDTOs = productData.getPrices().
                     stream().
@@ -239,7 +254,7 @@ public class ProductsService implements IProductsService {
             log.info("New Product with UUID " + product.getId() + " for user with UUID " + creator.getId() + " created successfully");
             return new ProductDTO(product);
 
-        } catch (ProductServiceCreationValidationException |
+        } catch (ProductServiceValidationException |
                 CategoryServiceNotFoundException |
                 PricesServiceValidationException e) {
 
@@ -263,55 +278,284 @@ public class ProductsService implements IProductsService {
         return productRepository.findById(id).orElse(null);
     }
 
-    private void validateProductData(final ProductCreateDTO productCreateDTO) {
-        User creator = userService.loadUserEntityByEmail(productCreateDTO.getPrincipal().getName());
+    @Override
+    public ProductGetResponse getProductResponse(final ProductLocaleDTO productIdLocaleDTO){
+        Product product = findProductById(productIdLocaleDTO.getProductId());
+
+        ActualProductPriceInRegionDTO actualProductPriceInRegionDTO = pricesService.getActualPriceForProductInRegion(productIdLocaleDTO);
+        ActualProductPriceConvertedForRegionDTO convertedPrice = priceConversionService.convertActualUCPriceForRealPrice(actualProductPriceInRegionDTO);
+
+        return new ProductGetResponse(
+                product.getId(),
+                product.getSupplier().getId(),
+                getSupplierNameByUserId(product.getSupplier().getId()),
+                product.getName(), product.getDescription(),
+                convertedPrice.getNormalConvertedPrice(),
+                convertedPrice.getDiscountConvertedPrice(),
+                convertedPrice.getCurrencySymbol(),
+                convertedPrice.getDiscountStartUtc(),
+                convertedPrice.getDiscountEndUtc(),
+                product.getParentProduct() == null ? null : product.getParentProduct().getId(),
+                product.getCategories().stream().map(Category::getName).collect(Collectors.toList())
+        );
+    }
+
+    @Override
+    public GetProductResponse getProductDetailed(final ProductIdAuthDTO productIdAuthDTO)
+            throws ProductServiceNotFoundException, ProductServiceNotAllowedException {
+        try {
+            log.info("The receipt of detailed information about product has begun for user with email: "
+                    + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());
+            Product productFromRepository = findProductById(productIdAuthDTO.getProductId());
+
+            validateSupplierByEmail(
+                    productFromRepository.getSupplier().getEmail(),
+                    productIdAuthDTO.getUserEmailAndRolesDTO()
+            );
+
+            UUID idOfSupplierOfProductFromRepository = productFromRepository.getSupplier().getId();
+            String supplierName = getSupplierNameByUserId(idOfSupplierOfProductFromRepository);
+
+            List<PriceRegionDTO> normalPrices =
+                    pricesService.getListOfPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
+            List<DiscountPriceRegionDTO> discountPrices =
+                    pricesService.getListOfDiscountPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
+
+            log.info("The receipt of detailed information about product has ended for user with email: "
+                    + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());
+            return new GetProductResponse(
+                    productFromRepository.getId(),
+                    productFromRepository.getName(),
+                    idOfSupplierOfProductFromRepository,
+                    supplierName,
+                    productFromRepository.getDescription(),
+                    normalPrices,
+                    discountPrices,
+                    productFromRepository.getParentProduct() != null ? productFromRepository.getParentProduct().getId() : null,
+                    productFromRepository.getCategories().stream().map(Category::getName).collect(Collectors.toList())
+            );
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            throw new ProductServiceNotFoundException("Unable to get product with UUID" + productIdAuthDTO.getProductId(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public UpdateProductResponse updateProduct(ProductIdUpdateRequestAuthDTO productIdUpdateRequestAuthDTO)
+            throws ProductServiceNotFoundException, ProductServiceNotAllowedException, ProductServiceValidationException {
+        try {
+            log.info("The update of the product information started by the request of the user with email: "
+                    + productIdUpdateRequestAuthDTO.getUserEmailAndRolesDTO().getEmail());
+            Product productFromRepository = findProductById(productIdUpdateRequestAuthDTO.getProductId());
+
+            validateSupplierByEmail(
+                    productFromRepository.getSupplier().getEmail(),
+                    productIdUpdateRequestAuthDTO.getUserEmailAndRolesDTO()
+            );
+
+            UpdateProductRequest newProductData = productIdUpdateRequestAuthDTO.getRequest();
+
+            validateProductName(newProductData.getProductName());
+            validateProductDescription(newProductData.getProductDescription());
+            validateParentProductId(newProductData.getParentProductId());
+            validateCategoriesNamesList(newProductData.getCategoriesNames());
+            validateProductPrices(
+                    newProductData.getNormalPrices(),
+                    newProductData.getDiscountPrices()
+            );
+
+            Product parentProduct = null;
+            if (newProductData.getParentProductId() != null) {
+                parentProduct = productRepository.getById(newProductData.getParentProductId());
+            }
+
+            List<Category> categories =
+                    newProductData.getCategoriesNames().
+                            stream().
+                            map(categoryService::getCategoryEntityByName).
+                            collect(Collectors.toList());
+
+            productFromRepository.setName(newProductData.getProductName());
+            productFromRepository.setDescription(newProductData.getProductDescription());
+            productFromRepository.setParentProduct(parentProduct);
+            productFromRepository.setCategories(categories);
+
+            pricesService.deleteAllProvidedPrices(productFromRepository.getProductPrices());
+
+            List<ProductPriceDTO> newPricesDTOs = newProductData.getNormalPrices().
+                    stream().
+                    map(e -> new ProductPriceCreateDTO(e.getPrice(), e.getRegion(), productFromRepository.getId())).
+                    map(pricesService::createProductPrice).
+                    collect(Collectors.toList());
+
+            Map<Locale, UUID> localeProductPriceUUIDMap =
+                    newPricesDTOs.
+                            stream().
+                            collect(Collectors.toMap(ProductPriceDTO::getLocale, ProductPriceDTO::getId));
+
+            if (newProductData.getDiscountPrices() != null) {
+                newProductData.getDiscountPrices().
+                        stream().
+                        map(e -> new DiscountCreateDTO(
+                                e.getPrice(),
+                                e.getStartUtcTime(),
+                                e.getEndUtcTime(),
+                                localeProductPriceUUIDMap.get(e.getRegion()))).
+                        forEach(discountsService::createNewDiscountForPrice);
+            }
+
+            log.info("Product with UUID " + productFromRepository.getId() + " for user with email: "
+                    + productIdUpdateRequestAuthDTO.getUserEmailAndRolesDTO().getEmail() + " updated successfully");
+
+            return new UpdateProductResponse(newProductData.getProductId(),
+                    newProductData.getProductName(),
+                    newProductData.getProductDescription(),
+                    newProductData.getNormalPrices(),
+                    newProductData.getDiscountPrices(),
+                    parentProduct != null ? parentProduct.getId() : null,
+                    newProductData.getCategoriesNames()
+            );
+        } catch (ProductServiceValidationException |
+                IllegalArgumentException |
+                CategoryServiceNotFoundException |
+                PricesServiceValidationException e) {
+
+            log.error(e.getMessage());
+            throw new ProductServiceCreationException("Unable to create new product for user with email: "
+                    + productIdUpdateRequestAuthDTO.getUserEmailAndRolesDTO().getEmail(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public DeleteProductResponse deleteProduct(ProductIdAuthDTO productIdAuthDTO)
+            throws ProductServiceNotFoundExpectedException, ProductServiceNotAllowedException {
+        try {
+            log.info("The deletion of the product started by the request of the user with email: "
+                    + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());
+            Product productFromRepository = findProductById(productIdAuthDTO.getProductId());
+
+            validateSupplierByEmail(
+                    productFromRepository.getSupplier().getEmail(),
+                    productIdAuthDTO.getUserEmailAndRolesDTO()
+            );
+
+            List<PriceRegionDTO> normalPrices =
+                    pricesService.getListOfPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
+            List<DiscountPriceRegionDTO> discountPrices =
+                    pricesService.getListOfDiscountPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
+
+            DeleteProductResponse response = new DeleteProductResponse(
+                    productFromRepository.getId(),
+                    productFromRepository.getName(),
+                    productFromRepository.getDescription(),
+                    normalPrices,
+                    discountPrices,
+                    productFromRepository.getParentProduct() != null ? productFromRepository.getParentProduct().getId() : null,
+                    productFromRepository.getCategories().stream().map(Category::getName).collect(Collectors.toList())
+            );
+
+            pricesService.deleteAllProvidedPrices(productFromRepository.getProductPrices());
+            productRepository.deleteProductById(productFromRepository.getId());
+
+            log.info("The deletion of the product completed for the request of the user with email: "
+                    + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());
+            return response;
+        } catch (ProductServiceValidationException | ProductServiceNotFoundException | IllegalArgumentException e) {
+            log.info(e.getMessage());
+            throw new ProductServiceNotFoundExpectedException("Unable to delete product for user with email: "
+                    + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail(), e);
+        }
+    }
+
+    private void validateSupplierByEmail(final String emailOfSupplierFromProduct, UserEmailAndRolesDTO userEmailAndRolesDTO)
+            throws ProductServiceValidationException {
+        if (!Objects.equals(emailOfSupplierFromProduct, userEmailAndRolesDTO.getEmail())) {
+            throw new ProductServiceNotAllowedException("Unable to find requested product for supplier with email: "
+                    + userEmailAndRolesDTO.getEmail());
+        }
+    }
+
+    private void validateSupplierRoleByPrincipal(final Principal principal) throws ProductServiceValidationException {
+        User creator = userService.loadUserEntityByEmail(principal.getName());
 
         boolean isSupplier = creator.getRoles().stream().anyMatch(e -> e.getRoleName().equals(ERoleName.SUPPLIER));
         if (!isSupplier) {
-            throw new ProductServiceCreationValidationException("User with UUID " + creator.getId() + " tried to create product while not having SUPPLIER role");
+            throw new ProductServiceValidationException("User with UUID " + creator.getId()
+                    + " tried to create product while not having SUPPLIER role");
         }
+    }
 
-
-        if (!ProductValidator.checkCategoriesNamesList(productCreateDTO.getCategoriesNames())) {
-            throw new ProductServiceCreationValidationException("Categories list not provided or empty");
+    private void validateCategoriesNamesList(final List<String> categoriesNames) throws ProductServiceValidationException {
+        if (!ProductValidator.checkCategoriesNamesList(categoriesNames)) {
+            throw new ProductServiceValidationException("Categories list not provided or empty");
         }
+    }
 
-        if (productCreateDTO.getParentProductUUID() != null) {
-            Product parentProduct = productRepository.findById(productCreateDTO.getParentProductUUID()).orElse(null);
+    private void validateParentProductId(final UUID uuid) throws ProductServiceValidationException {
+        if (uuid != null) {
+            Product parentProduct = productRepository.findById(uuid).orElse(null);
             if (parentProduct == null) {
-                throw new ProductServiceCreationValidationException("Product with UUID " + productCreateDTO.getParentProductUUID() + " not found, but was requested as parent product for new product.");
+                throw new ProductServiceValidationException("Product with UUID " + uuid
+                        + " not found, but was requested as parent product for new product.");
             }
         }
+    }
 
-        if (productCreateDTO.getPrices() == null) {
-            throw new ProductServiceCreationValidationException("No prices was provided. Could not create product.");
+    private void validateProductName(final String productName) throws ProductServiceValidationException {
+        if (!ProductValidator.isNameValid(productName)) {
+            throw new ProductServiceValidationException("Product name not provided or it length is not between (3;255)");
+        }
+    }
+
+    private void validateProductDescription(final String productDescription) throws ProductServiceValidationException {
+        if (!ProductValidator.isDescriptionValid(productDescription)) {
+            throw new ProductServiceValidationException("Product description not provided or is shorter than 50 symbols");
+        }
+    }
+
+    private void validateProductPrices(final List<PriceRegionDTO> prices, final List<DiscountPriceRegionDTO> discountPrices)
+            throws ProductServiceValidationException {
+        if (prices == null) {
+            throw new ProductServiceValidationException("No prices was provided. Could not create product.");
         }
 
         boolean hasDefaultLocale = ProductValidator.hasProvidedLocale(
-                productCreateDTO.getPrices().stream()
+                prices.stream()
                         .map(PriceRegionDTO::getRegion)
                         .collect(Collectors.toList()), defaultLocaleCode);
 
         if (!hasDefaultLocale) {
-            throw new ProductServiceCreationValidationException("No price for default Locale with tag " + defaultLocaleCode + " was provided. Could not create product.");
+            throw new ProductServiceValidationException("No price for default Locale with tag " + defaultLocaleCode
+                    + " was provided. Could not create product.");
         }
 
-        if (!PriceValidator.isPriceDuplicates(productCreateDTO.getPrices())) {
-            throw new ProductServiceCreationValidationException("Price duplicates (with same locale) found.");
+        if (!PriceValidator.isPriceDuplicates(prices)) {
+            throw new ProductServiceValidationException("Price duplicates (with same locale) found.");
         }
 
-        if (productCreateDTO.getDiscountPrices() != null) {
-            if (!PriceValidator.isDiscountsValid(productCreateDTO.getPrices(), productCreateDTO.getDiscountPrices())) {
-                throw new ProductServiceCreationValidationException("Discount prices are invalid. Each discount price must have normal price in same region.");
+        if (discountPrices != null) {
+            if (!PriceValidator.isDiscountsValid(prices, discountPrices)) {
+                throw new ProductServiceValidationException("Discount prices are invalid. " +
+                        "Each discount price must have normal price in same region.");
             }
         }
+    }
 
-        if (!ProductValidator.isNameValid(productCreateDTO.getName())) {
-            throw new ProductServiceCreationValidationException("Product name not provided or it length is not between (3;255)");
-        }
+    private Product findProductById(final UUID productId) throws ProductServiceNotFoundException {
+        return productRepository
+                .findById(productId)
+                .orElseThrow(() ->
+                        new ProductServiceNotFoundException("Unable to get product with UUID" + productId)
+                );
+    }
 
-        if (!ProductValidator.isDescriptionValid(productCreateDTO.getDescription())) {
-            throw new ProductServiceCreationValidationException("Product description not provided or is shorter than 50 symbols");
+    private String getSupplierNameByUserId(final UUID userId) {
+        String supplierName = userService.getCompanyData(userId).getCompanyName();
+        if (supplierName == null) {
+            supplierName = userService.getPersonData(userId).getNickName();
         }
+        return supplierName;
     }
 }

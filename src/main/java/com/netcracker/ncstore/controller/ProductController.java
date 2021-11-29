@@ -1,16 +1,15 @@
 package com.netcracker.ncstore.controller;
 
-import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
-import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.*;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.CategoryDTO;
 import com.netcracker.ncstore.dto.data.DiscountDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
-import com.netcracker.ncstore.dto.request.CreateProductRequest;
+import com.netcracker.ncstore.dto.request.ProductCreateRequest;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
-import com.netcracker.ncstore.dto.response.CreateProductResponse;
-import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.dto.request.UpdateProductRequest;
+import com.netcracker.ncstore.dto.response.*;
 import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.service.category.ICategoryService;
@@ -25,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,7 +74,7 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<List<ProductsGetResponse>> getProductsWithPagination(
+    public ResponseEntity<List<ProductsGetPaginationResponse>> getProductsWithPagination(
             @RequestParam(defaultValue = "", required = false) final String categoryIds,
             @RequestParam(defaultValue = "", required = false) final String searchText,
             @RequestParam(defaultValue = "default", required = false) final String sort,
@@ -93,7 +94,7 @@ public class ProductController {
         ProductsGetRequest productsGetRequest =
                 new ProductsGetRequest(categories, searchText, page, size, locale, sortEnum, sortOrderEnum, supplierId);
 
-        List<ProductsGetResponse> response = productsService.getPageOfProductsUsingFilterAndSortParameters(productsGetRequest);
+        List<ProductsGetPaginationResponse> response = productsService.getPageOfProductsUsingFilterAndSortParameters(productsGetRequest);
 
         log.info("RESPONSE: to get products by search text:" + searchText + " on: " + page + " page, with " + size + " size");
         return ResponseEntity.
@@ -105,7 +106,8 @@ public class ProductController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/createProduct
     @RequestMapping(value = "/products", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> createProduct(@RequestBody CreateProductRequest request, Principal principal) {
+    public ResponseEntity<CreateProductResponse> createProduct(@RequestBody final ProductCreateRequest request,
+                                                               final Principal principal) {
         log.info("REQUEST: to create product with name " + request.getProductName() + " for user with UUID: " + userService.loadUserByEmail(principal.getName()).getId());
 
         ProductCreateDTO productData = new ProductCreateDTO(
@@ -162,32 +164,87 @@ public class ProductController {
                 body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProduct
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.3#/Product/getProduct
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getProduct(@PathVariable final String productId) {
-        return null;
+    public ResponseEntity<ProductGetResponse> getProduct(@PathVariable final UUID productId, final Locale locale) {
+        log.info("REQUEST: to get product data by id: " + productId);
+        ProductGetResponse response = productsService.getProductResponse(new ProductLocaleDTO(productId, locale));
+        log.info("RESPONSE: to get product data by id: " + productId);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/updateProduct
+    @RequestMapping(value = "/products/{productId}/detailed", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<GetProductResponse> getProductDetailed(@PathVariable final UUID productId) {
+        log.info("REQUEST: to get product detailed data by id: " + productId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        GetProductResponse response = productsService.getProductDetailed(
+                new ProductIdAuthDTO(
+                        productId,
+                        new UserEmailAndRolesDTO(authentication)
+                )
+        );
+
+        log.info("RESPONSE: to get product detailed data by id: " + productId);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
+    }
+
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.3#/Product/updateProduct
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<?> updateProduct(@PathVariable final String productId) {
-        return null;
+    public ResponseEntity<UpdateProductResponse> updateProduct(@PathVariable final UUID productId,
+                                                               @RequestBody final UpdateProductRequest request) {
+        log.info("REQUEST: to update product with id: " + productId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UpdateProductResponse response = productsService.updateProduct(
+                new ProductIdUpdateRequestAuthDTO(
+                        productId,
+                        request,
+                        new UserEmailAndRolesDTO(authentication)
+                )
+        );
+
+        log.info("RESPONSE: to update product with id: " + productId);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/deleteProduct
+    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.3#/Product/deleteProduct
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteProduct(@PathVariable final String productId) {
-        return null;
+    public ResponseEntity<DeleteProductResponse> deleteProduct(@PathVariable final UUID productId) {
+        log.info("REQUEST: to delete product with id: " + productId);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        DeleteProductResponse response = productsService.deleteProduct(
+                new ProductIdAuthDTO(
+                        productId,
+                        new UserEmailAndRolesDTO(authentication)
+                )
+        );
+        log.info("RESPONSE: to delete product with id: " + productId);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/buyProduct
 
     @RequestMapping(value = "/products/{productId}/buy", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> buyProduct(@PathVariable final String productId) {
+    public ResponseEntity<?> buyProduct(@PathVariable final UUID productId) {
         return null;
     }
 }

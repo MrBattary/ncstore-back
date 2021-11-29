@@ -29,32 +29,33 @@ public abstract class PriceValidator {
         return discounts.stream().allMatch(checkDiscountRegionForExistenceInPrices);
     }
 
-    public static Double getActualDiscountPrice(Discount discount){
-        if(discount==null) {
+    public static Double getActualDiscountPrice(Discount discount) {
+        if (discount == null) {
             return null;
         }
         return getActualDiscountPrice(discount.getStartUtcTime(), discount.getEndUtcTime(), discount.getDiscountPrice());
     }
-    public static Double getActualDiscountPrice(DiscountCreateDTO discountCreateDTO){
-        if(discountCreateDTO==null) {
+
+    public static Double getActualDiscountPrice(DiscountCreateDTO discountCreateDTO) {
+        if (discountCreateDTO == null) {
             return null;
         }
         return getActualDiscountPrice(discountCreateDTO.getStartUtcTime(), discountCreateDTO.getEndUtcTime(), discountCreateDTO.getDiscountPrice());
     }
 
-    public static Double getActualDiscountPrice(Instant startUtcTime, Instant endUtcTime, double price){
-        if(startUtcTime.compareTo(Instant.now()) > 0){
+    public static Double getActualDiscountPrice(Instant startUtcTime, Instant endUtcTime, double price) {
+        if (startUtcTime.compareTo(Instant.now()) > 0) {
             return null;
-        }else if(endUtcTime.compareTo(Instant.now()) < 0){
+        } else if (endUtcTime.compareTo(Instant.now()) < 0) {
             return null;
-        }else {
+        } else {
             return price;
         }
     }
 
-    public static boolean isPriceDuplicates(List<PriceRegionDTO> prices){
+    public static boolean isPriceDuplicates(List<PriceRegionDTO> prices) {
         Predicate<PriceRegionDTO> checkPriceDuplicate =
-                priceRegionDTO -> prices.stream().filter(e->e.getRegion().equals(priceRegionDTO.getRegion())).count() > 1;
+                priceRegionDTO -> prices.stream().filter(e -> e.getRegion().equals(priceRegionDTO.getRegion())).count() > 1;
 
         return prices.stream().noneMatch(checkPriceDuplicate);
     }

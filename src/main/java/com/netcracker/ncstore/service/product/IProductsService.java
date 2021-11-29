@@ -1,14 +1,24 @@
 package com.netcracker.ncstore.service.product;
 
+import com.netcracker.ncstore.dto.ProductIdAuthDTO;
+import com.netcracker.ncstore.dto.ProductIdUpdateRequestAuthDTO;
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
-import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.dto.response.DeleteProductResponse;
+import com.netcracker.ncstore.dto.response.GetProductResponse;
+import com.netcracker.ncstore.dto.response.ProductGetResponse;
+import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
+import com.netcracker.ncstore.dto.response.UpdateProductResponse;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
 import com.netcracker.ncstore.model.Product;
+import com.netcracker.ncstore.exception.ProductServiceNotAllowedException;
+import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
+import com.netcracker.ncstore.exception.ProductServiceNotFoundExpectedException;
+import com.netcracker.ncstore.exception.ProductServiceValidationException;
 
 import java.util.List;
-
 import java.util.UUID;
 
 /**
@@ -24,7 +34,7 @@ public interface IProductsService {
      * @param productsGetRequest list containing DTOs which contains needed information
      * @return list of DTOs
      */
-    List<ProductsGetResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest);
+    List<ProductsGetPaginationResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest);
 
     /**
      * Create new product in store with given data.
@@ -60,4 +70,43 @@ public interface IProductsService {
      * @return product entity with provided UUID
      */
     Product loadProductEntityById(UUID id);
+
+    /**
+     * Returns product public data
+     * @param getProductDTO - DTO
+     * @return - Product's data as response
+     * @throws ProductServiceNotFoundException - if product was not found
+     */
+    ProductGetResponse getProductResponse(ProductLocaleDTO getProductDTO) throws ProductServiceNotFoundException;
+
+    /**
+     * Returns product detailed data for supllier
+     * @param productIdAuthDTO - DTO
+     * @return - Product's data as response
+     * @throws ProductServiceNotFoundException - if product was not found
+     * @throws ProductServiceNotAllowedException - if product does not belong to requesting supplier
+     */
+    GetProductResponse getProductDetailed(ProductIdAuthDTO productIdAuthDTO)
+            throws ProductServiceNotFoundException, ProductServiceNotAllowedException;
+
+    /**
+     * Update existing product
+     * @param productIdUpdateRequestAuthDTO - DTO
+     * @return - UpdateProductResponse
+     * @throws ProductServiceNotFoundException - if product was not found
+     * @throws ProductServiceNotAllowedException - if product does not belong to requesting supplier
+     * @throws ProductServiceValidationException - if new data was corrupted
+     */
+    UpdateProductResponse updateProduct(ProductIdUpdateRequestAuthDTO productIdUpdateRequestAuthDTO)
+            throws ProductServiceNotFoundException, ProductServiceNotAllowedException, ProductServiceValidationException;
+
+    /**
+     *
+     * @param productIdAuthDTO - DTO
+     * @return - DeleteProductResponse
+     * @throws ProductServiceNotFoundExpectedException - if product was not found
+     * @throws ProductServiceNotAllowedException - if product does not belong to requesting supplier
+     */
+    DeleteProductResponse deleteProduct(ProductIdAuthDTO productIdAuthDTO)
+            throws ProductServiceNotFoundExpectedException, ProductServiceNotAllowedException;
 }

@@ -1,6 +1,5 @@
 package com.netcracker.ncstore.service.cart;
 
-import com.netcracker.ncstore.dto.data.OrderDTO;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.exception.CartServiceCheckoutException;
 import com.netcracker.ncstore.exception.CartServiceValidationException;

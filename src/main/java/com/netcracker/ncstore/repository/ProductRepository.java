@@ -89,4 +89,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
             " (categories.id in ?3)")
     Page<Product> findProductsUserIdAndByLikeNameAndCategoriesAndLocale(UUID userID, String name, Collection<UUID> categoriesIDs, Pageable pageable);
 
+    void deleteProductById(UUID id);
 }

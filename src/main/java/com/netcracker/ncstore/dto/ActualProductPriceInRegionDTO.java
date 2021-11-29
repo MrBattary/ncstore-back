@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
-import org.apache.tomcat.jni.Local;
 
+import java.time.Instant;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -27,4 +27,8 @@ public class ActualProductPriceInRegionDTO {
     private final Double discountPrice;
     private final Locale requestedRegion;
     private final Locale actualRegion;
+    //should be null when no discount found
+    private final Instant discountStartUtc;
+    //should be null when no discount found
+    private final Instant discountEndUtc;
 }

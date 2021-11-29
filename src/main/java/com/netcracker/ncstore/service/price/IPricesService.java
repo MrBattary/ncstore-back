@@ -1,7 +1,6 @@
 package com.netcracker.ncstore.service.price;
 
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
-import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;

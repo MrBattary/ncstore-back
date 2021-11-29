@@ -70,6 +70,8 @@ public class PriceConversionService implements IPriceConversionService {
                 convertedNormalPrice.getPrice(),
                 discountPrice,
                 convertedNormalPrice.getLocale(),
-                convertedNormalPrice.getSymbol());
+                convertedNormalPrice.getSymbol(),
+                actualProductPriceInRegionDTO.getDiscountStartUtc(),
+                actualProductPriceInRegionDTO.getDiscountEndUtc());
     }
 }

@@ -21,7 +21,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class CreateProductRequest {
+public class ProductCreateRequest {
     private final String productName;
     private final String productDescription;
     private final List<PriceRegionDTO> normalPrices;

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
+import java.time.Instant;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -26,4 +27,8 @@ public class ActualProductPriceConvertedForRegionDTO {
     private final Double discountConvertedPrice;
     private final Locale region;
     private final String currencySymbol;
+    //should be null when no discount found
+    private final Instant discountStartUtc;
+    //should be null when no discount found
+    private final Instant discountEndUtc;
 }

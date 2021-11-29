@@ -1,14 +1,15 @@
 package com.netcracker.ncstore.service.product;
 
 import com.netcracker.ncstore.dto.ProductIdAuthDTO;
-import com.netcracker.ncstore.dto.ProductIdLocaleDTO;
 import com.netcracker.ncstore.dto.ProductIdUpdateRequestAuthDTO;
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.request.ProductsGetRequest;
 import com.netcracker.ncstore.dto.response.DeleteProductResponse;
 import com.netcracker.ncstore.dto.response.GetProductResponse;
-import com.netcracker.ncstore.dto.response.ProductsGetResponse;
+import com.netcracker.ncstore.dto.response.ProductGetResponse;
+import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
 import com.netcracker.ncstore.dto.response.UpdateProductResponse;
 import com.netcracker.ncstore.exception.ProductServiceCreationException;
 import com.netcracker.ncstore.model.Product;
@@ -33,7 +34,7 @@ public interface IProductsService {
      * @param productsGetRequest list containing DTOs which contains needed information
      * @return list of DTOs
      */
-    List<ProductsGetResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest);
+    List<ProductsGetPaginationResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest);
 
     /**
      * Create new product in store with given data.
@@ -76,7 +77,7 @@ public interface IProductsService {
      * @return - Product's data as response
      * @throws ProductServiceNotFoundException - if product was not found
      */
-    GetProductResponse getProduct(ProductIdLocaleDTO getProductDTO) throws ProductServiceNotFoundException;
+    ProductGetResponse getProductResponse(ProductLocaleDTO getProductDTO) throws ProductServiceNotFoundException;
 
     /**
      * Returns product detailed data for supllier

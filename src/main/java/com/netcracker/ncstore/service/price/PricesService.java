@@ -1,9 +1,8 @@
 package com.netcracker.ncstore.service.price;
 
-import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
-import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
@@ -14,7 +13,6 @@ import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.DiscountRepository;
 import com.netcracker.ncstore.repository.ProductPriceRepository;
 import com.netcracker.ncstore.repository.ProductRepository;
-import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import com.netcracker.ncstore.util.validator.LocaleValidator;
 import com.netcracker.ncstore.util.validator.PriceValidator;
 import org.slf4j.Logger;
@@ -71,7 +69,9 @@ public class PricesService implements IPricesService {
                 productPrice.getPrice(),
                 discountPrice,
                 productLocale.getLocale(),
-                locale
+                locale,
+                discountPrice != null ? productPrice.getDiscount().getStartUtcTime() : null,
+                discountPrice != null ? productPrice.getDiscount().getEndUtcTime() : null
         );
     }
 

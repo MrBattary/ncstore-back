@@ -3,7 +3,6 @@ package com.netcracker.ncstore.controller;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
-import com.netcracker.ncstore.dto.data.OrderDTO;
 import com.netcracker.ncstore.dto.request.CartAddRequest;
 import com.netcracker.ncstore.dto.response.CartItemChangedResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;

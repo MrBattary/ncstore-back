@@ -1,6 +1,11 @@
 package com.netcracker.ncstore.service.product;
 
 import com.netcracker.ncstore.dto.*;
+import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
+import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
+import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
@@ -14,12 +19,21 @@ import com.netcracker.ncstore.dto.response.ProductsGetResponse;
 import com.netcracker.ncstore.dto.response.UpdateProductResponse;
 import com.netcracker.ncstore.exception.*;
 import com.netcracker.ncstore.model.*;
+import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
+import com.netcracker.ncstore.exception.PricesServiceValidationException;
+import com.netcracker.ncstore.exception.ProductServiceCreationException;
+import com.netcracker.ncstore.exception.ProductServiceCreationValidationException;
+import com.netcracker.ncstore.model.Category;
+import com.netcracker.ncstore.model.Product;
+import com.netcracker.ncstore.model.User;
+import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
 import com.netcracker.ncstore.repository.projections.ProductWithPriceInfo;
 import com.netcracker.ncstore.service.category.ICategoryService;
 import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
+import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import com.netcracker.ncstore.util.enumeration.ESortOrder;
@@ -57,24 +71,27 @@ public class ProductsService implements IProductsService {
     private final IUserService userService;
     private final ICategoryService categoryService;
     private final IDiscountsService discountsService;
+    private final IPriceConversionService priceConversionService;
 
     public ProductsService(final ProductRepository productRepository,
                            final IPricesService pricesService,
                            final IUserService userService,
                            final ICategoryService categoryService,
-                           final IDiscountsService discountsService) {
+                           final IDiscountsService discountsService,
+                           final IPriceConversionService priceConversionService) {
         this.log = LoggerFactory.getLogger(ProductsService.class);
         this.productRepository = productRepository;
         this.pricesService = pricesService;
         this.userService = userService;
         this.categoryService = categoryService;
         this.discountsService = discountsService;
+        this.priceConversionService = priceConversionService;
     }
 
     @Override
     public List<ProductsGetResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
         Pageable productsPageRequest;
-        Page<ProductWithPriceInfo> productsPage;
+        Page<Product> productsPage;
 
         Sort.Direction direction = productsGetRequest.getSortOrder().equals(ESortOrder.ASC) ? Sort.Direction.ASC : Sort.Direction.DESC;
 
@@ -114,14 +131,10 @@ public class ProductsService implements IProductsService {
                 productsPage = productRepository.findProductByUserIdAndByLikeNameAndLocale(
                         productsGetRequest.getSupplierId(),
                         productsGetRequest.getSearchText(),
-                        productsGetRequest.getLocale(),
-                        Locale.forLanguageTag(defaultLocaleCode),
                         productsPageRequest);
             } else {
                 productsPage = productRepository.findProductByLikeNameAndLocale(
                         productsGetRequest.getSearchText(),
-                        productsGetRequest.getLocale(),
-                        Locale.forLanguageTag(defaultLocaleCode),
                         productsPageRequest);
             }
         } else {
@@ -129,15 +142,11 @@ public class ProductsService implements IProductsService {
                 productsPage = productRepository.findProductsUserIdAndByLikeNameAndCategoriesAndLocale(
                         productsGetRequest.getSupplierId(),
                         productsGetRequest.getSearchText(),
-                        productsGetRequest.getLocale(),
-                        Locale.forLanguageTag(defaultLocaleCode),
                         productsGetRequest.getCategoriesIds(),
                         productsPageRequest);
             } else {
                 productsPage = productRepository.findProductsByLikeNameAndCategoriesAndLocale(
                         productsGetRequest.getSearchText(),
-                        productsGetRequest.getLocale(),
-                        Locale.forLanguageTag(defaultLocaleCode),
                         productsGetRequest.getCategoriesIds(),
                         productsPageRequest);
             }
@@ -146,26 +155,32 @@ public class ProductsService implements IProductsService {
 
         List<ProductsGetResponse> responsesList = new ArrayList<>();
 
-        for (ProductWithPriceInfo productInfo : productsPage.getContent()) {
-            ProductWithPriceInfo.ProductPriceInfo firstPrice = productInfo.getProductPrices().get(0);
-
+        for (Product p : productsPage.getContent()) {
             String supplierName =
-                    userService.getCompanyData(productInfo.getUserId()) == null
+                    userService.getCompanyData(p.getSupplier().getId()) == null
                             ?
-                            userService.getPersonData(productInfo.getUserId()).getFirstName() + " " + userService.getPersonData(productInfo.getUserId()).getLastName()
+                            userService.getPersonData(p.getSupplier().getId()).getFirstName() + " " + userService.getPersonData(p.getSupplier().getId()).getLastName()
                             :
-                            userService.getCompanyData(productInfo.getUserId()).getCompanyName();
+                            userService.getCompanyData(p.getSupplier().getId()).getCompanyName();
 
-            ProductsGetResponse response = new ProductsGetResponse(
-                    productInfo.getId(),
-                    productInfo.getName(),
-                    productInfo.getUserId(),
+            ActualProductPriceInRegionDTO actualPrice =
+                    pricesService.getActualPriceForProductInRegion(
+                            new ProductLocaleDTO(p.getId(), productsGetRequest.getLocale())
+                    );
+
+            ActualProductPriceConvertedForRegionDTO actualPriceConverted =
+                    priceConversionService.convertActualUCPriceForRealPrice(actualPrice);
+
+            ProductsGetResponse item = new ProductsGetResponse(
+                    p.getId(),
+                    p.getName(),
+                    p.getSupplier().getId(),
                     supplierName,
-                    firstPrice.getPrice(),
-                    PriceValidator.getActualDiscountPrice(firstPrice.getDiscount()),
-                    LocaleToCurrencyConverter.getCurrencySymbolByLocale(firstPrice.getLocale()));
+                    actualPriceConverted.getNormalConvertedPrice(),
+                    actualPriceConverted.getDiscountConvertedPrice(),
+                    actualPriceConverted.getCurrencySymbol());
 
-            responsesList.add(response);
+            responsesList.add(item);
         }
 
         return responsesList;
@@ -244,6 +259,16 @@ public class ProductsService implements IProductsService {
     @Override
     public boolean doesProductExist(UUID id) {
         return productRepository.existsById(id);
+    }
+
+    @Override
+    public boolean checkIfProductIsOnSale(UUID id) {
+        return doesProductExist(id) && productRepository.getById(id).getProductStatus().equals(EProductStatus.IN_STOCK);
+    }
+
+    @Override
+    public Product loadProductEntityById(UUID id) {
+        return productRepository.findById(id).orElse(null);
     }
 
     @Override

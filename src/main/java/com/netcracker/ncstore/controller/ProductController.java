@@ -138,7 +138,6 @@ public class ProductController {
                         discountDTO.getEndUtcTime()));
 
             } catch (DiscountServiceNotFoundException ignored) {
-                log.warn("Discount was not found for " + p.getLocale().toString());
             }
         }
 

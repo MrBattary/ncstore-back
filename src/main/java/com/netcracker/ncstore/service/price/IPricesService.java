@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.service.price;
 
+import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
@@ -26,7 +27,7 @@ public interface IPricesService {
      * @param productLocale - ProductID and Locale pair
      * @return ProductPriceInRegionDTO
      */
-    ActualProductPriceWithCurrencySymbolDTO getActualPriceForProductInRegion(ProductLocaleDTO productLocale);
+    ActualProductPriceInRegionDTO getActualPriceForProductInRegion(ProductLocaleDTO productLocale);
 
     /**
      * Creates new instance of ProductPrice based on provided parameters.

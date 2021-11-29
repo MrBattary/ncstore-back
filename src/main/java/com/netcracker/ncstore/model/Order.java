@@ -33,13 +33,12 @@ public class Order {
     @GeneratedValue
     private UUID id;
     private Instant creationUtcTime;
-    private String bankData;
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(fetch = javax.persistence.FetchType.EAGER, mappedBy = "order")
     private List<OrderItem> products;
 
     @Enumerated(EnumType.STRING)

@@ -20,6 +20,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 
@@ -44,10 +45,13 @@ class UserServiceTest {
     @Mock
     private CompanyRepository companyRepositoryMocked;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        userService = new UserService(roleServiceMocked, userRepositoryMocked, personRepositoryMocked, companyRepositoryMocked, null);
+        userService = new UserService(roleServiceMocked, userRepositoryMocked, personRepositoryMocked, companyRepositoryMocked, passwordEncoder);
     }
 
     @AfterEach

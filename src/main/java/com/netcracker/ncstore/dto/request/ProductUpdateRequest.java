@@ -16,7 +16,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class UpdateProductRequest {
+public class ProductUpdateRequest {
     private final UUID productId;
     private final String productName;
     private final String productDescription;

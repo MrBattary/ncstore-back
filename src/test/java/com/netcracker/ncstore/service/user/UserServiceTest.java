@@ -47,7 +47,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        userService = new UserService(roleServiceMocked, userRepositoryMocked, personRepositoryMocked, companyRepositoryMocked);
+        userService = new UserService(roleServiceMocked, userRepositoryMocked, personRepositoryMocked, companyRepositoryMocked, null);
     }
 
     @AfterEach

@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.service.user;
 
+import com.netcracker.ncstore.dto.ChangePasswordDTO;
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
 import com.netcracker.ncstore.dto.data.CompanyDTO;
 import com.netcracker.ncstore.dto.data.PersonDTO;
@@ -55,6 +56,21 @@ public interface IUserService {
      * @throws UserServiceRepositoryException - if user not found
      */
     UserTypeEmailPasswordRolesDTO getUserAuthDataByEmail(String email) throws UserServiceRepositoryException;
+
+    /**
+     * Adds provided amount of money to balance
+     *
+     * @param addAmount - amount to be added
+     * @return new balance value
+     */
+    double addMoneyToBalance(double addAmount);
+
+    /**
+     * Changes user password
+     *
+     * @param changePasswordDTO DTO containing email of user plus old and new passwords
+     */
+    void changeUserPassword(ChangePasswordDTO changePasswordDTO);
 
     /**
      * Returns email of user with provided UUID

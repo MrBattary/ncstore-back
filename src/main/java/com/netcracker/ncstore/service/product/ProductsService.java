@@ -13,8 +13,8 @@ import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
-import com.netcracker.ncstore.dto.request.ProductsGetRequest;
-import com.netcracker.ncstore.dto.request.UpdateProductRequest;
+import com.netcracker.ncstore.dto.request.ProductGetRequest;
+import com.netcracker.ncstore.dto.request.ProductUpdateRequest;
 import com.netcracker.ncstore.dto.response.DeleteProductResponse;
 import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductGetResponse;
@@ -94,18 +94,18 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public List<ProductsGetPaginationResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
+    public List<ProductsGetPaginationResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductGetRequest productGetRequest) {
         Pageable productsPageRequest;
         Page<Product> productsPage;
 
-        productsPageRequest = PageRequest.of(productsGetRequest.getPage(), productsGetRequest.getSize());
+        productsPageRequest = PageRequest.of(productGetRequest.getPage(), productGetRequest.getSize());
 
         Specification<Product> specification =
-                ProductSpecifications.getByLikeName(productsGetRequest.getSearchText()).
-                        and(ProductSpecifications.getByCategoriesIDs(productsGetRequest.getCategoriesIds())).
+                ProductSpecifications.getByLikeName(productGetRequest.getSearchText()).
+                        and(ProductSpecifications.getByCategoriesIDs(productGetRequest.getCategoriesIds())).
                         and(ProductSpecifications.getByProductStatus(EProductStatus.IN_STOCK)).
-                        and(ProductSpecifications.getBySupplierId(productsGetRequest.getSupplierId())).
-                        and(ProductSpecifications.order(productsGetRequest.getSortOrder(), productsGetRequest.getSort(), productsGetRequest.getLocale(), Locale.forLanguageTag(defaultLocaleCode)));
+                        and(ProductSpecifications.getBySupplierId(productGetRequest.getSupplierId())).
+                        and(ProductSpecifications.order(productGetRequest.getSortOrder(), productGetRequest.getSort(), productGetRequest.getLocale(), Locale.forLanguageTag(defaultLocaleCode)));
 
 
         productsPage = productRepository.findAll(specification, productsPageRequest);
@@ -122,7 +122,7 @@ public class ProductsService implements IProductsService {
 
             ActualProductPriceInRegionDTO actualPrice =
                     pricesService.getActualPriceForProductInRegion(
-                            new ProductLocaleDTO(p.getId(), productsGetRequest.getLocale())
+                            new ProductLocaleDTO(p.getId(), productGetRequest.getLocale())
                     );
 
             ActualProductPriceConvertedForRegionDTO actualPriceConverted =
@@ -304,7 +304,7 @@ public class ProductsService implements IProductsService {
                     productIdUpdateRequestAuthDTO.getUserEmailAndRolesDTO()
             );
 
-            UpdateProductRequest newProductData = productIdUpdateRequestAuthDTO.getRequest();
+            ProductUpdateRequest newProductData = productIdUpdateRequestAuthDTO.getRequest();
 
             validateProductName(newProductData.getProductName());
             validateProductDescription(newProductData.getProductDescription());

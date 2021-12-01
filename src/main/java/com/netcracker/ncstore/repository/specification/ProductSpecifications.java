@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-public class ProductSpecifications {
+public abstract class ProductSpecifications {
 
     /**
      * Filters products by LIKE with provided string

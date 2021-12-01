@@ -39,8 +39,6 @@ import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.user.IUserService;
-import com.netcracker.ncstore.util.enumeration.ESortOrder;
-import com.netcracker.ncstore.util.enumeration.ESortRule;
 import com.netcracker.ncstore.util.validator.PriceValidator;
 import com.netcracker.ncstore.util.validator.ProductValidator;
 import org.slf4j.Logger;
@@ -49,17 +47,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.security.Principal;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -108,10 +102,10 @@ public class ProductsService implements IProductsService {
 
         Specification<Product> specification =
                 ProductSpecifications.getByLikeName(productsGetRequest.getSearchText()).
-                and(ProductSpecifications.getByCategoriesIDs(productsGetRequest.getCategoriesIds())).
-                and(ProductSpecifications.getByProductStatus(EProductStatus.IN_STOCK)).
-                and(ProductSpecifications.getBySupplierId(productsGetRequest.getSupplierId())).
-                and(ProductSpecifications.order(productsGetRequest.getSortOrder(), productsGetRequest.getSort(), productsGetRequest.getLocale(), Locale.forLanguageTag(defaultLocaleCode)));
+                        and(ProductSpecifications.getByCategoriesIDs(productsGetRequest.getCategoriesIds())).
+                        and(ProductSpecifications.getByProductStatus(EProductStatus.IN_STOCK)).
+                        and(ProductSpecifications.getBySupplierId(productsGetRequest.getSupplierId())).
+                        and(ProductSpecifications.order(productsGetRequest.getSortOrder(), productsGetRequest.getSort(), productsGetRequest.getLocale(), Locale.forLanguageTag(defaultLocaleCode)));
 
 
         productsPage = productRepository.findAll(specification, productsPageRequest);
@@ -235,7 +229,7 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public ProductGetResponse getProductResponse(final ProductLocaleDTO productIdLocaleDTO){
+    public ProductGetResponse getProductResponse(final ProductLocaleDTO productIdLocaleDTO) {
         Product product = findProductById(productIdLocaleDTO.getProductId());
 
         ActualProductPriceInRegionDTO actualProductPriceInRegionDTO = pricesService.getActualPriceForProductInRegion(productIdLocaleDTO);

@@ -33,12 +33,14 @@ import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
+import com.netcracker.ncstore.repository.specification.ProductSpecifications;
 import com.netcracker.ncstore.service.category.ICategoryService;
 import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.enumeration.ESortOrder;
+import com.netcracker.ncstore.util.enumeration.ESortRule;
 import com.netcracker.ncstore.util.validator.PriceValidator;
 import com.netcracker.ncstore.util.validator.ProductValidator;
 import org.slf4j.Logger;
@@ -49,6 +51,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.JpaSort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -56,6 +59,7 @@ import org.springframework.util.CollectionUtils;
 import java.security.Principal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -159,6 +163,19 @@ public class ProductsService implements IProductsService {
             }
         }
 
+        productsPageRequest = PageRequest.of(productsGetRequest.getPage(), productsGetRequest.getSize());
+        List<Category> list = new ArrayList<>();
+        list.add(categoryService.getCategoryEntityByName("category3"));
+
+        Specification<Product> specification = ProductSpecifications.getByLikeName(productsGetRequest.getSearchText());
+
+        specification = specification.and(ProductSpecifications.getByCategoriesIDs(productsGetRequest.getCategoriesIds()));
+        specification = specification.and(ProductSpecifications.getByProductStatus(EProductStatus.IN_STOCK));
+        specification = specification.and(ProductSpecifications.getBySupplierId(productsGetRequest.getSupplierId()));
+        specification = specification.and(ProductSpecifications.order(productsGetRequest.getSortOrder(), productsGetRequest.getSort(), productsGetRequest.getLocale(), Locale.forLanguageTag(defaultLocaleCode)));
+
+        productsPage = productRepository.findAll(specification, productsPageRequest);
+
 
         List<ProductsGetPaginationResponse> responsesList = new ArrayList<>();
 
@@ -182,7 +199,7 @@ public class ProductsService implements IProductsService {
                     p.getId(),
                     p.getName(),
                     p.getSupplier().getId(),
-                    supplierName,
+                    actualPrice.getActualRegion().toLanguageTag(),
                     actualPriceConverted.getNormalConvertedPrice(),
                     actualPriceConverted.getDiscountConvertedPrice(),
                     actualPriceConverted.getCurrencySymbol());

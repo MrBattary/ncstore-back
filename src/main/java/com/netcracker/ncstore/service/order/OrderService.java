@@ -132,7 +132,7 @@ public class OrderService implements IOrderService {
                 );
 
                 orderItemList.add(orderItem);
-                supplierIdBalanceToAddMap.put(productsToBuyMap.get(e.getKey()).getSupplier().getId(), price*e.getValue());
+                supplierIdBalanceToAddMap.put(productsToBuyMap.get(e.getKey()).getSupplier().getId(), price * e.getValue());
             }
         }
 
@@ -147,10 +147,10 @@ public class OrderService implements IOrderService {
         return new OrderDTO(order);
     }
 
-    private void addMoneyForProductsToSuppliersBalance(Map<UUID, Double> supplierIdBalanceToAddMap){
+    private void addMoneyForProductsToSuppliersBalance(Map<UUID, Double> supplierIdBalanceToAddMap) {
         for (Map.Entry<UUID, Double> e : supplierIdBalanceToAddMap.entrySet()) {
             User supplier = userService.loadUserEntityById(e.getKey());
-            supplier.setBalance(supplier.getBalance()+e.getValue());
+            supplier.setBalance(supplier.getBalance() + e.getValue());
         }
     }
 

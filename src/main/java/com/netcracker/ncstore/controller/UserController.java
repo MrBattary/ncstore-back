@@ -26,11 +26,11 @@ import java.security.Principal;
 public class UserController {
 
     private final IUserService userService;
+
     /**
      * Constructor
      * <p>
      * TODO: In the future, any services should be the arguments of constructor
-     * @param userService
      */
     public UserController(final IUserService userService) {
         this.userService = userService;

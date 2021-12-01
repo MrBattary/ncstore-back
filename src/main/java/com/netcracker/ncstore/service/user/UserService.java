@@ -8,12 +8,10 @@ import com.netcracker.ncstore.dto.data.PersonDTO;
 import com.netcracker.ncstore.dto.data.UserDTO;
 import com.netcracker.ncstore.dto.request.SignUpCompanyRequest;
 import com.netcracker.ncstore.dto.request.SignUpPersonRequest;
-import com.netcracker.ncstore.dto.request.UserChangePasswordRequest;
 import com.netcracker.ncstore.dto.response.CompanyDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.CompanyInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonInfoResponse;
-import com.netcracker.ncstore.exception.AuthServiceException;
 import com.netcracker.ncstore.exception.UserServiceChangePasswordException;
 import com.netcracker.ncstore.exception.UserServiceCreationException;
 import com.netcracker.ncstore.exception.UserServiceNotFoundException;
@@ -32,7 +30,6 @@ import com.netcracker.ncstore.util.converter.RolesConverter;
 import com.netcracker.ncstore.util.validator.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -154,12 +151,12 @@ public class UserService implements IUserService {
     @Override
     public double addMoneyToBalance(AddBalanceDTO addBalanceDTO) {
         User user = loadUserEntityByEmail(addBalanceDTO.getEmail());
-        log.info("Adding "+addBalanceDTO.getAmountToAdd() +" UC to user balance with UUID "+user.getId());
+        log.info("Adding " + addBalanceDTO.getAmountToAdd() + " UC to user balance with UUID " + user.getId());
 
-        user.setBalance(user.getBalance()+addBalanceDTO.getAmountToAdd());
+        user.setBalance(user.getBalance() + addBalanceDTO.getAmountToAdd());
         userRepository.flush();
 
-        log.info("Successfully added "+addBalanceDTO.getAmountToAdd()+" to user balance with UUID" + user.getId());
+        log.info("Successfully added " + addBalanceDTO.getAmountToAdd() + " to user balance with UUID" + user.getId());
         return user.getBalance();
     }
 
@@ -174,7 +171,7 @@ public class UserService implements IUserService {
 
         user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
         userRepository.flush();
-        log.info("Successfully changed password for user with UUID "+ user.getId());
+        log.info("Successfully changed password for user with UUID " + user.getId());
     }
 
     @Override

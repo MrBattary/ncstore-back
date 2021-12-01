@@ -111,6 +111,7 @@ public class OrderService implements IOrderService {
         Order order = new Order(null, Instant.now(), user, new ArrayList<>(), EOrderStatus.COMPLETED);
 
         List<OrderItem> orderItemList = new ArrayList<>();
+        Map<UUID, Double> supplierIdBalanceToAddMap = new HashMap<>();
 
         for (Map.Entry<UUID, Integer> e : details.getProductsToBuyWithCount().entrySet()) {
             Double price = productPricesMap.get(e.getKey());
@@ -131,17 +132,26 @@ public class OrderService implements IOrderService {
                 );
 
                 orderItemList.add(orderItem);
+                supplierIdBalanceToAddMap.put(productsToBuyMap.get(e.getKey()).getSupplier().getId(), price*e.getValue());
             }
         }
 
         order.setProducts(orderItemList);
         user.setBalance(user.getBalance() - sum);
+        addMoneyForProductsToSuppliersBalance(supplierIdBalanceToAddMap);
         order = orderRepository.save(order);
         orderItemRepository.saveAll(orderItemList);
 
         log.info("Successfully completed ordering for user with UUID " + user.getId() + " with final sum of " + sum + " UC");
 
         return new OrderDTO(order);
+    }
+
+    private void addMoneyForProductsToSuppliersBalance(Map<UUID, Double> supplierIdBalanceToAddMap){
+        for (Map.Entry<UUID, Double> e : supplierIdBalanceToAddMap.entrySet()) {
+            User supplier = userService.loadUserEntityById(e.getKey());
+            supplier.setBalance(supplier.getBalance()+e.getValue());
+        }
     }
 
     @Override

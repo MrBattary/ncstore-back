@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.service.user;
 
+import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.ChangePasswordDTO;
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
 import com.netcracker.ncstore.dto.data.CompanyDTO;
@@ -151,8 +152,15 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public double addMoneyToBalance(double addAmount) {
-        return 0;
+    public double addMoneyToBalance(AddBalanceDTO addBalanceDTO) {
+        User user = loadUserEntityByEmail(addBalanceDTO.getEmail());
+        log.info("Adding "+addBalanceDTO.getAmountToAdd() +" UC to user balance with UUID "+user.getId());
+
+        user.setBalance(user.getBalance()+addBalanceDTO.getAmountToAdd());
+        userRepository.flush();
+
+        log.info("Successfully added "+addBalanceDTO.getAmountToAdd()+" to user balance with UUID" + user.getId());
+        return user.getBalance();
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.netcracker.ncstore.controller;
 
+import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.ChangePasswordDTO;
 import com.netcracker.ncstore.dto.request.UserAddBalanceRequest;
 import com.netcracker.ncstore.dto.request.UserChangePasswordRequest;
+import com.netcracker.ncstore.dto.response.UserAddBalanceResponse;
 import com.netcracker.ncstore.service.user.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +38,17 @@ public class UserController {
 
     @PostMapping(value = "/balance")
     @ResponseBody
-    public ResponseEntity<?> addMoneyToOwnBalance(@RequestBody UserAddBalanceRequest request) {
-        return null;
+    public ResponseEntity<UserAddBalanceResponse> addMoneyToOwnBalance(@RequestBody UserAddBalanceRequest request, Principal principal) {
+        AddBalanceDTO addBalanceDTO = new AddBalanceDTO(
+                principal.getName(),
+                request.getAddAmount()
+        );
+
+        double newBalance = userService.addMoneyToBalance(addBalanceDTO);
+
+        UserAddBalanceResponse response = new UserAddBalanceResponse(newBalance);
+
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping(value = "/password")

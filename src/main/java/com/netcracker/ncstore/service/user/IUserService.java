@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.service.user;
 
+import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.ChangePasswordDTO;
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
 import com.netcracker.ncstore.dto.data.CompanyDTO;
@@ -60,10 +61,10 @@ public interface IUserService {
     /**
      * Adds provided amount of money to balance
      *
-     * @param addAmount - amount to be added
+     * @param addBalanceDTO - DTO containing email and amount to be added
      * @return new balance value
      */
-    double addMoneyToBalance(double addAmount);
+    double addMoneyToBalance(AddBalanceDTO addBalanceDTO);
 
     /**
      * Changes user password

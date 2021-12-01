@@ -104,78 +104,17 @@ public class ProductsService implements IProductsService {
         Pageable productsPageRequest;
         Page<Product> productsPage;
 
-        Sort.Direction direction = productsGetRequest.getSortOrder().equals(ESortOrder.ASC) ? Sort.Direction.ASC : Sort.Direction.DESC;
-
-
-        switch (productsGetRequest.getSort()) {
-            default:
-            case DEFAULT:
-            case POPULAR://TODO separate and make when rating will be
-            case RATING://TODO separate and make when rating will be
-                productsPageRequest = PageRequest.of(
-                        productsGetRequest.getPage(),
-                        productsGetRequest.getSize(),
-                        JpaSort.unsafe(direction, "name"));
-                break;
-            case PRICE:
-                productsPageRequest = PageRequest.of(
-                        productsGetRequest.getPage(),
-                        productsGetRequest.getSize(),
-                        JpaSort.unsafe(direction, "pp.price - coalesce(d.discountPrice,0)"));
-                break;
-            case DATE:
-                productsPageRequest = PageRequest.of(
-                        productsGetRequest.getPage(),
-                        productsGetRequest.getSize(),
-                        JpaSort.unsafe(direction, "creationUtcTime"));
-                break;
-            case DISCOUNT:
-                productsPageRequest = PageRequest.of(
-                        productsGetRequest.getPage(),
-                        productsGetRequest.getSize(),
-                        JpaSort.unsafe(Sort.Direction.ASC, "coalesce(d.discountPrice,pp.price)/pp.price"));
-                break;
-        }
-
-        if (CollectionUtils.isEmpty(productsGetRequest.getCategoriesIds())) {
-            if (productsGetRequest.getSupplierId() != null) {
-                productsPage = productRepository.findProductByUserIdAndByLikeNameAndLocale(
-                        productsGetRequest.getSupplierId(),
-                        productsGetRequest.getSearchText(),
-                        productsPageRequest);
-            } else {
-                productsPage = productRepository.findProductByLikeNameAndLocale(
-                        productsGetRequest.getSearchText(),
-                        productsPageRequest);
-            }
-        } else {
-            if (productsGetRequest.getSupplierId() != null) {
-                productsPage = productRepository.findProductsUserIdAndByLikeNameAndCategoriesAndLocale(
-                        productsGetRequest.getSupplierId(),
-                        productsGetRequest.getSearchText(),
-                        productsGetRequest.getCategoriesIds(),
-                        productsPageRequest);
-            } else {
-                productsPage = productRepository.findProductsByLikeNameAndCategoriesAndLocale(
-                        productsGetRequest.getSearchText(),
-                        productsGetRequest.getCategoriesIds(),
-                        productsPageRequest);
-            }
-        }
-
         productsPageRequest = PageRequest.of(productsGetRequest.getPage(), productsGetRequest.getSize());
-        List<Category> list = new ArrayList<>();
-        list.add(categoryService.getCategoryEntityByName("category3"));
 
-        Specification<Product> specification = ProductSpecifications.getByLikeName(productsGetRequest.getSearchText());
+        Specification<Product> specification =
+                ProductSpecifications.getByLikeName(productsGetRequest.getSearchText()).
+                and(ProductSpecifications.getByCategoriesIDs(productsGetRequest.getCategoriesIds())).
+                and(ProductSpecifications.getByProductStatus(EProductStatus.IN_STOCK)).
+                and(ProductSpecifications.getBySupplierId(productsGetRequest.getSupplierId())).
+                and(ProductSpecifications.order(productsGetRequest.getSortOrder(), productsGetRequest.getSort(), productsGetRequest.getLocale(), Locale.forLanguageTag(defaultLocaleCode)));
 
-        specification = specification.and(ProductSpecifications.getByCategoriesIDs(productsGetRequest.getCategoriesIds()));
-        specification = specification.and(ProductSpecifications.getByProductStatus(EProductStatus.IN_STOCK));
-        specification = specification.and(ProductSpecifications.getBySupplierId(productsGetRequest.getSupplierId()));
-        specification = specification.and(ProductSpecifications.order(productsGetRequest.getSortOrder(), productsGetRequest.getSort(), productsGetRequest.getLocale(), Locale.forLanguageTag(defaultLocaleCode)));
 
         productsPage = productRepository.findAll(specification, productsPageRequest);
-
 
         List<ProductsGetPaginationResponse> responsesList = new ArrayList<>();
 
@@ -199,7 +138,7 @@ public class ProductsService implements IProductsService {
                     p.getId(),
                     p.getName(),
                     p.getSupplier().getId(),
-                    actualPrice.getActualRegion().toLanguageTag(),
+                    supplierName,
                     actualPriceConverted.getNormalConvertedPrice(),
                     actualPriceConverted.getDiscountConvertedPrice(),
                     actualPriceConverted.getCurrencySymbol());
@@ -474,7 +413,7 @@ public class ProductsService implements IProductsService {
             );
 
             pricesService.deleteAllProvidedPrices(productFromRepository.getProductPrices());
-            productRepository.deleteProductById(productFromRepository.getId());
+            productRepository.deleteById(productFromRepository.getId());
 
             log.info("The deletion of the product completed for the request of the user with email: "
                     + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());

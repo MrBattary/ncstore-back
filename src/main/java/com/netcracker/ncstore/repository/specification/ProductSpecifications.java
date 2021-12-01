@@ -143,6 +143,7 @@ public abstract class ProductSpecifications {
 
                 //more IFs and criteriaBuilder.and() for returnPredicate if needed
 
+
                 switch (rule) {
                     default:
                     case DEFAULT:
@@ -165,12 +166,17 @@ public abstract class ProductSpecifications {
                         break;
                 }
 
+
                 switch (order) {
+                    default:
                     case ASC:
                         query.orderBy(criteriaBuilder.asc(criteriaOrderingPath));
                         break;
                     case DESC:
                         query.orderBy(criteriaBuilder.desc(criteriaOrderingPath));
+                        break;
+                    case RAND:
+                        query.orderBy(criteriaBuilder.asc(criteriaBuilder.function("random", null)));
                         break;
                 }
 

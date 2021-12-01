@@ -158,6 +158,7 @@
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
+                    <suppressionsLocation>checkstyle-suppression.xml</suppressionsLocation>
                 </configuration>
                 <executions>
                     <execution>

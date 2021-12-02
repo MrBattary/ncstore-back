@@ -1,5 +1,7 @@
 package com.netcracker.ncstore.service.user;
 
+import com.netcracker.ncstore.dto.AddBalanceDTO;
+import com.netcracker.ncstore.dto.ChangePasswordDTO;
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
 import com.netcracker.ncstore.dto.data.CompanyDTO;
 import com.netcracker.ncstore.dto.data.PersonDTO;
@@ -10,6 +12,7 @@ import com.netcracker.ncstore.dto.response.CompanyDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.CompanyInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonInfoResponse;
+import com.netcracker.ncstore.exception.UserServiceChangePasswordException;
 import com.netcracker.ncstore.exception.UserServiceCreationException;
 import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServiceRepositoryException;
@@ -27,6 +30,7 @@ import com.netcracker.ncstore.util.converter.RolesConverter;
 import com.netcracker.ncstore.util.validator.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -38,17 +42,20 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final PersonRepository personRepository;
     private final CompanyRepository companyRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private final Logger log;
 
     public UserService(final IRoleService roleService,
                        final UserRepository userRepository,
                        final PersonRepository personRepository,
-                       final CompanyRepository companyRepository) {
+                       final CompanyRepository companyRepository,
+                       final PasswordEncoder passwordEncoder) {
         this.roleService = roleService;
         this.userRepository = userRepository;
         this.personRepository = personRepository;
         this.companyRepository = companyRepository;
+        this.passwordEncoder = passwordEncoder;
         log = LoggerFactory.getLogger(UserService.class);
     }
 
@@ -139,6 +146,32 @@ public class UserService implements IUserService {
             );
         }
         throw new UserServiceRepositoryException("Unable to find a user with email: " + email);
+    }
+
+    @Override
+    public double addMoneyToBalance(AddBalanceDTO addBalanceDTO) {
+        User user = loadUserEntityByEmail(addBalanceDTO.getEmail());
+        log.info("Adding " + addBalanceDTO.getAmountToAdd() + " UC to user balance with UUID " + user.getId());
+
+        user.setBalance(user.getBalance() + addBalanceDTO.getAmountToAdd());
+        userRepository.flush();
+
+        log.info("Successfully added " + addBalanceDTO.getAmountToAdd() + " to user balance with UUID" + user.getId());
+        return user.getBalance();
+    }
+
+    @Override
+    public void changeUserPassword(ChangePasswordDTO changePasswordDTO) {
+        User user = loadUserEntityByEmail(changePasswordDTO.getEmail());
+        log.info("Changing password for user with UUID " + user.getId());
+        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
+            log.error("User with UUID" + user.getId() + " tried to change password, but old password was incorrect");
+            throw new UserServiceChangePasswordException("Old password incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        userRepository.flush();
+        log.info("Successfully changed password for user with UUID " + user.getId());
     }
 
     @Override

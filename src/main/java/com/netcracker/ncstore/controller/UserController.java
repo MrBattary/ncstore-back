@@ -1,45 +1,68 @@
 package com.netcracker.ncstore.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.netcracker.ncstore.dto.AddBalanceDTO;
+import com.netcracker.ncstore.dto.ChangePasswordDTO;
+import com.netcracker.ncstore.dto.request.UserAddBalanceRequest;
+import com.netcracker.ncstore.dto.request.UserChangePasswordRequest;
+import com.netcracker.ncstore.dto.response.UserAddBalanceResponse;
+import com.netcracker.ncstore.service.user.IUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
 
 /**
  * User controller which is responsible for requests/responses
  * which are related to the user's accounts
  */
+@RequestMapping(value = "/user")
 @RestController
+@Slf4j
 public class UserController {
-    private final Logger log;
+
+    private final IUserService userService;
 
     /**
      * Constructor
      * <p>
      * TODO: In the future, any services should be the arguments of constructor
      */
-    public UserController() {
-        this.log = LoggerFactory.getLogger(UserController.class);
+    public UserController(final IUserService userService) {
+        this.userService = userService;
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/User/getUser
-    @RequestMapping(value = "/user/info", method = RequestMethod.GET)
+    @PostMapping(value = "/balance")
     @ResponseBody
-    public ResponseEntity<?> getOwnUserInfo() {
-        return null;
+    public ResponseEntity<UserAddBalanceResponse> addMoneyToOwnBalance(@RequestBody UserAddBalanceRequest request, Principal principal) {
+        AddBalanceDTO addBalanceDTO = new AddBalanceDTO(
+                principal.getName(),
+                request.getAddAmount()
+        );
+
+        double newBalance = userService.addMoneyToBalance(addBalanceDTO);
+
+        UserAddBalanceResponse response = new UserAddBalanceResponse(newBalance);
+
+        return ResponseEntity.ok().body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/User/changeUser
-    @RequestMapping(value = "/user/info", method = RequestMethod.POST)
+    @PostMapping(value = "/password")
     @ResponseBody
-    public ResponseEntity<?> changeOwnUserInfo() {
-        return null;
+    public ResponseEntity<?> changeOwnPassword(@RequestBody UserChangePasswordRequest request, Principal principal) {
+        ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO(
+                request.getOldPassword(),
+                request.getNewPassword(),
+                principal.getName()
+        );
+
+        userService.changeUserPassword(changePasswordDTO);
+
+        return ResponseEntity.noContent().build();
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/User/getUserProfile
-    @RequestMapping(value = "/user/info/{userId}", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<?> getUserInfo(@PathVariable final String userId) {
-        return null;
-    }
 }

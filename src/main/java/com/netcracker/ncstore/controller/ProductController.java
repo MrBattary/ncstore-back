@@ -7,8 +7,8 @@ import com.netcracker.ncstore.dto.data.DiscountDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductCreateRequest;
-import com.netcracker.ncstore.dto.request.ProductsGetRequest;
-import com.netcracker.ncstore.dto.request.UpdateProductRequest;
+import com.netcracker.ncstore.dto.request.ProductGetRequest;
+import com.netcracker.ncstore.dto.request.ProductUpdateRequest;
 import com.netcracker.ncstore.dto.response.*;
 import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
@@ -91,10 +91,10 @@ public class ProductController {
 
         List<UUID> categories = ProductRequestConverter.convertCategoriesStringToList(categoryIds);
 
-        ProductsGetRequest productsGetRequest =
-                new ProductsGetRequest(categories, searchText, page, size, locale, sortEnum, sortOrderEnum, supplierId);
+        ProductGetRequest productGetRequest =
+                new ProductGetRequest(categories, searchText, page, size, locale, sortEnum, sortOrderEnum, supplierId);
 
-        List<ProductsGetPaginationResponse> response = productsService.getPageOfProductsUsingFilterAndSortParameters(productsGetRequest);
+        List<ProductsGetPaginationResponse> response = productsService.getPageOfProductsUsingFilterAndSortParameters(productGetRequest);
 
         log.info("RESPONSE: to get products by search text:" + searchText + " on: " + page + " page, with " + size + " size");
         return ResponseEntity.
@@ -201,7 +201,7 @@ public class ProductController {
     @RequestMapping(value = "/products/{productId}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<UpdateProductResponse> updateProduct(@PathVariable final UUID productId,
-                                                               @RequestBody final UpdateProductRequest request) {
+                                                               @RequestBody final ProductUpdateRequest request) {
         log.info("REQUEST: to update product with id: " + productId);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

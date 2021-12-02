@@ -13,8 +13,8 @@ import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
-import com.netcracker.ncstore.dto.request.ProductsGetRequest;
-import com.netcracker.ncstore.dto.request.UpdateProductRequest;
+import com.netcracker.ncstore.dto.request.ProductGetRequest;
+import com.netcracker.ncstore.dto.request.ProductUpdateRequest;
 import com.netcracker.ncstore.dto.response.DeleteProductResponse;
 import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductGetResponse;
@@ -33,12 +33,12 @@ import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
+import com.netcracker.ncstore.repository.specification.ProductSpecifications;
 import com.netcracker.ncstore.service.category.ICategoryService;
 import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.user.IUserService;
-import com.netcracker.ncstore.util.enumeration.ESortOrder;
 import com.netcracker.ncstore.util.validator.PriceValidator;
 import com.netcracker.ncstore.util.validator.ProductValidator;
 import org.slf4j.Logger;
@@ -47,11 +47,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.JpaSort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.security.Principal;
 import java.time.Instant;
@@ -96,69 +94,21 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public List<ProductsGetPaginationResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest) {
+    public List<ProductsGetPaginationResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductGetRequest productGetRequest) {
         Pageable productsPageRequest;
         Page<Product> productsPage;
 
-        Sort.Direction direction = productsGetRequest.getSortOrder().equals(ESortOrder.ASC) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        productsPageRequest = PageRequest.of(productGetRequest.getPage(), productGetRequest.getSize());
+
+        Specification<Product> specification =
+                ProductSpecifications.getByLikeName(productGetRequest.getSearchText()).
+                        and(ProductSpecifications.getByCategoriesIDs(productGetRequest.getCategoriesIds())).
+                        and(ProductSpecifications.getByProductStatus(EProductStatus.IN_STOCK)).
+                        and(ProductSpecifications.getBySupplierId(productGetRequest.getSupplierId())).
+                        and(ProductSpecifications.order(productGetRequest.getSortOrder(), productGetRequest.getSort(), productGetRequest.getLocale(), Locale.forLanguageTag(defaultLocaleCode)));
 
 
-        switch (productsGetRequest.getSort()) {
-            default:
-            case DEFAULT:
-            case POPULAR://TODO separate and make when rating will be
-            case RATING://TODO separate and make when rating will be
-                productsPageRequest = PageRequest.of(
-                        productsGetRequest.getPage(),
-                        productsGetRequest.getSize(),
-                        JpaSort.unsafe(direction, "name"));
-                break;
-            case PRICE:
-                productsPageRequest = PageRequest.of(
-                        productsGetRequest.getPage(),
-                        productsGetRequest.getSize(),
-                        JpaSort.unsafe(direction, "pp.price - coalesce(d.discountPrice,0)"));
-                break;
-            case DATE:
-                productsPageRequest = PageRequest.of(
-                        productsGetRequest.getPage(),
-                        productsGetRequest.getSize(),
-                        JpaSort.unsafe(direction, "creationUtcTime"));
-                break;
-            case DISCOUNT:
-                productsPageRequest = PageRequest.of(
-                        productsGetRequest.getPage(),
-                        productsGetRequest.getSize(),
-                        JpaSort.unsafe(Sort.Direction.ASC, "coalesce(d.discountPrice,pp.price)/pp.price"));
-                break;
-        }
-
-        if (CollectionUtils.isEmpty(productsGetRequest.getCategoriesIds())) {
-            if (productsGetRequest.getSupplierId() != null) {
-                productsPage = productRepository.findProductByUserIdAndByLikeNameAndLocale(
-                        productsGetRequest.getSupplierId(),
-                        productsGetRequest.getSearchText(),
-                        productsPageRequest);
-            } else {
-                productsPage = productRepository.findProductByLikeNameAndLocale(
-                        productsGetRequest.getSearchText(),
-                        productsPageRequest);
-            }
-        } else {
-            if (productsGetRequest.getSupplierId() != null) {
-                productsPage = productRepository.findProductsUserIdAndByLikeNameAndCategoriesAndLocale(
-                        productsGetRequest.getSupplierId(),
-                        productsGetRequest.getSearchText(),
-                        productsGetRequest.getCategoriesIds(),
-                        productsPageRequest);
-            } else {
-                productsPage = productRepository.findProductsByLikeNameAndCategoriesAndLocale(
-                        productsGetRequest.getSearchText(),
-                        productsGetRequest.getCategoriesIds(),
-                        productsPageRequest);
-            }
-        }
-
+        productsPage = productRepository.findAll(specification, productsPageRequest);
 
         List<ProductsGetPaginationResponse> responsesList = new ArrayList<>();
 
@@ -172,7 +122,7 @@ public class ProductsService implements IProductsService {
 
             ActualProductPriceInRegionDTO actualPrice =
                     pricesService.getActualPriceForProductInRegion(
-                            new ProductLocaleDTO(p.getId(), productsGetRequest.getLocale())
+                            new ProductLocaleDTO(p.getId(), productGetRequest.getLocale())
                     );
 
             ActualProductPriceConvertedForRegionDTO actualPriceConverted =
@@ -279,7 +229,7 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public ProductGetResponse getProductResponse(final ProductLocaleDTO productIdLocaleDTO){
+    public ProductGetResponse getProductResponse(final ProductLocaleDTO productIdLocaleDTO) {
         Product product = findProductById(productIdLocaleDTO.getProductId());
 
         ActualProductPriceInRegionDTO actualProductPriceInRegionDTO = pricesService.getActualPriceForProductInRegion(productIdLocaleDTO);
@@ -354,7 +304,7 @@ public class ProductsService implements IProductsService {
                     productIdUpdateRequestAuthDTO.getUserEmailAndRolesDTO()
             );
 
-            UpdateProductRequest newProductData = productIdUpdateRequestAuthDTO.getRequest();
+            ProductUpdateRequest newProductData = productIdUpdateRequestAuthDTO.getRequest();
 
             validateProductName(newProductData.getProductName());
             validateProductDescription(newProductData.getProductDescription());
@@ -457,7 +407,7 @@ public class ProductsService implements IProductsService {
             );
 
             pricesService.deleteAllProvidedPrices(productFromRepository.getProductPrices());
-            productRepository.deleteProductById(productFromRepository.getId());
+            productRepository.deleteById(productFromRepository.getId());
 
             log.info("The deletion of the product completed for the request of the user with email: "
                     + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());

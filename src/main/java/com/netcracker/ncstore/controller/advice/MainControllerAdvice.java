@@ -81,6 +81,13 @@ public class MainControllerAdvice {
         return ResponseEntity.badRequest().build();
     }
 
+    @ExceptionHandler(UserServiceChangePasswordException.class)
+    public ResponseEntity<?> handleCartServiceValidationException(final UserServiceChangePasswordException e) {
+        log.error(e.getMessage());
+        log.info("RESPONSE: 400");
+        return ResponseEntity.badRequest().build();
+    }
+
 /*    //Should be activated only on production
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleAllUncaughtException(final RuntimeException e) {

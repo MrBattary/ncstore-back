@@ -5,7 +5,7 @@ import com.netcracker.ncstore.dto.ProductIdUpdateRequestAuthDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
-import com.netcracker.ncstore.dto.request.ProductsGetRequest;
+import com.netcracker.ncstore.dto.request.ProductGetRequest;
 import com.netcracker.ncstore.dto.response.DeleteProductResponse;
 import com.netcracker.ncstore.dto.response.GetProductResponse;
 import com.netcracker.ncstore.dto.response.ProductGetResponse;
@@ -31,10 +31,10 @@ public interface IProductsService {
      * Returns list of DTOs containing information about
      * product(name, price, discount, currency) and paging data.
      *
-     * @param productsGetRequest list containing DTOs which contains needed information
+     * @param productGetRequest list containing DTOs which contains needed information
      * @return list of DTOs
      */
-    List<ProductsGetPaginationResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductsGetRequest productsGetRequest);
+    List<ProductsGetPaginationResponse> getPageOfProductsUsingFilterAndSortParameters(final ProductGetRequest productGetRequest);
 
     /**
      * Create new product in store with given data.

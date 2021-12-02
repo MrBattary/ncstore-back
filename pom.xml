@@ -22,6 +22,7 @@
         <maven.assembly.plugin.version>3.1.0</maven.assembly.plugin.version>
         <maven.checkstyle.plugin.version>3.1.0</maven.checkstyle.plugin.version>
         <maven.jxr.plugin.version>3.0.0</maven.jxr.plugin.version>
+        <hibernate.metamodel.version>5.6.1.Final</hibernate.metamodel.version>
     </properties>
 
     <parent>
@@ -88,6 +89,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${hibernate.metamodel.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
             <version>${maven.jar.plugin.version}</version>
@@ -131,14 +137,18 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <archive><manifest>
-                        <mainClass>com.netcracker.ncstore.Main</mainClass>
-                    </manifest></archive>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.netcracker.ncstore.Main</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals><goal>single</goal></goals>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -149,11 +159,14 @@
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
+                    <suppressionsLocation>checkstyle-suppression.xml</suppressionsLocation>
                 </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals><goal>checkstyle</goal></goals>
+                        <goals>
+                            <goal>checkstyle</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

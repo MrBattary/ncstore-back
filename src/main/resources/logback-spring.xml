@@ -2,7 +2,8 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <property name="APP" value="ncstore"/>
-    <property name="LOGS_PATH" value="/var/log"/>
+    <!--PROD ONLY <property name="LOGS_PATH" value="/var/log"/>-->
+    <property name="LOGS_PATH" value="logs"/>
     <property name="LOGS_EXTENSION" value="log.gz"/>
     <property name="LOGS_MAX_SIZE" value="20MB"/>
     <property name="LOGS_TOTAL_MAX_SIZE" value="1GB"/>
@@ -37,7 +38,6 @@
     <springProfile name="development">
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="ROLLING-FILE"/>
         </root>
     </springProfile>
     <springProfile name="production">

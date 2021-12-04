@@ -10,5 +10,4 @@ import java.math.BigDecimal;
 public class PaymentProceedDTO {
     private final BigDecimal amount;
     private final String nonce;
-    private final String userName;
 }

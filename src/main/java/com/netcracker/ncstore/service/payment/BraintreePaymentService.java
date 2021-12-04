@@ -5,10 +5,15 @@ import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
 import com.braintreegateway.ValidationError;
+import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
 import com.netcracker.ncstore.exception.PaymentServiceException;
+import com.netcracker.ncstore.model.User;
+import com.netcracker.ncstore.service.user.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @Slf4j
@@ -42,6 +47,7 @@ public class BraintreePaymentService implements IPaymentService{
             for (ValidationError error : result.getErrors().getAllDeepValidationErrors()) {
                 errorStringBuilder.append("Error: ").append(error.getCode()).append(": ").append(error.getMessage()).append("\n");
             }
+            log.error("Can not proceed payment due to error");
             throw new PaymentServiceException(errorStringBuilder.toString());
         }
     }

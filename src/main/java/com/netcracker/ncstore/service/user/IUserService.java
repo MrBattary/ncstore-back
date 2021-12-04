@@ -59,12 +59,12 @@ public interface IUserService {
     UserTypeEmailPasswordRolesDTO getUserAuthDataByEmail(String email) throws UserServiceRepositoryException;
 
     /**
-     * Adds provided amount of money to balance
+     * Adds money to user balance using payment system
      *
-     * @param addBalanceDTO - DTO containing email and amount to be added
-     * @return new balance value
+     * @param addBalanceDTO DTO containing payment info
+     * @return new balance amount
      */
-    double addMoneyToBalance(AddBalanceDTO addBalanceDTO);
+    double addMoneyToUserBalance(AddBalanceDTO addBalanceDTO);
 
     /**
      * Changes user password

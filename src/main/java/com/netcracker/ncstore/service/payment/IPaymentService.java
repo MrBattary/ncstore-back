@@ -1,7 +1,9 @@
 package com.netcracker.ncstore.service.payment;
 
+import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
 import com.netcracker.ncstore.dto.response.PaymentGetResponse;
+import com.netcracker.ncstore.exception.PaymentServiceException;
 
 /**
  * basic interface for all payment services
@@ -18,7 +20,8 @@ public interface IPaymentService {
      *
      * @param paymentProceedDTO DTO containing info about payment
      * @return transaction id
+     * @throws PaymentServiceException when there is some exception during payment
      */
-    String proceedPayment(PaymentProceedDTO paymentProceedDTO);
+    String proceedPayment(PaymentProceedDTO paymentProceedDTO) throws PaymentServiceException;
 
 }

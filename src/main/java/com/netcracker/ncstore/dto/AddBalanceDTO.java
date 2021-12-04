@@ -8,4 +8,5 @@ import lombok.Getter;
 public class AddBalanceDTO {
     private final String email;
     private final double amountToAdd;
+    private final String nonce;
 }

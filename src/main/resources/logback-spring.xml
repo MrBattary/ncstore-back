@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <property name="APP" value="ncstore"/>
+    <!--PROD ONLY <property name="LOGS_PATH" value="/var/log"/>-->
+    <property name="LOGS_PATH" value="logs"/>
+    <property name="LOGS_EXTENSION" value="log.gz"/>
+    <property name="LOGS_MAX_SIZE" value="20MB"/>
+    <property name="LOGS_TOTAL_MAX_SIZE" value="1GB"/>
+    <property name="LOGS_MAX_AGE" value="30"/>
+    <property name="LOGS_CLEAN_ON_START" value="true"/>
+
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="ROLLING-FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOGS_PATH}/${APP}/${APP}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_PATH}/${APP}/${date:MM-yyyy}/${APP}-%d{-dd-MM-yyyy}-%i.${LOGS_EXTENSION}</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${LOGS_MAX_SIZE}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>${LOGS_MAX_AGE}</maxHistory>
+            <cleanHistoryOnStart>${LOGS_CLEAN_ON_START}</cleanHistoryOnStart>
+            <totalSizeCap>${LOGS_TOTAL_MAX_SIZE}</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <springProfile name="development">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+    <springProfile name="production">
+        <root level="INFO">
+            <appender-ref ref="ROLLING-FILE"/>
+        </root>
+    </springProfile>
+</configuration>

@@ -1,0 +1,11 @@
+# ide
+.idea/
+.jpb/
+
+# local
+target/
+logs/
+
+# other
+*.class
+*.iml

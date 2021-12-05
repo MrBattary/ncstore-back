@@ -2,7 +2,9 @@ package com.netcracker.ncstore.service.user;
 
 import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.ChangePasswordDTO;
+import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
+import com.netcracker.ncstore.dto.UserBalanceDTO;
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
 import com.netcracker.ncstore.dto.data.CompanyDTO;
 import com.netcracker.ncstore.dto.data.PersonDTO;
@@ -28,6 +30,7 @@ import com.netcracker.ncstore.repository.CompanyRepository;
 import com.netcracker.ncstore.repository.PersonRepository;
 import com.netcracker.ncstore.repository.UserRepository;
 import com.netcracker.ncstore.service.payment.IPaymentService;
+import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.role.IRoleService;
 import com.netcracker.ncstore.util.converter.RolesConverter;
 import com.netcracker.ncstore.util.validator.EmailValidator;
@@ -38,6 +41,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -170,7 +174,7 @@ public class UserService implements IUserService {
         try {
             transactionId = paymentService.proceedPayment(paymentProceedDTO);
         } catch (PaymentServiceException e) {
-            log.error("Can not add money to balance of user with UUID " + user.getId() + " sue to unsuccessful payment");
+            log.error("Can not add money to balance of user with UUID " + user.getId() + " due to payment error: "+e.getMessage());
             throw new PaymentServiceException("Unable to add money to balance due to unsuccessful payment", e);
         }
 
@@ -179,6 +183,12 @@ public class UserService implements IUserService {
 
         log.info("Successfully finished balance payment procedure for user with UUID " + user.getId() + " for amount of " + addBalanceDTO.getAmountToAdd());
         return user.getBalance();
+    }
+
+    @Override
+    public double getUserBalance(String email) {
+        UserDTO userDTO = loadUserByEmail(email);
+        return userDTO.getBalance();
     }
 
     @Override

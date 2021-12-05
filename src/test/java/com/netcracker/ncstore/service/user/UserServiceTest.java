@@ -10,6 +10,7 @@ import com.netcracker.ncstore.repository.CompanyRepository;
 import com.netcracker.ncstore.repository.PersonRepository;
 import com.netcracker.ncstore.repository.UserRepository;
 import com.netcracker.ncstore.service.payment.IPaymentService;
+import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.role.IRoleService;
 import com.netcracker.ncstore.util.validator.EmailValidator;
 import org.junit.jupiter.api.AfterEach;

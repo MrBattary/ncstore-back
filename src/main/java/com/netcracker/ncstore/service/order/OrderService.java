@@ -163,7 +163,7 @@ public class OrderService implements IOrderService {
         } else {
             List<OrderItemInfoResponse> orderItems = order.getProducts().
                     stream().map(e -> new OrderItemInfoResponse(
-                            e.getId(),
+                            e.getProduct().getId(),
                             e.getProduct().getName(),
                             e.getProduct().getSupplier().getId(),
                             e.getPrice(),

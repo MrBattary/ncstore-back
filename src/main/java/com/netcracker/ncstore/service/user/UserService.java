@@ -2,9 +2,8 @@ package com.netcracker.ncstore.service.user;
 
 import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.ChangePasswordDTO;
-import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
-import com.netcracker.ncstore.dto.UserBalanceDTO;
+import com.netcracker.ncstore.dto.UCPriceConvertedFromRealDTO;
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
 import com.netcracker.ncstore.dto.data.CompanyDTO;
 import com.netcracker.ncstore.dto.data.PersonDTO;
@@ -41,7 +40,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Locale;
+import java.util.Currency;
 import java.util.UUID;
 
 @Service
@@ -52,6 +51,7 @@ public class UserService implements IUserService {
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
     private final IPaymentService paymentService;
+    private final IPriceConversionService priceConversionService;
 
     private final Logger log;
 
@@ -60,13 +60,15 @@ public class UserService implements IUserService {
                        final PersonRepository personRepository,
                        final CompanyRepository companyRepository,
                        final PasswordEncoder passwordEncoder,
-                       final IPaymentService paymentService) {
+                       final IPaymentService paymentService,
+                       final IPriceConversionService priceConversionService) {
         this.roleService = roleService;
         this.userRepository = userRepository;
         this.personRepository = personRepository;
         this.companyRepository = companyRepository;
         this.passwordEncoder = passwordEncoder;
         this.paymentService = paymentService;
+        this.priceConversionService = priceConversionService;
         log = LoggerFactory.getLogger(UserService.class);
     }
 
@@ -162,23 +164,25 @@ public class UserService implements IUserService {
     @Override
     public double addMoneyToUserBalance(AddBalanceDTO addBalanceDTO) {
         User user = loadUserEntityByEmail(addBalanceDTO.getEmail());
-        log.info("Starting balance payment procedure for user with UUID " + user.getId() + " for amount of " + addBalanceDTO.getAmountToAdd());
+        UCPriceConvertedFromRealDTO UCAmountToAdd = priceConversionService.convertRealPriceToUC(addBalanceDTO.getAmountToAdd(), addBalanceDTO.getLocale());
+        log.info("Starting balance payment procedure for user with UUID " + user.getId() + " for amount of " + addBalanceDTO.getAmountToAdd() + " in currency with ISO code " + Currency.getInstance(UCAmountToAdd.getActualLocale()).getCurrencyCode());
 
         PaymentProceedDTO paymentProceedDTO = new PaymentProceedDTO(
                 BigDecimal.valueOf(addBalanceDTO.getAmountToAdd()),
-                addBalanceDTO.getNonce()
+                addBalanceDTO.getNonce(),
+                UCAmountToAdd.getActualLocale()
         );
 
         String transactionId;
 
         try {
-            transactionId = paymentService.proceedPayment(paymentProceedDTO);
+            transactionId = paymentService.proceedPaymentInRealMoney(paymentProceedDTO);
         } catch (PaymentServiceException e) {
             log.error("Can not add money to balance of user with UUID " + user.getId() + " due to payment error: "+e.getMessage());
             throw new PaymentServiceException("Unable to add money to balance due to unsuccessful payment", e);
         }
 
-        user.setBalance(user.getBalance() + addBalanceDTO.getAmountToAdd());
+        user.setBalance(user.getBalance() + UCAmountToAdd.getUCAmount());
         userRepository.flush();
 
         log.info("Successfully finished balance payment procedure for user with UUID " + user.getId() + " for amount of " + addBalanceDTO.getAmountToAdd());

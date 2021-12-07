@@ -22,6 +22,6 @@ public interface IPaymentService {
      * @return transaction id
      * @throws PaymentServiceException when there is some exception during payment
      */
-    String proceedPayment(PaymentProceedDTO paymentProceedDTO) throws PaymentServiceException;
+    String proceedPaymentInRealMoney(PaymentProceedDTO paymentProceedDTO) throws PaymentServiceException;
 
 }

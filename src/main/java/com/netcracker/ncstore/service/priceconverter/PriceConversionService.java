@@ -3,7 +3,7 @@ package com.netcracker.ncstore.service.priceconverter;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
-import com.netcracker.ncstore.exception.PriceConversionServiceLocaleNotSpecifiedException;
+import com.netcracker.ncstore.dto.UCPriceConvertedFromRealDTO;
 import com.netcracker.ncstore.model.PriceConversionRate;
 import com.netcracker.ncstore.repository.PriceConversionRateRepository;
 import com.netcracker.ncstore.util.converter.DoubleRounder;
@@ -43,12 +43,21 @@ public class PriceConversionService implements IPriceConversionService {
     }
 
     @Override
-    public double convertRealPriceToUC(double realPrice, Locale regionOfPrice) throws PriceConversionServiceLocaleNotSpecifiedException {
+    public UCPriceConvertedFromRealDTO convertRealPriceToUC(double realPrice, Locale regionOfPrice) {
         PriceConversionRate conversionRate = priceConversionRateRepository.findByRegion(regionOfPrice);
         if (conversionRate != null) {
-            return conversionRate.getUniversalPriceValue() * realPrice;
+            return new UCPriceConvertedFromRealDTO(
+                    conversionRate.getUniversalPriceValue() * realPrice,
+                    regionOfPrice,
+                    regionOfPrice
+            );
         } else {
-            throw new PriceConversionServiceLocaleNotSpecifiedException("Locale with tag " + regionOfPrice.toLanguageTag() + " is not supported. Unable to convert to UC price.");
+            conversionRate = priceConversionRateRepository.findByRegion(defaultLocale);
+            return new UCPriceConvertedFromRealDTO(
+                    conversionRate.getUniversalPriceValue() * realPrice,
+                    regionOfPrice,
+                    conversionRate.getRegion()
+            );
         }
     }
 

@@ -3,7 +3,7 @@ package com.netcracker.ncstore.service.priceconverter;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
-import com.netcracker.ncstore.exception.PriceConversionServiceLocaleNotSpecifiedException;
+import com.netcracker.ncstore.dto.UCPriceConvertedFromRealDTO;
 
 import java.util.Locale;
 
@@ -29,10 +29,9 @@ public interface IPriceConversionService {
      *
      * @param realPrice - regional price in real currency
      * @param regionOfPrice - region
-     * @return converted price value
-     * @throws PriceConversionServiceLocaleNotSpecifiedException - when provided locale is not registered in database, and it is impossible to convert provided real price to UC price
+     * @return DTO containing converted price value, requested locale and actual locale. Actual locale is different if no conversion rate for that locale specified.
      */
-    double convertRealPriceToUC(double realPrice, Locale regionOfPrice) throws PriceConversionServiceLocaleNotSpecifiedException;
+    UCPriceConvertedFromRealDTO convertRealPriceToUC(double realPrice, Locale regionOfPrice);
 
     /**
      * Converts ActualProductPriceInRegionDTO to ActualProductPriceConvertedForRegionDTO

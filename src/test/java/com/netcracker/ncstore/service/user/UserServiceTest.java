@@ -53,11 +53,14 @@ class UserServiceTest {
     @Mock
     private IPaymentService paymentService;
 
+    @Mock
+    private IPriceConversionService priceConversionService;
+
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        userService = new UserService(roleServiceMocked, userRepositoryMocked, personRepositoryMocked, companyRepositoryMocked, passwordEncoder, paymentService);
+        userService = new UserService(roleServiceMocked, userRepositoryMocked, personRepositoryMocked, companyRepositoryMocked, passwordEncoder, paymentService, priceConversionService);
     }
 
     @AfterEach

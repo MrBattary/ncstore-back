@@ -50,7 +50,8 @@ public class UserController {
         AddBalanceDTO addBalanceDTO = new AddBalanceDTO(
                 principal.getName(),
                 request.getPaymentAmount(),
-                request.getNonce()
+                request.getNonce(),
+                locale
         );
 
         double newBalance = userService.addMoneyToUserBalance(addBalanceDTO);

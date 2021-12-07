@@ -5,7 +5,6 @@ import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.exception.CartServiceCheckoutException;
 import com.netcracker.ncstore.exception.CartServiceValidationException;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 

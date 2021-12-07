@@ -2,7 +2,6 @@ package com.netcracker.ncstore.service.user;
 
 import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.ChangePasswordDTO;
-import com.netcracker.ncstore.dto.UserBalanceDTO;
 import com.netcracker.ncstore.dto.UserTypeEmailPasswordRolesDTO;
 import com.netcracker.ncstore.dto.data.CompanyDTO;
 import com.netcracker.ncstore.dto.data.PersonDTO;
@@ -18,7 +17,6 @@ import com.netcracker.ncstore.exception.UserServiceRepositoryException;
 import com.netcracker.ncstore.exception.UserServiceValidationException;
 import com.netcracker.ncstore.model.User;
 
-import java.util.Locale;
 import java.util.UUID;
 
 /**

@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/balance")
-    public ResponseEntity<UserBalanceResponse> getUserBalance(Principal principal, Locale locale){
+    public ResponseEntity<UserBalanceResponse> getUserBalance(Principal principal, Locale locale) {
         double balance = userService.getUserBalance(principal.getName());
 
         ConvertedPriceWithCurrencySymbolDTO convertedBalance =

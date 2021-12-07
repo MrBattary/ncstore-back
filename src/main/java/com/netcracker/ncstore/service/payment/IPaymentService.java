@@ -1,8 +1,6 @@
 package com.netcracker.ncstore.service.payment;
 
-import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
-import com.netcracker.ncstore.dto.response.PaymentGetResponse;
 import com.netcracker.ncstore.exception.PaymentServiceException;
 
 /**

@@ -84,7 +84,7 @@ public class ProductController {
             @RequestParam final int size,
             final Locale locale) {
 
-        log.info("REQUEST: to get products by search text='" + searchText + "'; for supplierId='"+supplierId+"'; order by "+sort+" "+sortOrder+"; on: " + page + " page, with " + size + " size");
+        log.info("REQUEST: to get products by search text='" + searchText + "'; for supplierId='" + supplierId + "'; order by " + sort + " " + sortOrder + "; on: " + page + " page, with " + size + " size");
 
         ESortRule sortEnum = ProductRequestConverter.convertSortRuleStringToEnum(sort);
         ESortOrder sortOrderEnum = ProductRequestConverter.convertSortOrderStringToEnum(sortOrder);

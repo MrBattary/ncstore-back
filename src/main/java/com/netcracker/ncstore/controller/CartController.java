@@ -55,7 +55,7 @@ public class CartController {
         Map<UUID, Integer> cartItems = cartService.getCartItems();
 
 
-        List<CartItemChangedResponse> responses = new ArrayList<>();
+        List<CartItemChangedResponse> responses;
 
         responses = cartItems.entrySet().
                 stream().
@@ -81,7 +81,7 @@ public class CartController {
     }
 
     @PostMapping
-    public ResponseEntity<?> checkout(@RequestBody CartCheckoutRequest request, Locale locale) {
+    public ResponseEntity<OrderInfoResponse> checkout(@RequestBody CartCheckoutRequest request, Locale locale) {
         CartCheckoutDTO cartCheckoutDTO = new CartCheckoutDTO(request.isUseBalance(), request.getNonce(), locale);
         OrderInfoResponse response = cartService.checkout(cartCheckoutDTO);
         return ResponseEntity.ok().body(response);

@@ -6,22 +6,18 @@ import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
 import com.braintreegateway.ValidationError;
-import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
 import com.netcracker.ncstore.exception.PaymentServiceCurrencyNotSupportedException;
 import com.netcracker.ncstore.exception.PaymentServiceException;
-import com.netcracker.ncstore.model.User;
-import com.netcracker.ncstore.service.user.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Iterator;
 
 @Service
 @Slf4j
-public class BraintreePaymentService implements IPaymentService{
+public class BraintreePaymentService implements IPaymentService {
     private final BraintreeGateway braintreeGateway;
 
     public BraintreePaymentService(final BraintreeGateway braintreeGateway) {
@@ -35,21 +31,21 @@ public class BraintreePaymentService implements IPaymentService{
 
     @Override
     public String proceedPaymentInRealMoney(PaymentProceedDTO paymentProceedDTO) {
-        log.info("Processing payment with amount " + paymentProceedDTO.getAmount() + " in currency with ISO code "+Currency.getInstance(paymentProceedDTO.getRegion()).getCurrencyCode());
+        log.info("Processing payment with amount " + paymentProceedDTO.getAmount() + " in currency with ISO code " + Currency.getInstance(paymentProceedDTO.getRegion()).getCurrencyCode());
 
         String currencyISOCode = Currency.getInstance(paymentProceedDTO.getRegion()).getCurrencyCode();
         Iterator<MerchantAccount> merchantAccountIterator = braintreeGateway.merchantAccount().all().iterator();
         MerchantAccount paymentMerchantAccount = null;
 
-        while (merchantAccountIterator.hasNext()){
+        while (merchantAccountIterator.hasNext()) {
             MerchantAccount merchantAccount = merchantAccountIterator.next();
-            if(merchantAccount.getCurrencyIsoCode().equals(currencyISOCode)) {
+            if (merchantAccount.getCurrencyIsoCode().equals(currencyISOCode)) {
                 paymentMerchantAccount = merchantAccount;
             }
         }
-        if(paymentMerchantAccount==null){
+        if (paymentMerchantAccount == null) {
             log.error("There was a request to pay in currency" + currencyISOCode + " but payment in that currency is not suppoerted");
-            throw new PaymentServiceCurrencyNotSupportedException("Currency with code "+currencyISOCode+" not supported");
+            throw new PaymentServiceCurrencyNotSupportedException("Currency with code " + currencyISOCode + " not supported");
         }
 
         TransactionRequest request = new TransactionRequest()
@@ -61,10 +57,10 @@ public class BraintreePaymentService implements IPaymentService{
                 .done();
 
         Result<Transaction> result = braintreeGateway.transaction().sale(request);
-        if(result.isSuccess()){
+        if (result.isSuccess()) {
             Transaction transaction = result.getTarget();
             return transaction.getId();
-        }else{
+        } else {
             StringBuilder errorStringBuilder = new StringBuilder();
             for (ValidationError error : result.getErrors().getAllDeepValidationErrors()) {
                 errorStringBuilder.append("Error: ").append(error.getCode()).append(": ").append(error.getMessage()).append("\n");

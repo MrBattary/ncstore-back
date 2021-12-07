@@ -2,8 +2,10 @@ package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
+import com.netcracker.ncstore.dto.CartCheckoutDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.request.CartAddRequest;
+import com.netcracker.ncstore.dto.request.CartCheckoutRequest;
 import com.netcracker.ncstore.dto.response.CartItemChangedResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.repository.ProductRepository;
@@ -79,8 +81,9 @@ public class CartController {
     }
 
     @PostMapping
-    public ResponseEntity<?> checkout(Locale locale) {
-        OrderInfoResponse response = cartService.checkout(locale);
+    public ResponseEntity<?> checkout(@RequestBody CartCheckoutRequest request, Locale locale) {
+        CartCheckoutDTO cartCheckoutDTO = new CartCheckoutDTO(request.isUseBalance(), request.getNonce(), locale);
+        OrderInfoResponse response = cartService.checkout(cartCheckoutDTO);
         return ResponseEntity.ok().body(response);
     }
 

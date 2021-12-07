@@ -132,7 +132,7 @@ public class OrderService implements IOrderService {
                 OrderItem orderItem = new OrderItem(
                         null,
                         convertedPrice.getRealPrice(),
-                        details.getRegion(),
+                        convertedPrice.getRegion(),
                         UUID.randomUUID().toString(),
                         order,
                         productsService.loadProductEntityById(actualPrice.getProductId()),

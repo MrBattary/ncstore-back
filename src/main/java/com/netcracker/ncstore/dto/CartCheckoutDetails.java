@@ -13,4 +13,6 @@ public class CartCheckoutDetails {
     private final Map<UUID, Integer> productsToBuyWithCount;
     private final UUID userId;
     private final Locale region;
+    private final boolean useBalance;
+    private final String nonce;
 }

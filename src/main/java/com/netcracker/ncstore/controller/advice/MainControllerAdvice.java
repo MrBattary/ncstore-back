@@ -88,6 +88,20 @@ public class MainControllerAdvice {
         return ResponseEntity.badRequest().build();
     }
 
+    @ExceptionHandler(PaymentServiceException.class)
+    public ResponseEntity<?> handleCartServiceValidationException(final PaymentServiceException e) {
+        log.error(e.getMessage());
+        log.info("RESPONSE: 400");
+        return ResponseEntity.badRequest().build();
+    }
+
+    @ExceptionHandler(PaymentServiceCurrencyNotSupportedException.class)
+    public ResponseEntity<?> handleCartServiceValidationException(final PaymentServiceCurrencyNotSupportedException e) {
+        log.error(e.getMessage());
+        log.info("RESPONSE: 400");
+        return ResponseEntity.badRequest().build();
+    }
+
 /*    //Should be activated only on production
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleAllUncaughtException(final RuntimeException e) {

@@ -7,9 +7,8 @@ import java.util.Locale;
 
 @AllArgsConstructor
 @Getter
-public class AddBalanceDTO {
-    private final String email;
-    private final double amountToAdd;
+public class CartCheckoutDTO {
+    private final boolean useBalance;
     private final String nonce;
     private final Locale locale;
 }

@@ -11,7 +11,7 @@ import lombok.extern.jackson.Jacksonized;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class UserAddBalanceResponse {
+public class UserBalanceResponse {
     private final double balance;
     private final String currency;
 }

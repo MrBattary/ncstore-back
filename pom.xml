@@ -23,6 +23,7 @@
         <maven.checkstyle.plugin.version>3.1.0</maven.checkstyle.plugin.version>
         <maven.jxr.plugin.version>3.0.0</maven.jxr.plugin.version>
         <hibernate.metamodel.version>5.6.1.Final</hibernate.metamodel.version>
+        <payment.braintree.version>3.13.0</payment.braintree.version>
     </properties>
 
     <parent>
@@ -92,6 +93,11 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
             <version>${hibernate.metamodel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.braintreepayments.gateway</groupId>
+            <artifactId>braintree-java</artifactId>
+            <version>${payment.braintree.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>

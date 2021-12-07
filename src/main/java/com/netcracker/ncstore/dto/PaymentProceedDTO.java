@@ -3,13 +3,13 @@ package com.netcracker.ncstore.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 
-@AllArgsConstructor
 @Getter
-public class AddBalanceDTO {
-    private final String email;
-    private final double amountToAdd;
+@AllArgsConstructor
+public class PaymentProceedDTO {
+    private final BigDecimal amount;
     private final String nonce;
-    private final Locale locale;
+    private final Locale region;
 }

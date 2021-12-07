@@ -6,12 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
+/**
+ * This DTO contains response info for payment POST request
+ */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class UserAddBalanceResponse {
-    private final double balance;
-    private final String currency;
+public class PaymentPostResponse {
+    private final String transactionId;
 }

@@ -9,6 +9,8 @@ import com.netcracker.ncstore.model.Person;
 import com.netcracker.ncstore.repository.CompanyRepository;
 import com.netcracker.ncstore.repository.PersonRepository;
 import com.netcracker.ncstore.repository.UserRepository;
+import com.netcracker.ncstore.service.payment.IPaymentService;
+import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.role.IRoleService;
 import com.netcracker.ncstore.util.validator.EmailValidator;
 import org.junit.jupiter.api.AfterEach;
@@ -48,10 +50,17 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private IPaymentService paymentService;
+
+    @Mock
+    private IPriceConversionService priceConversionService;
+
+
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        userService = new UserService(roleServiceMocked, userRepositoryMocked, personRepositoryMocked, companyRepositoryMocked, passwordEncoder);
+        userService = new UserService(roleServiceMocked, userRepositoryMocked, personRepositoryMocked, companyRepositoryMocked, passwordEncoder, paymentService, priceConversionService);
     }
 
     @AfterEach

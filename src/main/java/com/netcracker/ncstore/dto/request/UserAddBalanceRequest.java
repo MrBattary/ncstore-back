@@ -15,5 +15,6 @@ import lombok.extern.jackson.Jacksonized;
 @AllArgsConstructor
 @Getter
 public class UserAddBalanceRequest {
-    private final double addAmount;
+    private final double paymentAmount;
+    private final String nonce;
 }

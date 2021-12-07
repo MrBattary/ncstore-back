@@ -1,10 +1,10 @@
 package com.netcracker.ncstore.service.cart;
 
+import com.netcracker.ncstore.dto.CartCheckoutDTO;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.exception.CartServiceCheckoutException;
 import com.netcracker.ncstore.exception.CartServiceValidationException;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,9 +39,9 @@ public interface ICartService {
     /**
      * Checkouts user and creates order
      *
-     * @param locale - locale in which prices will be calculated
+     * @param cartCheckoutDTO - DTO containing checkout info
      * @return dto containing information about order
      * @throws CartServiceCheckoutException when some problem occurred while checkout process
      */
-    OrderInfoResponse checkout(Locale locale) throws CartServiceCheckoutException;
+    OrderInfoResponse checkout(CartCheckoutDTO cartCheckoutDTO) throws CartServiceCheckoutException;
 }

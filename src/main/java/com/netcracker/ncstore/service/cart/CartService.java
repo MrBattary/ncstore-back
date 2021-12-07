@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.service.cart;
 
+import com.netcracker.ncstore.dto.CartCheckoutDTO;
 import com.netcracker.ncstore.dto.CartCheckoutDetails;
 import com.netcracker.ncstore.dto.data.OrderDTO;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
@@ -25,7 +26,6 @@ import org.springframework.web.context.annotation.SessionScope;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -61,11 +61,14 @@ public class CartService implements ICartService {
             Cart cartEntity = cartRepository.findById(userId).orElse(null);
 
             if (cartEntity != null) {
+                log.info("Loaded cart from database for user with UUID " + userId);
                 cartMap = cartEntity.getCartItems().stream().collect(Collectors.toMap(CartItem::getProductId, CartItem::getCount));
             } else {
+                log.info("Created new cart for user with UUID " + userId);
                 cartMap = new HashMap<>();
             }
         } else {
+            log.info("Created cart bean for anonymous user");
             userId = null;
             cartMap = new HashMap<>();
         }
@@ -74,8 +77,9 @@ public class CartService implements ICartService {
     @Transactional
     @EventListener(SessionDestroyedEvent.class)
     public void saveCart() {
-        if (userId != null && cartMap!=null) {
+        if (userId != null && cartMap != null) {
             Cart savedCart;
+            log.info("Saving cart of user with UUID " + userId + " to database");
 
             if (!cartRepository.existsById(userId)) {
                 Cart cartToSave = new Cart(
@@ -89,6 +93,7 @@ public class CartService implements ICartService {
 
             } else {
                 savedCart = cartRepository.getById(userId);
+                savedCart.setCreationTime(Instant.now());
                 cartItemRepository.deleteByCartId(userId);
             }
 
@@ -125,14 +130,21 @@ public class CartService implements ICartService {
     }
 
     @Override
-    public OrderInfoResponse checkout(Locale locale) throws CartServiceCheckoutException {
+    public OrderInfoResponse checkout(CartCheckoutDTO cartCheckoutDTO) throws CartServiceCheckoutException {
         if (userId == null) {
             throw new CartServiceCheckoutException("Cant checkout anonymous user");
         } else if (CollectionUtils.isEmpty(cartMap)) {
             throw new CartServiceCheckoutException("Cant checkout empty cart");
         } else {
             try {
-                OrderDTO orderDTO = orderService.checkoutUserCart(new CartCheckoutDetails(new HashMap<>(cartMap), userId, locale));
+                OrderDTO orderDTO = orderService.checkoutUserCart(new CartCheckoutDetails(
+                                new HashMap<>(cartMap),
+                                userId,
+                                cartCheckoutDTO.getLocale(),
+                                cartCheckoutDTO.isUseBalance(),
+                                cartCheckoutDTO.getNonce()
+                        )
+                );
                 cartMap.clear();
                 return orderService.getOrderInfoResponse(orderDTO.getId());
 

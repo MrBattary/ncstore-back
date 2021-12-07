@@ -20,7 +20,7 @@ public class ScheduledConfiguration {
     }
 
     //@Scheduled(cron = "0 0 0/12 ? * *")
-    @Scheduled(initialDelay = 0, fixedRate = 1000*60*12)
+    @Scheduled(initialDelay = 0, fixedRate = 1000*60*60*12)
     @Transactional
     public void clearAllPastDiscounts() {
         int deleted = discountRepository.deleteDiscountByLessEndTime(Instant.now());

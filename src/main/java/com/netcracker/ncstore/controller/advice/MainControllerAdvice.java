@@ -32,6 +32,12 @@ public class MainControllerAdvice {
         return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(GeneralBadRequestException.class)
+    public ResponseEntity<String> handleGeneralBadRequestException(final GeneralBadRequestException e) {
+        log.error(e.getMessage());
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
 
 
 

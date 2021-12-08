@@ -2,7 +2,7 @@ package com.netcracker.ncstore.service.order;
 
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
-import com.netcracker.ncstore.dto.CartCheckoutDetails;
+import com.netcracker.ncstore.dto.CheckoutDetails;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
@@ -21,7 +21,6 @@ import com.netcracker.ncstore.model.enumerations.EOrderStatus;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.repository.OrderItemRepository;
 import com.netcracker.ncstore.repository.OrderRepository;
-import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.order.interfaces.IOrderService;
 import com.netcracker.ncstore.service.payment.IPaymentService;
 import com.netcracker.ncstore.service.price.IPricesService;
@@ -77,7 +76,7 @@ public class OrderService implements IOrderService {
 
     @Override
     @Transactional
-    public OrderDTO checkoutUserCart(CartCheckoutDetails details) throws OrderServiceOrderCreationException {
+    public OrderDTO checkoutUserCart(CheckoutDetails details) throws OrderServiceOrderCreationException {
         User user = userService.loadUserEntityById(details.getUserId());
 
         log.info("Started ordering for user with UUID " + user.getId());
@@ -187,7 +186,7 @@ public class OrderService implements IOrderService {
         //TODO add money to admin
     }
 
-    private void checkOrderRequestProduct(CartCheckoutDetails details) throws OrderServiceOrderCreationException {
+    private void checkOrderRequestProduct(CheckoutDetails details) throws OrderServiceOrderCreationException {
         for (Map.Entry<UUID, Integer> e : details.getProductsToBuyWithCount().entrySet()) {
             Product product = productsService.loadProductEntityById(e.getKey());
             if (product == null) {
@@ -199,7 +198,7 @@ public class OrderService implements IOrderService {
         }
     }
 
-    private Map<ActualProductPriceInRegionDTO, Integer> calculateRealPricesForProducts(CartCheckoutDetails details) {
+    private Map<ActualProductPriceInRegionDTO, Integer> calculateRealPricesForProducts(CheckoutDetails details) {
         Map<ActualProductPriceInRegionDTO, Integer> productIdPriceMap = new HashMap<>();
         for (Map.Entry<UUID, Integer> e : details.getProductsToBuyWithCount().entrySet()) {
             ActualProductPriceInRegionDTO actualPrice = pricesService.getActualPriceForProductInRegion(

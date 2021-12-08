@@ -45,4 +45,9 @@ public class Order {
     @Column(name = "order_status")
     private EOrderStatus orderStatus;
 
+    public Order(Instant creationUtcTime, User user, EOrderStatus orderStatus) {
+        this.creationUtcTime = creationUtcTime;
+        this.user = user;
+        this.orderStatus = orderStatus;
+    }
 }

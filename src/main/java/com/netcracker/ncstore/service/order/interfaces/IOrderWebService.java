@@ -1,6 +1,7 @@
 package com.netcracker.ncstore.service.order.interfaces;
 
-import com.netcracker.ncstore.dto.CartCheckoutDetails;
+import com.netcracker.ncstore.dto.CheckoutDetails;
+import com.netcracker.ncstore.dto.request.OrderCreateRequest;
 import com.netcracker.ncstore.dto.request.OrderGetRequest;
 import com.netcracker.ncstore.dto.request.OrderInfoGetRequest;
 import com.netcracker.ncstore.dto.response.OrderGetResponse;
@@ -29,5 +30,5 @@ public interface IOrderWebService {
      */
     OrderInfoResponse getSpecificOrder(OrderInfoGetRequest request) throws GeneralNotFoundException, GeneralPermissionDeniedException;
 
-    OrderInfoResponse createOrder(CartCheckoutDetails orderCreateDTO);
+    OrderInfoResponse createOrder(OrderCreateRequest request);
 }

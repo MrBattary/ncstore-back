@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.service.cart;
 
 import com.netcracker.ncstore.dto.CartCheckoutDTO;
-import com.netcracker.ncstore.dto.CartCheckoutDetails;
+import com.netcracker.ncstore.dto.CheckoutDetails;
 import com.netcracker.ncstore.dto.data.OrderDTO;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.exception.CartServiceCheckoutException;
@@ -55,7 +55,7 @@ public class CartService implements ICartService {
         this.userService = userService;
         this.orderService = orderService;
 
-        if (SecurityContextHolder.getContext() != null) {
+        if (!SecurityContextHolder.getContext().getAuthentication().getName().equals("ANONYMOUS")) {
             userId = userService.loadUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getId();
 
             Cart cartEntity = cartRepository.findById(userId).orElse(null);
@@ -137,7 +137,7 @@ public class CartService implements ICartService {
             throw new CartServiceCheckoutException("Cant checkout empty cart");
         } else {
             try {
-                OrderDTO orderDTO = orderService.checkoutUserCart(new CartCheckoutDetails(
+                OrderDTO orderDTO = orderService.checkoutUserCart(new CheckoutDetails(
                                 new HashMap<>(cartMap),
                                 userId,
                                 cartCheckoutDTO.getLocale(),

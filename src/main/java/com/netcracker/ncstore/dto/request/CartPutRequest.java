@@ -7,9 +7,11 @@ import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
 import java.util.Locale;
+import java.util.UUID;
 
 /**
- * DTO containing information about how to checkout user
+ * DTO containing information about product that will
+ * be added (or updated, if exists in cart) to cart.
  *
  */
 @Jacksonized
@@ -17,9 +19,9 @@ import java.util.Locale;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class CartCheckoutRequest {
-    private final boolean useBalance;
-    private final String nonce;
+public class CartPutRequest {
+    private final UUID productId;
+    private final Integer productCount;
     private final String email;
     private final Locale locale;
 }

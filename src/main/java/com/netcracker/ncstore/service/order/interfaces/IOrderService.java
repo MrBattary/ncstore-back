@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.service.order.interfaces;
 
-import com.netcracker.ncstore.dto.CartCheckoutDetails;
+import com.netcracker.ncstore.dto.CheckoutDetails;
 import com.netcracker.ncstore.dto.data.OrderDTO;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.exception.OrderServiceOrderCreationException;
@@ -18,7 +18,7 @@ public interface IOrderService {
      * @return dto containing info about created order
      * @throws OrderServiceOrderCreationException when order can not be created
      */
-    OrderDTO checkoutUserCart(CartCheckoutDetails details) throws OrderServiceOrderCreationException;
+    OrderDTO checkoutUserCart(CheckoutDetails details) throws OrderServiceOrderCreationException;
 
     /**
      * Returns OrderInfoResponse DTO containing info about order

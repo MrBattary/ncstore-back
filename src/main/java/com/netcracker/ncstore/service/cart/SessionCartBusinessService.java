@@ -99,6 +99,11 @@ public class SessionCartBusinessService implements ICartBusinessService {
         this.userEmail = email;
     }
 
+    @Override
+    public void clearCart() {
+        cartMap.clear();
+    }
+
     @PreDestroy
     public void saveCart() {
         if (userEmail != null && cartMap != null) {

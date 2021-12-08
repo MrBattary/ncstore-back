@@ -93,7 +93,11 @@ public class CartWebService implements ICartWebService {
                 request.getNonce()
         );
 
-        return orderWebService.createOrder(orderCreateRequest);
+        OrderInfoResponse orderInfoResponse = orderWebService.createOrder(orderCreateRequest);
+
+        cartBusinessService.clearCart();
+
+        return orderInfoResponse;
     }
 
     private void checkAndSetCartUserEmailIfAbsent(String email) {

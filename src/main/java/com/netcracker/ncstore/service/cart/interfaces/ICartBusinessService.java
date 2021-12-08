@@ -15,4 +15,5 @@ public interface ICartBusinessService {
     CartItemDTO deleteProductFromCart(UUID productId);
     String getCartUserEmail();
     void setCartUserEmail(String email);
+    void clearCart();
 }

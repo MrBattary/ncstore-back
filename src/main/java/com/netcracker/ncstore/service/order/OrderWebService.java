@@ -24,6 +24,7 @@ import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class OrderWebService implements IOrderWebService {
 
     @Override
     public List<OrderGetResponse> getOrders(OrderGetRequest request) {
-        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by("creationUtcTime").descending());
         OrderGetPageDTO getPageDTO = new OrderGetPageDTO(pageable, request.getEmail());
 
         Page<Order> ordersPage = orderBusinessService.getOrdersForUserWithPagination(getPageDTO);

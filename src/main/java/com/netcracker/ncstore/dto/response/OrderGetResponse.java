@@ -21,5 +21,5 @@ import java.util.UUID;
 public class OrderGetResponse {
     private final UUID orderId;
     private final EOrderStatus status;
-    private final Instant timeStampUTC;
+    private final Instant timeStampUtc;
 }

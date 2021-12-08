@@ -11,7 +11,7 @@ import com.netcracker.ncstore.model.Cart;
 import com.netcracker.ncstore.model.CartItem;
 import com.netcracker.ncstore.repository.CartItemRepository;
 import com.netcracker.ncstore.repository.CartRepository;
-import com.netcracker.ncstore.service.order.IOrderService;
+import com.netcracker.ncstore.service.order.interfaces.IOrderService;
 import com.netcracker.ncstore.service.product.IProductsService;
 import com.netcracker.ncstore.service.user.IUserService;
 import lombok.extern.slf4j.Slf4j;

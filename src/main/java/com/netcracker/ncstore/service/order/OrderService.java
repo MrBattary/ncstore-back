@@ -21,6 +21,8 @@ import com.netcracker.ncstore.model.enumerations.EOrderStatus;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.repository.OrderItemRepository;
 import com.netcracker.ncstore.repository.OrderRepository;
+import com.netcracker.ncstore.service.discount.IDiscountsService;
+import com.netcracker.ncstore.service.order.interfaces.IOrderService;
 import com.netcracker.ncstore.service.payment.IPaymentService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;

@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.service.order;
+package com.netcracker.ncstore.service.order.interfaces;
 
 import com.netcracker.ncstore.dto.CartCheckoutDetails;
 import com.netcracker.ncstore.dto.data.OrderDTO;

@@ -407,7 +407,8 @@ public class ProductsService implements IProductsService {
             );
 
             pricesService.deleteAllProvidedPrices(productFromRepository.getProductPrices());
-            productRepository.deleteById(productFromRepository.getId());
+            productFromRepository.setProductStatus(EProductStatus.DISCONTINUED);
+            productRepository.flush();
 
             log.info("The deletion of the product completed for the request of the user with email: "
                     + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());

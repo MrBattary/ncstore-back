@@ -100,8 +100,8 @@ public class SessionCartBusinessService implements ICartBusinessService {
     }
 
     @PreDestroy
-    public void saveCart(){
-        if (userEmail != null && cartMap!=null) {
+    public void saveCart() {
+        if (userEmail != null && cartMap != null) {
             CartServiceSessionEndedEvent event = new CartServiceSessionEndedEvent(this, new HashMap(cartMap), userEmail);
             applicationEventPublisher.publishEvent(event);
         }

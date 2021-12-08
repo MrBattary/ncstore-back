@@ -6,6 +6,9 @@ import com.netcracker.ncstore.dto.CartPutDTO;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Interface for all business services related to cart.
+ */
 public interface ICartBusinessService {
     List<CartItemDTO> getCartItems();
     CartItemDTO addOrUpdateProductInCart(CartPutDTO putDTO);

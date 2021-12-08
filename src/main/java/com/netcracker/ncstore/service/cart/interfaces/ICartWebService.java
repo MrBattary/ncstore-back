@@ -1,10 +1,9 @@
 package com.netcracker.ncstore.service.cart.interfaces;
 
-import com.netcracker.ncstore.dto.CheckoutDetails;
 import com.netcracker.ncstore.dto.request.CartCheckoutRequest;
 import com.netcracker.ncstore.dto.request.CartDeleteRequest;
-import com.netcracker.ncstore.dto.request.CartPutRequest;
 import com.netcracker.ncstore.dto.request.CartGetRequest;
+import com.netcracker.ncstore.dto.request.CartPutRequest;
 import com.netcracker.ncstore.dto.response.CartItemResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 

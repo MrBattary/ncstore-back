@@ -1,6 +1,5 @@
 package com.netcracker.ncstore.service.order.interfaces;
 
-import com.netcracker.ncstore.dto.CheckoutDetails;
 import com.netcracker.ncstore.dto.request.OrderCreateRequest;
 import com.netcracker.ncstore.dto.request.OrderGetRequest;
 import com.netcracker.ncstore.dto.request.OrderInfoGetRequest;

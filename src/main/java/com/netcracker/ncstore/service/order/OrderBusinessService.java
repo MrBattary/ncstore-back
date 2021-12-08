@@ -27,7 +27,6 @@ import com.netcracker.ncstore.service.payment.IPaymentService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.product.IProductsService;
-import com.netcracker.ncstore.service.user.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -186,7 +185,7 @@ public class OrderBusinessService implements IOrderBusinessService {
     }
 
     private void validateOrderCreateProducts(OrderCreateDTO orderCreateDTO) throws OrderServiceOrderCreationException {
-        if(CollectionUtils.isEmpty(orderCreateDTO.getProductsToBuyWithCount())){
+        if (CollectionUtils.isEmpty(orderCreateDTO.getProductsToBuyWithCount())) {
             throw new OrderServiceValidationException("Order list is empty. ");
         }
         for (Map.Entry<UUID, Integer> e : orderCreateDTO.getProductsToBuyWithCount().entrySet()) {
@@ -195,7 +194,7 @@ public class OrderBusinessService implements IOrderBusinessService {
                 throw new OrderServiceValidationException("Cant create order because product with UUID " + e.getKey() + " does not exist. ");
             }
             if (!product.getProductStatus().equals(EProductStatus.IN_STOCK)) {
-                throw new OrderServiceValidationException("Cant create order because product with UUID " + e.getKey() + " has status " + product.getProductStatus().toString()+". ");
+                throw new OrderServiceValidationException("Cant create order because product with UUID " + e.getKey() + " has status " + product.getProductStatus().toString() + ". ");
             }
         }
     }

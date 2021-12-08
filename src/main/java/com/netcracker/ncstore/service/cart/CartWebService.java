@@ -76,9 +76,9 @@ public class CartWebService implements ICartWebService {
         checkAndSetCartUserEmailIfAbsent(request.getEmail());
 
         CartItemDTO deleted = cartBusinessService.deleteProductFromCart(request.getProductId());
-        if(deleted.getCountOfProduct()==0){
+        if (deleted.getCountOfProduct() == 0) {
             return null;
-        }else{
+        } else {
             return convertCartItemDTOToResponse(deleted, request.getLocale());
         }
     }

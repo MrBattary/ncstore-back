@@ -11,17 +11,17 @@ import java.util.UUID;
 public class CartServiceSessionEndedEvent extends ApplicationEvent {
 
     private Map<UUID, Integer> itemsToSafe;
-    private UUID userId;
+    private String userEmail;
 
-    public CartServiceSessionEndedEvent(Object source, Map<UUID, Integer> itemsToSafe, UUID userId) {
+    public CartServiceSessionEndedEvent(Object source, Map<UUID, Integer> itemsToSafe, String userEmail) {
         super(source);
         this.itemsToSafe = itemsToSafe;
-        this.userId = userId;
+        this.userEmail = userEmail;
     }
 
-    public CartServiceSessionEndedEvent(Object source, Clock clock, Map<UUID, Integer> itemsToSafe, UUID userId) {
+    public CartServiceSessionEndedEvent(Object source, Clock clock, Map<UUID, Integer> itemsToSafe, String userEmail) {
         super(source, clock);
         this.itemsToSafe = itemsToSafe;
-        this.userId = userId;
+        this.userEmail = userEmail;
     }
 }

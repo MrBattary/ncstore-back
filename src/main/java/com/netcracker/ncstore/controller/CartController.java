@@ -1,6 +1,5 @@
 package com.netcracker.ncstore.controller;
 
-import com.netcracker.ncstore.dto.CartCheckoutDTO;
 import com.netcracker.ncstore.dto.body.CartCheckoutBody;
 import com.netcracker.ncstore.dto.request.CartDeleteRequest;
 import com.netcracker.ncstore.dto.request.CartGetRequest;
@@ -9,7 +8,7 @@ import com.netcracker.ncstore.dto.request.CartCheckoutRequest;
 import com.netcracker.ncstore.dto.request.CartPutRequest;
 import com.netcracker.ncstore.dto.response.CartItemResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
-import com.netcracker.ncstore.service.cart.ICartWebService;
+import com.netcracker.ncstore.service.cart.interfaces.ICartWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

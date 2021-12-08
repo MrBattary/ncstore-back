@@ -28,4 +28,10 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
+
+    public CartItem(UUID productId, int count, Cart cart) {
+        this.productId = productId;
+        this.count = count;
+        this.cart = cart;
+    }
 }

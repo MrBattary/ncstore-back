@@ -33,4 +33,9 @@ public class Cart {
 
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems;
+
+    public Cart(Instant creationTime, User user) {
+        this.creationTime = creationTime;
+        this.user = user;
+    }
 }

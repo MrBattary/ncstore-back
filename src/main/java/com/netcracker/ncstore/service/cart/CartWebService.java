@@ -4,7 +4,6 @@ import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.CartItemDTO;
 import com.netcracker.ncstore.dto.CartPutDTO;
-import com.netcracker.ncstore.dto.CheckoutDetails;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.request.CartCheckoutRequest;
 import com.netcracker.ncstore.dto.request.CartDeleteRequest;
@@ -13,15 +12,15 @@ import com.netcracker.ncstore.dto.request.CartPutRequest;
 import com.netcracker.ncstore.dto.request.OrderCreateRequest;
 import com.netcracker.ncstore.dto.response.CartItemResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
+import com.netcracker.ncstore.service.cart.interfaces.ICartBusinessService;
+import com.netcracker.ncstore.service.cart.interfaces.ICartWebService;
 import com.netcracker.ncstore.service.order.interfaces.IOrderWebService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
-import com.netcracker.ncstore.service.user.IUserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service

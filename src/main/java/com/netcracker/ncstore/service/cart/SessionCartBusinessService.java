@@ -1,12 +1,15 @@
 package com.netcracker.ncstore.service.cart;
 
+import com.netcracker.ncstore.config.event.customevent.CartServiceSessionEndedEvent;
 import com.netcracker.ncstore.dto.CartItemDTO;
 import com.netcracker.ncstore.dto.CartPutDTO;
 import com.netcracker.ncstore.exception.CartServiceValidationException;
 import com.netcracker.ncstore.model.Cart;
 import com.netcracker.ncstore.model.CartItem;
 import com.netcracker.ncstore.repository.CartRepository;
+import com.netcracker.ncstore.service.cart.interfaces.ICartBusinessService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
@@ -25,8 +28,11 @@ public class SessionCartBusinessService implements ICartBusinessService {
     private String userEmail;
 
     private final Map<UUID, Integer> cartMap;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public SessionCartBusinessService(final CartRepository cartRepository) {
+    public SessionCartBusinessService(final CartRepository cartRepository,
+                                      final ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
 
         userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -95,6 +101,9 @@ public class SessionCartBusinessService implements ICartBusinessService {
 
     @PreDestroy
     public void saveCart(){
-        //TODO after merge fixes because fixes got it done
+        if (userEmail != null && cartMap!=null) {
+            CartServiceSessionEndedEvent event = new CartServiceSessionEndedEvent(this, new HashMap(cartMap), userEmail);
+            applicationEventPublisher.publishEvent(event);
+        }
     }
 }

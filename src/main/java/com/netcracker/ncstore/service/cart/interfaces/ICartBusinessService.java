@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.service.cart;
+package com.netcracker.ncstore.service.cart.interfaces;
 
 import com.netcracker.ncstore.dto.CartItemDTO;
 import com.netcracker.ncstore.dto.CartPutDTO;

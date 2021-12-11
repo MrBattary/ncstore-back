@@ -17,6 +17,7 @@ import com.netcracker.ncstore.service.cart.interfaces.ICartWebService;
 import com.netcracker.ncstore.service.order.interfaces.IOrderWebService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,9 @@ public class CartWebService implements ICartWebService {
     private final IPriceConversionService priceConversionService;
     private final IPricesService pricesService;
     private final IOrderWebService orderWebService;
+
+    @Value("${security.anonymous_user_name}")
+    private String anonymousUserName;
 
     public CartWebService(final ICartBusinessService cartBusinessService,
                           final IPriceConversionService priceConversionService,
@@ -43,7 +47,7 @@ public class CartWebService implements ICartWebService {
 
 
     @Override
-    public List<CartItemResponse> getCartItems(CartGetRequest request) {
+    public List<CartItemResponse> getCartItems(final CartGetRequest request) {
         checkAndSetCartUserEmailIfAbsent(request.getEmail());
 
         List<CartItemDTO> cartItemDTOList = cartBusinessService.getCartItems();
@@ -59,7 +63,7 @@ public class CartWebService implements ICartWebService {
     }
 
     @Override
-    public CartItemResponse putCartItem(CartPutRequest request) {
+    public CartItemResponse putCartItem(final CartPutRequest request) {
         checkAndSetCartUserEmailIfAbsent(request.getEmail());
 
         CartItemDTO put = cartBusinessService.addOrUpdateProductInCart(new CartPutDTO(
@@ -72,7 +76,7 @@ public class CartWebService implements ICartWebService {
     }
 
     @Override
-    public CartItemResponse deleteCartItem(CartDeleteRequest request) {
+    public CartItemResponse deleteCartItem(final CartDeleteRequest request) {
         checkAndSetCartUserEmailIfAbsent(request.getEmail());
 
         CartItemDTO deleted = cartBusinessService.deleteProductFromCart(request.getProductId());
@@ -84,7 +88,7 @@ public class CartWebService implements ICartWebService {
     }
 
     @Override
-    public OrderInfoResponse checkoutCartForUser(CartCheckoutRequest request) {
+    public OrderInfoResponse checkoutCartForUser(final CartCheckoutRequest request) {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 cartBusinessService.getCartItems(),
                 request.getEmail(),
@@ -100,13 +104,14 @@ public class CartWebService implements ICartWebService {
         return orderInfoResponse;
     }
 
-    private void checkAndSetCartUserEmailIfAbsent(String email) {
-        if (cartBusinessService.getCartUserEmail() == null) {
+    private void checkAndSetCartUserEmailIfAbsent(final String email) {
+        if (cartBusinessService.getCartUserEmail() == null && !email.equals(anonymousUserName)) {
             cartBusinessService.setCartUserEmail(email);
         }
     }
 
-    private CartItemResponse convertCartItemDTOToResponse(CartItemDTO cartItemDTO, Locale locale) {
+    private CartItemResponse convertCartItemDTOToResponse(final CartItemDTO cartItemDTO,
+                                                          final Locale locale) {
         ActualProductPriceInRegionDTO priceForProduct =
                 pricesService.getActualPriceForProductInRegion(new ProductLocaleDTO(cartItemDTO.getProductId(), locale));
 

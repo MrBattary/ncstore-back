@@ -3,11 +3,14 @@ package com.netcracker.ncstore.security.filter;
 import com.netcracker.ncstore.security.token.UnauthenticatedJwtToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -16,6 +19,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -24,9 +29,11 @@ import java.util.Collections;
 public abstract class AJwtAuthFilter extends AbstractAuthenticationProcessingFilter {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private String anonymousUserName = "ANONYMOUS";
+
     private Authentication anonymousToken() {
-        return new AnonymousAuthenticationToken("ANONYMOUS", "ANONYMOUS",
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
+        return new AnonymousAuthenticationToken(anonymousUserName, anonymousUserName,
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_"+anonymousUserName)));
     }
 
     /**

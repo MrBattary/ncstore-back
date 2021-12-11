@@ -6,6 +6,7 @@ import com.netcracker.ncstore.dto.response.OrderGetResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.service.order.interfaces.IOrderWebService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,14 +32,15 @@ public class OrderController {
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.4#/Order/getOrders
     @GetMapping
     public ResponseEntity<List<OrderGetResponse>> getOrdersWithPagination(@RequestParam final int page,
-                                                                    @RequestParam final int size,
-                                                                    final Principal principal) {
+                                                                          @RequestParam final int size,
+                                                                          final Principal principal) {
         OrderGetRequest request = new OrderGetRequest(page, size, principal.getName());
 
         List<OrderGetResponse> response = orderWebService.getOrders(request);
 
         return ResponseEntity.
                 ok().
+                contentType(MediaType.APPLICATION_JSON).
                 body(response);
     }
 
@@ -51,6 +53,7 @@ public class OrderController {
 
         return ResponseEntity.
                 ok().
+                contentType(MediaType.APPLICATION_JSON).
                 body(response);
     }
 }

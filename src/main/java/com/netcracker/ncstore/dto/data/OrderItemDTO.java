@@ -25,7 +25,7 @@ public class OrderItemDTO {
     private UUID productId;
     private EOrderItemStatus itemStatus;
 
-    public OrderItemDTO(OrderItem orderItem){
+    public OrderItemDTO(OrderItem orderItem) {
         id = orderItem.getId();
         price = orderItem.getPrice();
         priceLocale = orderItem.getPriceLocale();

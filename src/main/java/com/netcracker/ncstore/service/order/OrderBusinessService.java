@@ -71,12 +71,12 @@ public class OrderBusinessService implements IOrderBusinessService {
 
 
     @Override
-    public Page<Order> getOrdersForUserWithPagination(OrderGetPageDTO orderGetPageDTO) {
+    public Page<Order> getOrdersForUserWithPagination(final OrderGetPageDTO orderGetPageDTO) {
         return orderRepository.findByUserEmail(orderGetPageDTO.getEmail(), orderGetPageDTO.getPageable());
     }
 
     @Override
-    public Order getSpecificOrderForUser(OrderGetDTO orderGetDTO) {
+    public Order getSpecificOrderForUser(OrderGetDTO orderGetDTO) throws OrderServiceNotFoundException, OrderServicePermissionException {
         UUID orderId = orderGetDTO.getOrderId();
         Order order = orderRepository.
                 findById(orderId).orElseThrow(
@@ -92,7 +92,7 @@ public class OrderBusinessService implements IOrderBusinessService {
 
     @Override
     @Transactional
-    public Order createNewOrder(OrderCreateDTO orderCreateDTO) throws OrderServiceOrderCreationException {
+    public Order createNewOrder(final OrderCreateDTO orderCreateDTO) throws OrderServiceOrderCreationException {
         String transactionId = null;
 
         try {
@@ -114,7 +114,7 @@ public class OrderBusinessService implements IOrderBusinessService {
 
             if (orderCreateDTO.isUseBalance()) {
                 if (customer.getBalance() < sum) {
-                    throw new OrderServiceValidationException("There is not enough money ob balance to checkout. ");
+                    throw new OrderServiceValidationException("There is not enough money on balance to checkout. ");
                 }
             } else {
                 try {
@@ -174,7 +174,7 @@ public class OrderBusinessService implements IOrderBusinessService {
         }
     }
 
-    private void addMoneyToSupplierForProduct(UUID productId, double amount) {
+    private void addMoneyToSupplierForProduct(final UUID productId, final double amount) {
         Product product = productsService.loadProductEntityById(productId);
         User supplier = product.getSupplier();
         double supplierMoney = amount * (1 - ownerPercent);
@@ -184,7 +184,7 @@ public class OrderBusinessService implements IOrderBusinessService {
         //TODO add money to admin
     }
 
-    private void validateOrderCreateProducts(OrderCreateDTO orderCreateDTO) throws OrderServiceOrderCreationException {
+    private void validateOrderCreateProducts(final OrderCreateDTO orderCreateDTO) throws OrderServiceOrderCreationException {
         if (CollectionUtils.isEmpty(orderCreateDTO.getProductsToBuyWithCount())) {
             throw new OrderServiceValidationException("Order list is empty. ");
         }
@@ -199,7 +199,7 @@ public class OrderBusinessService implements IOrderBusinessService {
         }
     }
 
-    private Map<ActualProductPriceInRegionDTO, Integer> calculateRealPricesForProducts(OrderCreateDTO orderCreateDTO) {
+    private Map<ActualProductPriceInRegionDTO, Integer> calculateRealPricesForProducts(final OrderCreateDTO orderCreateDTO) {
         Map<ActualProductPriceInRegionDTO, Integer> productIdPriceMap = new HashMap<>();
         for (Map.Entry<UUID, Integer> e : orderCreateDTO.getProductsToBuyWithCount().entrySet()) {
             ActualProductPriceInRegionDTO actualPrice = pricesService.getActualPriceForProductInRegion(

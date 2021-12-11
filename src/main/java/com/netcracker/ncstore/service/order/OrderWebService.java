@@ -45,7 +45,7 @@ public class OrderWebService implements IOrderWebService {
 
 
     @Override
-    public List<OrderGetResponse> getOrders(OrderGetRequest request) {
+    public List<OrderGetResponse> getOrders(final OrderGetRequest request) {
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by("creationUtcTime").descending());
         OrderGetPageDTO getPageDTO = new OrderGetPageDTO(pageable, request.getEmail());
 
@@ -64,7 +64,7 @@ public class OrderWebService implements IOrderWebService {
     }
 
     @Override
-    public OrderInfoResponse getSpecificOrder(OrderInfoGetRequest request) {
+    public OrderInfoResponse getSpecificOrder(final OrderInfoGetRequest request) {
         OrderGetDTO getDTO = new OrderGetDTO(request.getOrderId(), request.getEmail());
 
         try {
@@ -78,7 +78,7 @@ public class OrderWebService implements IOrderWebService {
     }
 
     @Override
-    public OrderInfoResponse createOrder(OrderCreateRequest request) {
+    public OrderInfoResponse createOrder(final OrderCreateRequest request) {
         try {
             Map<UUID, Integer> products = request.
                     getProductsToBuyWithCount().
@@ -108,7 +108,7 @@ public class OrderWebService implements IOrderWebService {
         }
     }
 
-    private OrderInfoResponse convertOrderToInfoResponse(Order order) {
+    private OrderInfoResponse convertOrderToInfoResponse(final Order order) throws GeneralBadRequestException{
         List<OrderItemInfoResponse> orderItems = order.getProducts().
                 stream().
                 map(e -> new OrderItemInfoResponse(

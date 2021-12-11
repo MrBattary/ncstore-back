@@ -10,7 +10,9 @@ import com.netcracker.ncstore.dto.response.CartItemResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.service.cart.interfaces.ICartWebService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,30 +38,29 @@ public class CartController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CartItemResponse>> getShoppingCartProducts(final Locale locale,
-                                                                          final Principal principal) {
+    public ResponseEntity<List<CartItemResponse>> getShoppingCartProducts(final Locale locale) {
 
         CartGetRequest request = new CartGetRequest(
                 locale,
-                principal.getName()
+                SecurityContextHolder.getContext().getAuthentication().getName()
         );
 
         List<CartItemResponse> response = cartService.getCartItems(request);
 
         return ResponseEntity.
                 ok().
+                contentType(MediaType.APPLICATION_JSON).
                 body(response);
     }
 
     @PutMapping
     public ResponseEntity<CartItemResponse> addProductToShoppingCart(@RequestBody final CartPutBody body,
-                                                                     final Locale locale,
-                                                                     final Principal principal) {
+                                                                     final Locale locale) {
 
         CartPutRequest request = new CartPutRequest(
                 body.getProductId(),
                 body.getProductCount(),
-                principal.getName(),
+                SecurityContextHolder.getContext().getAuthentication().getName(),
                 locale
         );
 
@@ -67,15 +68,19 @@ public class CartController {
 
         return ResponseEntity.
                 ok().
+                contentType(MediaType.APPLICATION_JSON).
                 body(response);
     }
 
     @DeleteMapping(value = "/{productId}")
     public ResponseEntity<?> deleteProductFromCart(@PathVariable final UUID productId,
-                                                   final Locale locale,
-                                                   final Principal principal) {
+                                                   final Locale locale) {
 
-        CartDeleteRequest request = new CartDeleteRequest(productId, principal.getName(), locale);
+        CartDeleteRequest request = new CartDeleteRequest(
+                productId,
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                locale
+        );
 
         CartItemResponse response = cartService.deleteCartItem(request);
 
@@ -84,6 +89,7 @@ public class CartController {
         } else {
             return ResponseEntity.
                     ok().
+                    contentType(MediaType.APPLICATION_JSON).
                     body(response);
         }
 
@@ -91,17 +97,19 @@ public class CartController {
 
     @PostMapping
     public ResponseEntity<OrderInfoResponse> checkout(@RequestBody CartCheckoutBody body,
-                                                      final Locale locale,
-                                                      final Principal principal) {
+                                                      final Locale locale) {
         CartCheckoutRequest request = new CartCheckoutRequest(
                 body.isUseBalance(),
                 body.getNonce(),
-                principal.getName(),
+                SecurityContextHolder.getContext().getAuthentication().getName(),
                 locale
         );
 
         OrderInfoResponse response = cartService.checkoutCartForUser(request);
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
     }
 }

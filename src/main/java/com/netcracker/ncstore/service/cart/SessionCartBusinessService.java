@@ -9,6 +9,7 @@ import com.netcracker.ncstore.model.CartItem;
 import com.netcracker.ncstore.repository.CartRepository;
 import com.netcracker.ncstore.service.cart.interfaces.ICartBusinessService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ import java.util.stream.Collectors;
 public class SessionCartBusinessService implements ICartBusinessService {
     private String userEmail;
 
+    @Value("${security.anonymous_user_name}")
+    private String anonymousUserName;
+
     private final Map<UUID, Integer> cartMap;
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -36,7 +40,7 @@ public class SessionCartBusinessService implements ICartBusinessService {
 
         userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if (!userEmail.equals("ANONYMOUS")) {
+        if (!userEmail.equals(anonymousUserName)) {
             Cart cartEntity = cartRepository.findByUserEmail(userEmail).orElse(null);
 
             if (cartEntity != null) {
@@ -67,7 +71,7 @@ public class SessionCartBusinessService implements ICartBusinessService {
     }
 
     @Override
-    public CartItemDTO addOrUpdateProductInCart(CartPutDTO putDTO) {
+    public CartItemDTO addOrUpdateProductInCart(final CartPutDTO putDTO) throws CartServiceValidationException {
         if (putDTO.getCountOfProduct() < 1) {
             throw new CartServiceValidationException("Product count must be non-zero positive integer.");
         }
@@ -80,7 +84,7 @@ public class SessionCartBusinessService implements ICartBusinessService {
     }
 
     @Override
-    public CartItemDTO deleteProductFromCart(UUID productId) {
+    public CartItemDTO deleteProductFromCart(final UUID productId) {
         Integer deletedProductCount = cartMap.remove(productId);
 
         return new CartItemDTO(
@@ -95,7 +99,7 @@ public class SessionCartBusinessService implements ICartBusinessService {
     }
 
     @Override
-    public void setCartUserEmail(String email) {
+    public void setCartUserEmail(final String email) {
         this.userEmail = email;
     }
 

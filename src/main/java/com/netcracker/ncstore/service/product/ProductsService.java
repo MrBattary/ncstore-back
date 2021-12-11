@@ -102,7 +102,7 @@ public class ProductsService implements IProductsService {
 
         Specification<Product> specification =
                 ProductSpecifications.getByLikeName(productGetRequest.getSearchText()).
-                        and(ProductSpecifications.getByCategoriesIDs(productGetRequest.getCategoriesIds())).
+                        and(ProductSpecifications.getByCategoriesNames(productGetRequest.getCategoriesNames())).
                         and(ProductSpecifications.getByProductStatus(EProductStatus.IN_STOCK)).
                         and(ProductSpecifications.getBySupplierId(productGetRequest.getSupplierId())).
                         and(ProductSpecifications.order(productGetRequest.getSortOrder(), productGetRequest.getSort(), productGetRequest.getLocale(), Locale.forLanguageTag(defaultLocaleCode)));

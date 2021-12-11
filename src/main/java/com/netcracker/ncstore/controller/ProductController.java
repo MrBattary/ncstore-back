@@ -35,10 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -75,7 +72,7 @@ public class ProductController {
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<ProductsGetPaginationResponse>> getProductsWithPagination(
-            @RequestParam(defaultValue = "", required = false) final String categoryIds,
+            @RequestParam(defaultValue = "", required = false) final String categoryNames,
             @RequestParam(defaultValue = "", required = false) final String searchText,
             @RequestParam(defaultValue = "default", required = false) final String sort,
             @RequestParam(defaultValue = "asc", required = false) final String sortOrder,
@@ -84,12 +81,15 @@ public class ProductController {
             @RequestParam final int size,
             final Locale locale) {
 
-        log.info("REQUEST: to get products by search text='" + searchText + "'; for supplierId='" + supplierId + "'; order by " + sort + " " + sortOrder + "; on: " + page + " page, with " + size + " size");
+        List<String> categories = ProductRequestConverter.convertCategoriesStringToList(categoryNames);
+        log.info("REQUEST: to get products with categories: '" +
+                categories.stream().map(Object::toString).collect(Collectors.joining(" ")) +
+                "', by search text='" + searchText + "', for supplierId='" + supplierId + "', order by " + sort + " " + sortOrder + ", on: " + page + " page, with " + size + " size");
+
 
         ESortRule sortEnum = ProductRequestConverter.convertSortRuleStringToEnum(sort);
         ESortOrder sortOrderEnum = ProductRequestConverter.convertSortOrderStringToEnum(sortOrder);
 
-        List<UUID> categories = ProductRequestConverter.convertCategoriesStringToList(categoryIds);
 
         ProductGetRequest productGetRequest =
                 new ProductGetRequest(categories, searchText, page, size, locale, sortEnum, sortOrderEnum, supplierId);

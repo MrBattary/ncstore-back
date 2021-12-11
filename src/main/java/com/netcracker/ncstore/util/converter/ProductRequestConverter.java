@@ -18,11 +18,10 @@ import java.util.stream.Collectors;
  * and there is no need to create instance of it
  */
 public abstract class ProductRequestConverter {
-    public static List<UUID> convertCategoriesStringToList(String stringOfCategoriesIDs) {
+    public static List<String> convertCategoriesStringToList(String stringOfCategoriesIDs) {
         if (!stringOfCategoriesIDs.equals("")) {
             try {
-                return Arrays.stream(stringOfCategoriesIDs.split("\\|")).
-                        map(UUID::fromString).collect(Collectors.toList());
+                return Arrays.stream(stringOfCategoriesIDs.split("\\|")).collect(Collectors.toList());
             } catch (IllegalArgumentException e) {
                 throw new RequestParametersInvalidException("Provided UUID is not valid.");
             }

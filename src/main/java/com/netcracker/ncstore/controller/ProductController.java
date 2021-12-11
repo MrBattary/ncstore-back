@@ -1,6 +1,11 @@
 package com.netcracker.ncstore.controller;
 
-import com.netcracker.ncstore.dto.*;
+import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
+import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.ProductIdAuthDTO;
+import com.netcracker.ncstore.dto.ProductIdUpdateRequestAuthDTO;
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
+import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.CategoryDTO;
 import com.netcracker.ncstore.dto.data.DiscountDTO;
@@ -9,7 +14,12 @@ import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductCreateRequest;
 import com.netcracker.ncstore.dto.request.ProductGetRequest;
 import com.netcracker.ncstore.dto.request.ProductUpdateRequest;
-import com.netcracker.ncstore.dto.response.*;
+import com.netcracker.ncstore.dto.response.CreateProductResponse;
+import com.netcracker.ncstore.dto.response.DeleteProductResponse;
+import com.netcracker.ncstore.dto.response.GetProductResponse;
+import com.netcracker.ncstore.dto.response.ProductGetResponse;
+import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
+import com.netcracker.ncstore.dto.response.UpdateProductResponse;
 import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.service.category.ICategoryService;
@@ -35,7 +45,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**

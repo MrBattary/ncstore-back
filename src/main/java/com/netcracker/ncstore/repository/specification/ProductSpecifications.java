@@ -43,16 +43,16 @@ public abstract class ProductSpecifications {
     /**
      * Filters products that belongs to one of the specified categories
      *
-     * @param categories list of categories
+     * @param categoriesNames list of categories
      * @return Specification<Product>
      */
-    public static Specification<Product> getByCategoriesIDs(List<UUID> categories) {
+    public static Specification<Product> getByCategoriesNames(List<String> categoriesNames) {
         return (root, query, criteriaBuilder) -> {
-            if (CollectionUtils.isEmpty(categories)) {
+            if (CollectionUtils.isEmpty(categoriesNames)) {
                 return criteriaBuilder.and();
             } else {
                 Join<Product, Category> categoryJoin = root.join(Product_.CATEGORIES, JoinType.LEFT);
-                return categoryJoin.get(Category_.ID).in(categories);
+                return categoryJoin.get(Category_.NAME).in(categoriesNames);
             }
         };
     }

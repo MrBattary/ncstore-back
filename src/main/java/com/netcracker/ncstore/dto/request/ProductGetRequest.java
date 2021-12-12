@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class ProductGetRequest {
-    private final List<UUID> categoriesIds;
+    private final List<String> categoriesNames;
     private final String searchText;
     private final int page;
     private final int size;

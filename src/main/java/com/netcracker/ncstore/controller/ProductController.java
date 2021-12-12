@@ -1,6 +1,11 @@
 package com.netcracker.ncstore.controller;
 
-import com.netcracker.ncstore.dto.*;
+import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
+import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.ProductIdAuthDTO;
+import com.netcracker.ncstore.dto.ProductIdUpdateRequestAuthDTO;
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
+import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.data.CategoryDTO;
 import com.netcracker.ncstore.dto.data.DiscountDTO;
@@ -9,7 +14,12 @@ import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductCreateRequest;
 import com.netcracker.ncstore.dto.request.ProductGetRequest;
 import com.netcracker.ncstore.dto.request.ProductUpdateRequest;
-import com.netcracker.ncstore.dto.response.*;
+import com.netcracker.ncstore.dto.response.CreateProductResponse;
+import com.netcracker.ncstore.dto.response.DeleteProductResponse;
+import com.netcracker.ncstore.dto.response.GetProductResponse;
+import com.netcracker.ncstore.dto.response.ProductGetResponse;
+import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
+import com.netcracker.ncstore.dto.response.UpdateProductResponse;
 import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.service.category.ICategoryService;
@@ -75,7 +85,7 @@ public class ProductController {
     @RequestMapping(value = "/products", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<List<ProductsGetPaginationResponse>> getProductsWithPagination(
-            @RequestParam(defaultValue = "", required = false) final String categoryIds,
+            @RequestParam(defaultValue = "", required = false) final String categoryNames,
             @RequestParam(defaultValue = "", required = false) final String searchText,
             @RequestParam(defaultValue = "default", required = false) final String sort,
             @RequestParam(defaultValue = "asc", required = false) final String sortOrder,
@@ -84,12 +94,15 @@ public class ProductController {
             @RequestParam final int size,
             final Locale locale) {
 
-        log.info("REQUEST: to get products by search text='" + searchText + "'; for supplierId='" + supplierId + "'; order by " + sort + " " + sortOrder + "; on: " + page + " page, with " + size + " size");
+        List<String> categories = ProductRequestConverter.convertCategoriesStringToList(categoryNames);
+        log.info("REQUEST: to get products with categories: '" +
+                categories.stream().map(Object::toString).collect(Collectors.joining(" ")) +
+                "', by search text='" + searchText + "', for supplierId='" + supplierId + "', order by " + sort + " " + sortOrder + ", on: " + page + " page, with " + size + " size");
+
 
         ESortRule sortEnum = ProductRequestConverter.convertSortRuleStringToEnum(sort);
         ESortOrder sortOrderEnum = ProductRequestConverter.convertSortOrderStringToEnum(sortOrder);
 
-        List<UUID> categories = ProductRequestConverter.convertCategoriesStringToList(categoryIds);
 
         ProductGetRequest productGetRequest =
                 new ProductGetRequest(categories, searchText, page, size, locale, sortEnum, sortOrderEnum, supplierId);

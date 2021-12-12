@@ -33,6 +33,8 @@ public class Order {
     @GeneratedValue
     private UUID id;
     private Instant creationUtcTime;
+    //null if payment was from balance
+    private String transactionId;
 
     @OneToOne
     @JoinColumn(name = "user_id")

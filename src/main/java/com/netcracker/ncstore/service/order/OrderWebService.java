@@ -3,6 +3,7 @@ package com.netcracker.ncstore.service.order;
 import com.netcracker.ncstore.dto.CartItemDTO;
 import com.netcracker.ncstore.dto.OrderGetDTO;
 import com.netcracker.ncstore.dto.OrderGetPageDTO;
+import com.netcracker.ncstore.dto.OrderPayDTO;
 import com.netcracker.ncstore.dto.create.OrderCreateDTO;
 import com.netcracker.ncstore.dto.request.OrderCreateRequest;
 import com.netcracker.ncstore.dto.request.OrderGetRequest;
@@ -14,9 +15,12 @@ import com.netcracker.ncstore.exception.GeneralBadRequestException;
 import com.netcracker.ncstore.exception.GeneralNotFoundException;
 import com.netcracker.ncstore.exception.GeneralPermissionDeniedException;
 import com.netcracker.ncstore.exception.OrderServiceNotFoundException;
+import com.netcracker.ncstore.exception.OrderServiceOrderCompletionException;
 import com.netcracker.ncstore.exception.OrderServiceOrderCreationException;
+import com.netcracker.ncstore.exception.OrderServiceOrderPaymentException;
 import com.netcracker.ncstore.exception.OrderServicePermissionException;
 import com.netcracker.ncstore.model.Order;
+import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.service.order.interfaces.IOrderBusinessService;
 import com.netcracker.ncstore.service.order.interfaces.IOrderWebService;
 import com.netcracker.ncstore.service.user.IUserService;
@@ -89,26 +93,36 @@ public class OrderWebService implements IOrderWebService {
                             )
                     );
 
+            User customer = userService.loadUserEntityByEmail(
+                    request.getCustomerEmail()
+            );
 
             OrderCreateDTO orderCreateDTO = new OrderCreateDTO(
                     products,
-                    userService.loadUserEntityByEmail(
-                            request.getCustomerEmail()
-                    ),
+                    customer
+            );
+
+            Order order = orderBusinessService.createNewUnpaidOrder(orderCreateDTO);
+
+            OrderPayDTO orderPayDTO = new OrderPayDTO(
+                    order.getId(),
+                    request.getCustomerEmail(),
                     request.getRegion(),
                     request.isUseBalance(),
                     request.getNonce()
             );
 
-            Order order = orderBusinessService.createNewOrder(orderCreateDTO);
+            order = orderBusinessService.payExistingOrder(orderPayDTO);
+
+            order = orderBusinessService.completePaidOrder(order.getId());
 
             return convertOrderToInfoResponse(order);
-        } catch (OrderServiceOrderCreationException e) {
+        } catch (OrderServiceOrderCreationException | OrderServiceOrderPaymentException | OrderServiceOrderCompletionException e) {
             throw new GeneralBadRequestException(e.getMessage(), e);
         }
     }
 
-    private OrderInfoResponse convertOrderToInfoResponse(final Order order) throws GeneralBadRequestException{
+    private OrderInfoResponse convertOrderToInfoResponse(final Order order) throws GeneralBadRequestException {
         List<OrderItemInfoResponse> orderItems = order.getProducts().
                 stream().
                 map(e -> new OrderItemInfoResponse(

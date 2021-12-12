@@ -54,4 +54,10 @@ public class OrderItem {
         this.product = product;
         this.itemStatus = itemStatus;
     }
+
+    public OrderItem(Order order, Product product) {
+        this.order = order;
+        this.product = product;
+        this.itemStatus = EOrderItemStatus.REGISTERED;
+    }
 }

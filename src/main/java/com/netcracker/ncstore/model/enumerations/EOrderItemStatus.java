@@ -8,6 +8,15 @@ package com.netcracker.ncstore.model.enumerations;
  */
 public enum EOrderItemStatus {
     /**
+     * Order is registered but not paid, so user can't use item.
+     * Such item may only have Product and Order references without any price, key and region
+     */
+    REGISTERED,
+    /**
+     * Order is paid, item is paid, but no licence key assigned
+     */
+    PAID,
+    /**
      * Product is ready to use.
      */
     COMPLETED,

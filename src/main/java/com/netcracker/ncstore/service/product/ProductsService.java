@@ -224,8 +224,12 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public Product loadProductEntityById(UUID id) {
-        return productRepository.findById(id).orElse(null);
+    public Product loadProductEntityById(UUID id) throws ProductServiceNotFoundException {
+        return productRepository.
+                findById(id).
+                orElseThrow(
+                        () -> new ProductServiceNotFoundException("Product with UUID " + id + " not found. ")
+                );
     }
 
     @Override

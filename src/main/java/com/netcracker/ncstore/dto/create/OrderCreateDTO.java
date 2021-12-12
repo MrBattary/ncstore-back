@@ -13,7 +13,4 @@ import java.util.UUID;
 public class OrderCreateDTO {
     private final Map<UUID, Integer> productsToBuyWithCount;
     private final User customer;
-    private final Locale region;
-    private final boolean useBalance;
-    private final String nonce;
 }

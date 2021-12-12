@@ -130,7 +130,7 @@ public class OrderWebService implements IOrderWebService {
                                 e.getProduct().getName(),
                                 e.getProduct().getSupplier().getId(),
                                 e.getPrice(),
-                                LocaleToCurrencyConverter.getCurrencySymbolByLocale(e.getPriceLocale()),
+                                e.getPriceLocale() == null ? null : LocaleToCurrencyConverter.getCurrencySymbolByLocale(e.getPriceLocale()),
                                 e.getLicenseKey(),
                                 e.getItemStatus()
                         )

@@ -35,8 +35,11 @@ public class OrderController {
                                                                           @RequestParam final int size,
                                                                           final Principal principal) {
         OrderGetRequest request = new OrderGetRequest(page, size, principal.getName());
+        log.info("REQUEST: to get orders for user with email" + principal.getName() + " on page: " + page + " with size: " + size);
 
         List<OrderGetResponse> response = orderWebService.getOrders(request);
+
+        log.info("RESPONSE: to get orders for user with email" + principal.getName() + " on page: " + page + " with size: " + size);
 
         return ResponseEntity.
                 ok().

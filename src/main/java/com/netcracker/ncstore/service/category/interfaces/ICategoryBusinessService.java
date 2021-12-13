@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.service.category;
+package com.netcracker.ncstore.service.category.interfaces;
 
 import com.netcracker.ncstore.dto.data.CategoryDTO;
 import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;

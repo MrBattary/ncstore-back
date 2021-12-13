@@ -1,6 +1,8 @@
 package com.netcracker.ncstore.service.category;
 
 import com.netcracker.ncstore.dto.response.CategoryGetResponse;
+import com.netcracker.ncstore.service.category.interfaces.ICategoryBusinessService;
+import com.netcracker.ncstore.service.category.interfaces.ICategoryWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

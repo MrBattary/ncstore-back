@@ -7,7 +7,6 @@ import com.netcracker.ncstore.dto.ProductIdUpdateRequestAuthDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
-import com.netcracker.ncstore.dto.data.CategoryDTO;
 import com.netcracker.ncstore.dto.data.DiscountDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
@@ -21,8 +20,9 @@ import com.netcracker.ncstore.dto.response.ProductGetResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
 import com.netcracker.ncstore.dto.response.UpdateProductResponse;
 import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
+import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
-import com.netcracker.ncstore.service.category.ICategoryService;
+import com.netcracker.ncstore.service.category.interfaces.ICategoryBusinessService;
 import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.product.IProductsService;
@@ -59,7 +59,7 @@ public class ProductController {
     private final Logger log;
     private final IProductsService productsService;
     private final IPricesService pricesService;
-    private final ICategoryService categoryService;
+    private final ICategoryBusinessService categoryService;
     private final IUserService userService;
     private final IDiscountsService discountsService;
 
@@ -70,7 +70,7 @@ public class ProductController {
      */
     public ProductController(final IProductsService productsService,
                              final IPricesService pricesService,
-                             final ICategoryService categoryService,
+                             final ICategoryBusinessService categoryService,
                              final IUserService userService,
                              final IDiscountsService discountsService) {
         this.log = LoggerFactory.getLogger(ProductController.class);
@@ -156,7 +156,7 @@ public class ProductController {
 
         List<String> categoryNames = categoryService.
                 getCategoriesForProduct(productDTO.getId()).
-                stream().map(CategoryDTO::getName).
+                stream().map(Category::getName).
                 collect(Collectors.toList());
 
         CreateProductResponse response = new CreateProductResponse(

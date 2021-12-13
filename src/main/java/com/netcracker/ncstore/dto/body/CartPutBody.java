@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.dto.response;
+package com.netcracker.ncstore.dto.body;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -9,18 +9,14 @@ import lombok.extern.jackson.Jacksonized;
 import java.util.UUID;
 
 /**
- * DTO containing all fields for PUT /cart response
+ * DTO containing request body for cart PUT request
  */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class CartItemChangedResponse {
+public class CartPutBody {
     private final UUID productId;
-    private final Integer productCount;
-    private final String productName;
-    private final double normalPrice;
-    private final Double discountPrice;
-    private final String priceCurrency;
+    private final int productCount;
 }

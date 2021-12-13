@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
 
+/**
+ * DTO containing information about order payment
+ */
 @AllArgsConstructor
 @Getter
-public class CartCheckoutDetails {
-    private final Map<UUID, Integer> productsToBuyWithCount;
-    private final UUID userId;
+public class OrderPayDTO {
+    private final UUID orderId;
+    private final String email;
     private final Locale region;
     private final boolean useBalance;
     private final String nonce;

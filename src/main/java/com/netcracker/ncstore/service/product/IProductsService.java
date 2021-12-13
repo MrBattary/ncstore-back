@@ -55,7 +55,7 @@ public interface IProductsService {
 
     /**
      * Checks if buyers can buy a product with provided UUID
-     *
+     * <p>
      * For example, product might be out of stock or discontinued
      *
      * @param id - product UUID
@@ -68,11 +68,13 @@ public interface IProductsService {
      *
      * @param id - UUID of product
      * @return product entity with provided UUID
+     * @throws ProductServiceNotFoundException when product no found
      */
-    Product loadProductEntityById(UUID id);
+    Product loadProductEntityById(UUID id) throws ProductServiceNotFoundException;
 
     /**
      * Returns product public data
+     *
      * @param getProductDTO - DTO
      * @return - Product's data as response
      * @throws ProductServiceNotFoundException - if product was not found
@@ -81,9 +83,10 @@ public interface IProductsService {
 
     /**
      * Returns product detailed data for supllier
+     *
      * @param productIdAuthDTO - DTO
      * @return - Product's data as response
-     * @throws ProductServiceNotFoundException - if product was not found
+     * @throws ProductServiceNotFoundException   - if product was not found
      * @throws ProductServiceNotAllowedException - if product does not belong to requesting supplier
      */
     GetProductResponse getProductDetailed(ProductIdAuthDTO productIdAuthDTO)
@@ -91,9 +94,10 @@ public interface IProductsService {
 
     /**
      * Update existing product
+     *
      * @param productIdUpdateRequestAuthDTO - DTO
      * @return - UpdateProductResponse
-     * @throws ProductServiceNotFoundException - if product was not found
+     * @throws ProductServiceNotFoundException   - if product was not found
      * @throws ProductServiceNotAllowedException - if product does not belong to requesting supplier
      * @throws ProductServiceValidationException - if new data was corrupted
      */
@@ -101,11 +105,10 @@ public interface IProductsService {
             throws ProductServiceNotFoundException, ProductServiceNotAllowedException, ProductServiceValidationException;
 
     /**
-     *
      * @param productIdAuthDTO - DTO
      * @return - DeleteProductResponse
      * @throws ProductServiceNotFoundExpectedException - if product was not found
-     * @throws ProductServiceNotAllowedException - if product does not belong to requesting supplier
+     * @throws ProductServiceNotAllowedException       - if product does not belong to requesting supplier
      */
     DeleteProductResponse deleteProduct(ProductIdAuthDTO productIdAuthDTO)
             throws ProductServiceNotFoundExpectedException, ProductServiceNotAllowedException;

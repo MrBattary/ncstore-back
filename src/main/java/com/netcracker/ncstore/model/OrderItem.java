@@ -46,4 +46,18 @@ public class OrderItem {
     @Column(name = "item_status")
     private EOrderItemStatus itemStatus;
 
+    public OrderItem(double price, Locale priceLocale, String licenseKey, Order order, Product product, EOrderItemStatus itemStatus) {
+        this.price = price;
+        this.priceLocale = priceLocale;
+        this.licenseKey = licenseKey;
+        this.order = order;
+        this.product = product;
+        this.itemStatus = itemStatus;
+    }
+
+    public OrderItem(Order order, Product product) {
+        this.order = order;
+        this.product = product;
+        this.itemStatus = EOrderItemStatus.REGISTERED;
+    }
 }

@@ -33,6 +33,8 @@ public class Order {
     @GeneratedValue
     private UUID id;
     private Instant creationUtcTime;
+    //null if payment was from balance
+    private String transactionId;
 
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -45,4 +47,9 @@ public class Order {
     @Column(name = "order_status")
     private EOrderStatus orderStatus;
 
+    public Order(Instant creationUtcTime, User user, EOrderStatus orderStatus) {
+        this.creationUtcTime = creationUtcTime;
+        this.user = user;
+        this.orderStatus = orderStatus;
+    }
 }

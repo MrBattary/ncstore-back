@@ -224,8 +224,12 @@ public class ProductsService implements IProductsService {
     }
 
     @Override
-    public Product loadProductEntityById(UUID id) {
-        return productRepository.findById(id).orElse(null);
+    public Product loadProductEntityById(UUID id) throws ProductServiceNotFoundException {
+        return productRepository.
+                findById(id).
+                orElseThrow(
+                        () -> new ProductServiceNotFoundException("Product with UUID " + id + " not found. ")
+                );
     }
 
     @Override
@@ -407,7 +411,8 @@ public class ProductsService implements IProductsService {
             );
 
             pricesService.deleteAllProvidedPrices(productFromRepository.getProductPrices());
-            productRepository.deleteById(productFromRepository.getId());
+            productFromRepository.setProductStatus(EProductStatus.DISCONTINUED);
+            productRepository.flush();
 
             log.info("The deletion of the product completed for the request of the user with email: "
                     + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());

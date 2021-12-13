@@ -6,19 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
-import java.util.UUID;
+import java.util.Locale;
 
-/**
- * DTO containing information about product that will
- * be added (or updated, if exists in cart) to cart.
- *
- */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class CartAddRequest {
-    private final UUID productId;
-    private final Integer productCount;
+public class CartGetRequest {
+    private final Locale locale;
+    private final String email;
 }

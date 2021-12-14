@@ -92,6 +92,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.DELETE,"/cart/{\\d+}").permitAll()
                 .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/category").permitAll()
+                .and()
                 .authorizeRequests().antMatchers(HttpMethod.POST,"/cart").hasAuthority("CUSTOMER")
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/products/{\\d+}/detailed").hasAuthority("SUPPLIER")

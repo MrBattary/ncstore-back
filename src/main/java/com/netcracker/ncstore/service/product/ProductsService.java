@@ -34,7 +34,7 @@ import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
 import com.netcracker.ncstore.repository.specification.ProductSpecifications;
-import com.netcracker.ncstore.service.category.ICategoryService;
+import com.netcracker.ncstore.service.category.interfaces.ICategoryBusinessService;
 import com.netcracker.ncstore.service.discount.IDiscountsService;
 import com.netcracker.ncstore.service.price.IPricesService;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
@@ -74,14 +74,14 @@ public class ProductsService implements IProductsService {
     private final ProductRepository productRepository;
     private final IPricesService pricesService;
     private final IUserService userService;
-    private final ICategoryService categoryService;
+    private final ICategoryBusinessService categoryService;
     private final IDiscountsService discountsService;
     private final IPriceConversionService priceConversionService;
 
     public ProductsService(final ProductRepository productRepository,
                            final IPricesService pricesService,
                            final IUserService userService,
-                           final ICategoryService categoryService,
+                           final ICategoryBusinessService categoryService,
                            final IDiscountsService discountsService,
                            final IPriceConversionService priceConversionService) {
         this.log = LoggerFactory.getLogger(ProductsService.class);
@@ -165,7 +165,7 @@ public class ProductsService implements IProductsService {
             List<Category> categories =
                     productData.getCategoriesNames().
                             stream().
-                            map(categoryService::getCategoryEntityByName).
+                            map(categoryService::getCategoryByName).
                             collect(Collectors.toList());
 
             Product product = productRepository.save(new Product(
@@ -327,7 +327,7 @@ public class ProductsService implements IProductsService {
             List<Category> categories =
                     newProductData.getCategoriesNames().
                             stream().
-                            map(categoryService::getCategoryEntityByName).
+                            map(categoryService::getCategoryByName).
                             collect(Collectors.toList());
 
             productFromRepository.setName(newProductData.getProductName());

@@ -339,4 +339,16 @@ public class UserService implements IUserService {
                 birthday,
                 RolesConverter.rolesListToRoleNamesList(user.getRoles()));
     }
+
+    @Override
+    public String getSupplierNameByUserId(final UUID userId) {
+        String supplierName;
+        try{
+            supplierName = getCompanyData(userId).getCompanyName();
+        }catch (UserServiceNotFoundException e){
+            PersonDTO personData = getPersonData(userId);
+            supplierName = personData.getFirstName() + " " + personData.getLastName();
+        }
+        return supplierName;
+    }
 }

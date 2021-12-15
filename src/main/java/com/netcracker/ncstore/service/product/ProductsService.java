@@ -115,12 +115,10 @@ public class ProductsService implements IProductsService {
         List<ProductsGetPaginationResponse> responsesList = new ArrayList<>();
 
         for (Product p : productsPage.getContent()) {
-            String supplierName =
-                    userService.getCompanyData(p.getSupplier().getId()) == null
-                            ?
-                            userService.getPersonData(p.getSupplier().getId()).getFirstName() + " " + userService.getPersonData(p.getSupplier().getId()).getLastName()
-                            :
-                            userService.getCompanyData(p.getSupplier().getId()).getCompanyName();
+            String supplierName = userService.getSupplierNameByUserId(p.
+                            getSupplier().
+                            getId()
+            );
 
             ActualProductPriceInRegionDTO actualPrice =
                     pricesService.getActualPriceForProductInRegion(
@@ -509,13 +507,6 @@ public class ProductsService implements IProductsService {
     }
 
     private String getSupplierNameByUserId(final UUID userId) {
-        String supplierName;
-        try{
-            supplierName = userService.getCompanyData(userId).getCompanyName();
-        }catch (UserServiceNotFoundException e){
-            PersonDTO personData = userService.getPersonData(userId);
-            supplierName = personData.getFirstName() + " " + personData.getLastName();
-        }
-        return supplierName;
+        return userService.getSupplierNameByUserId(userId);
     }
 }

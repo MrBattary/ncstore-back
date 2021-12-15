@@ -13,6 +13,7 @@ import com.netcracker.ncstore.dto.response.CompanyInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonInfoResponse;
 import com.netcracker.ncstore.exception.UserServiceCreationException;
+import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServiceRepositoryException;
 import com.netcracker.ncstore.exception.UserServiceValidationException;
 import com.netcracker.ncstore.model.User;
@@ -164,6 +165,14 @@ public interface IUserService {
      * @return PersonInfoResponse
      */
     PersonInfoResponse getBasisPersonInfo(UUID userId);
+
+    /**
+     * Returns supplier name for provided user
+     *
+     * @param userId the UUID of user
+     * @return supplier name for that user
+     */
+    String getSupplierNameByUserId(final UUID userId);
 
 
 }

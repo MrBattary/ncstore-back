@@ -238,24 +238,20 @@ public class UserService implements IUserService {
 
     @Override
     public CompanyDTO getCompanyData(UUID userId) {
-        Company company = companyRepository.findById(userId).orElse(null);
+        Company company = companyRepository.
+                findById(userId).
+                orElseThrow(()-> new UserServiceNotFoundException("User with UUID "+userId + " is not company. "));
 
-        if (company == null) {
-            return null;
-        } else {
-            return new CompanyDTO(company);
-        }
+        return new CompanyDTO(company);
     }
 
     @Override
     public PersonDTO getPersonData(UUID userId) {
-        Person person = personRepository.findById(userId).orElse(null);
+        Person person = personRepository.
+                findById(userId).
+                orElseThrow(()-> new UserServiceNotFoundException("User with UUID "+userId + " is not person. "));
 
-        if (person == null) {
-            return null;
-        } else {
-            return new PersonDTO(person);
-        }
+        return new PersonDTO(person);
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
+import com.netcracker.ncstore.dto.data.PersonDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductGetRequest;
@@ -27,6 +28,7 @@ import com.netcracker.ncstore.exception.ProductServiceNotAllowedException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundExpectedException;
 import com.netcracker.ncstore.exception.ProductServiceValidationException;
+import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.User;
@@ -507,9 +509,12 @@ public class ProductsService implements IProductsService {
     }
 
     private String getSupplierNameByUserId(final UUID userId) {
-        String supplierName = userService.getCompanyData(userId).getCompanyName();
-        if (supplierName == null) {
-            supplierName = userService.getPersonData(userId).getNickName();
+        String supplierName;
+        try{
+            supplierName = userService.getCompanyData(userId).getCompanyName();
+        }catch (UserServiceNotFoundException e){
+            PersonDTO personData = userService.getPersonData(userId);
+            supplierName = personData.getFirstName() + " " + personData.getLastName();
         }
         return supplierName;
     }

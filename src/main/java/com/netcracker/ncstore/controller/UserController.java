@@ -10,6 +10,7 @@ import com.netcracker.ncstore.dto.response.UserBalanceResponse;
 import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.user.IUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,7 +64,7 @@ public class UserController {
                 convertedBalance.getPrice(),
                 convertedBalance.getSymbol());
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
     @GetMapping(value = "/balance")
@@ -78,7 +79,7 @@ public class UserController {
                 convertedBalance.getSymbol()
         );
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
     @PostMapping(value = "/password")

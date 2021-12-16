@@ -43,7 +43,7 @@ public interface ICartWebService {
      * Preforms order cart checkout
      *
      * @param request request
-     * @return
+     * @return - OrderInfoResponse
      */
     OrderInfoResponse checkoutCartForUser(final CartCheckoutRequest request);
 }

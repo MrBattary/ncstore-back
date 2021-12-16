@@ -51,8 +51,16 @@ public abstract class ProductSpecifications {
             if (CollectionUtils.isEmpty(categoriesNames)) {
                 return criteriaBuilder.and();
             } else {
-                Join<Product, Category> categoryJoin = root.join(Product_.CATEGORIES, JoinType.LEFT);
-                return categoryJoin.get(Category_.NAME).in(categoriesNames);
+                Subquery<Category> categorySubquery = query.subquery(Category.class);
+                Root<Category> categoryRoot = categorySubquery.from(Category.class);
+                Join<Category, Product> categoryProductJoin = categoryRoot.join(Category_.products);
+                categorySubquery.select(categoryRoot).where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(root.get(Product_.id), categoryProductJoin.get(Product_.id)),
+                                categoryRoot.get(Category_.name).in(categoriesNames)
+                        )
+                );
+                return criteriaBuilder.exists(categorySubquery);
             }
         };
     }

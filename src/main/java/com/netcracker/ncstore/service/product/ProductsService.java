@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.service.product;
 
+import com.netcracker.ncstore.dto.ActualProductPrice;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
-import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
 import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.ProductIdAuthDTO;
@@ -9,11 +9,10 @@ import com.netcracker.ncstore.dto.ProductIdUpdateRequestAuthDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
+import com.netcracker.ncstore.dto.create.DiscountedProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
-import com.netcracker.ncstore.dto.data.PersonDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
-import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductGetRequest;
 import com.netcracker.ncstore.dto.request.ProductUpdateRequest;
 import com.netcracker.ncstore.dto.response.DeleteProductResponse;
@@ -28,18 +27,17 @@ import com.netcracker.ncstore.exception.ProductServiceNotAllowedException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundExpectedException;
 import com.netcracker.ncstore.exception.ProductServiceValidationException;
-import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
+import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
 import com.netcracker.ncstore.repository.specification.ProductSpecifications;
 import com.netcracker.ncstore.service.category.interfaces.ICategoryBusinessService;
-import com.netcracker.ncstore.service.discount.IDiscountsService;
-import com.netcracker.ncstore.service.price.IPricesService;
-import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
+import com.netcracker.ncstore.service.price.interfaces.IPricesBusinessService;
+import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.validator.PriceValidator;
 import com.netcracker.ncstore.util.validator.ProductValidator;
@@ -74,24 +72,21 @@ public class ProductsService implements IProductsService {
 
     private final Logger log;
     private final ProductRepository productRepository;
-    private final IPricesService pricesService;
+    private final IPricesBusinessService pricesBusinessService;
     private final IUserService userService;
     private final ICategoryBusinessService categoryService;
-    private final IDiscountsService discountsService;
     private final IPriceConversionService priceConversionService;
 
     public ProductsService(final ProductRepository productRepository,
-                           final IPricesService pricesService,
+                           final IPricesBusinessService pricesBusinessService,
                            final IUserService userService,
                            final ICategoryBusinessService categoryService,
-                           final IDiscountsService discountsService,
                            final IPriceConversionService priceConversionService) {
         this.log = LoggerFactory.getLogger(ProductsService.class);
         this.productRepository = productRepository;
-        this.pricesService = pricesService;
+        this.pricesBusinessService = pricesBusinessService;
         this.userService = userService;
         this.categoryService = categoryService;
-        this.discountsService = discountsService;
         this.priceConversionService = priceConversionService;
     }
 
@@ -116,17 +111,19 @@ public class ProductsService implements IProductsService {
 
         for (Product p : productsPage.getContent()) {
             String supplierName = userService.getSupplierNameByUserId(p.
-                            getSupplier().
-                            getId()
+                    getSupplier().
+                    getId()
             );
 
-            ActualProductPriceInRegionDTO actualPrice =
-                    pricesService.getActualPriceForProductInRegion(
-                            new ProductLocaleDTO(p.getId(), productGetRequest.getLocale())
-                    );
+            ActualProductPrice productPrice = pricesBusinessService.getActualPriceForProductInRegion(
+                    new ProductLocaleDTO(
+                            p.getId(),
+                            productGetRequest.getLocale()
+                    )
+            );
 
             ActualProductPriceConvertedForRegionDTO actualPriceConverted =
-                    priceConversionService.convertActualUCPriceForRealPrice(actualPrice);
+                    priceConversionService.convertUCPriceForRealPrice(productPrice);
 
             ProductsGetPaginationResponse item = new ProductsGetPaginationResponse(
                     p.getId(),
@@ -179,26 +176,37 @@ public class ProductsService implements IProductsService {
                     null,
                     categories));
 
-            List<ProductPriceDTO> createdPricesDTOs = productData.getPrices().
-                    stream().
-                    map(e -> new ProductPriceCreateDTO(e.getPrice(), e.getRegion(), product.getId())).
-                    map(pricesService::createProductPrice).
-                    collect(Collectors.toList());
-
-            Map<Locale, UUID> localeProductPriceUUIDMap =
-                    createdPricesDTOs.
+            Map<Locale, DiscountPriceRegionDTO> localeDiscountPriceRegionDTOMap =
+                    productData.getDiscountPrices().
                             stream().
-                            collect(Collectors.toMap(ProductPriceDTO::getLocale, ProductPriceDTO::getId));
+                            collect(
+                                    Collectors.toMap(DiscountPriceRegionDTO::getRegion, e -> e)
+                            );
 
-            if (productData.getDiscountPrices() != null) {
-                productData.getDiscountPrices().
-                        stream().
-                        map(e -> new DiscountCreateDTO(
-                                e.getPrice(),
-                                e.getStartUtcTime(),
-                                e.getEndUtcTime(),
-                                localeProductPriceUUIDMap.get(e.getRegion()))).
-                        forEach(discountsService::createNewDiscountForPrice);
+            for (PriceRegionDTO priceRegionDTO : productData.getPrices()) {
+                DiscountPriceRegionDTO discountPriceRegionDTO =
+                        localeDiscountPriceRegionDTOMap.get(priceRegionDTO.getRegion());
+
+                if (discountPriceRegionDTO != null) {
+                    pricesBusinessService.createDiscountedProductPrice(
+                            new DiscountedProductPriceCreateDTO(
+                                    product.getId(),
+                                    priceRegionDTO.getRegion(),
+                                    priceRegionDTO.getPrice(),
+                                    discountPriceRegionDTO.getPrice(),
+                                    discountPriceRegionDTO.getStartUtcTime(),
+                                    discountPriceRegionDTO.getEndUtcTime()
+                            )
+                    );
+                } else {
+                    pricesBusinessService.createProductPrice(
+                            new ProductPriceCreateDTO(
+                                    priceRegionDTO.getPrice(),
+                                    priceRegionDTO.getRegion(),
+                                    product.getId()
+                            )
+                    );
+                }
             }
 
             log.info("New Product with UUID " + product.getId() + " for user with UUID " + creator.getId() + " created successfully");
@@ -236,8 +244,10 @@ public class ProductsService implements IProductsService {
     public ProductGetResponse getProductResponse(final ProductLocaleDTO productIdLocaleDTO) {
         Product product = findProductById(productIdLocaleDTO.getProductId());
 
-        ActualProductPriceInRegionDTO actualProductPriceInRegionDTO = pricesService.getActualPriceForProductInRegion(productIdLocaleDTO);
-        ActualProductPriceConvertedForRegionDTO convertedPrice = priceConversionService.convertActualUCPriceForRealPrice(actualProductPriceInRegionDTO);
+        ActualProductPrice productPrice =
+                pricesBusinessService.getActualPriceForProductInRegion(productIdLocaleDTO);
+        ActualProductPriceConvertedForRegionDTO convertedPrice =
+                priceConversionService.convertUCPriceForRealPrice(productPrice);
 
         return new ProductGetResponse(
                 product.getId(),
@@ -270,10 +280,28 @@ public class ProductsService implements IProductsService {
             UUID idOfSupplierOfProductFromRepository = productFromRepository.getSupplier().getId();
             String supplierName = getSupplierNameByUserId(idOfSupplierOfProductFromRepository);
 
-            List<PriceRegionDTO> normalPrices =
-                    pricesService.getListOfPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
-            List<DiscountPriceRegionDTO> discountPrices =
-                    pricesService.getListOfDiscountPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
+            List<PriceRegionDTO> normalPrices = productFromRepository.getProductPrices()
+                    .stream().
+                    map(
+                            e -> new PriceRegionDTO(
+                                    e.getPrice(),
+                                    e.getLocale()
+                            )
+                    ).
+                    collect(Collectors.toList());
+
+            List<DiscountPriceRegionDTO> discountPrices = productFromRepository.getProductPrices().
+                    stream().
+                    filter(e -> e.getDiscount() != null).
+                    map(
+                            e -> new DiscountPriceRegionDTO(
+                                    e.getDiscount().getDiscountPrice(),
+                                    e.getLocale(),
+                                    e.getDiscount().getStartUtcTime(),
+                                    e.getDiscount().getEndUtcTime()
+                            )
+                    ).
+                    collect(Collectors.toList());
 
             log.info("The receipt of detailed information about product has ended for user with email: "
                     + productIdAuthDTO.getUserEmailAndRolesDTO().getEmail());
@@ -335,28 +363,29 @@ public class ProductsService implements IProductsService {
             productFromRepository.setParentProduct(parentProduct);
             productFromRepository.setCategories(categories);
 
-            pricesService.deleteAllProvidedPrices(productFromRepository.getProductPrices());
+            pricesBusinessService.deleteAllProductPricesForProduct(productFromRepository.getId());
 
-            List<ProductPriceDTO> newPricesDTOs = newProductData.getNormalPrices().
+            List<ProductPrice> newPricesDTOs = newProductData.getNormalPrices().
                     stream().
                     map(e -> new ProductPriceCreateDTO(e.getPrice(), e.getRegion(), productFromRepository.getId())).
-                    map(pricesService::createProductPrice).
+                    map(pricesBusinessService::createProductPrice).
                     collect(Collectors.toList());
 
             Map<Locale, UUID> localeProductPriceUUIDMap =
                     newPricesDTOs.
                             stream().
-                            collect(Collectors.toMap(ProductPriceDTO::getLocale, ProductPriceDTO::getId));
+                            collect(Collectors.toMap(ProductPrice::getLocale, ProductPrice::getId));
 
             if (newProductData.getDiscountPrices() != null) {
                 newProductData.getDiscountPrices().
                         stream().
                         map(e -> new DiscountCreateDTO(
+                                productFromRepository.getId(),
+                                e.getRegion(),
                                 e.getPrice(),
                                 e.getStartUtcTime(),
-                                e.getEndUtcTime(),
-                                localeProductPriceUUIDMap.get(e.getRegion()))).
-                        forEach(discountsService::createNewDiscountForPrice);
+                                e.getEndUtcTime())).
+                        forEach(pricesBusinessService::createDiscountForProduct);
             }
 
             log.info("Product with UUID " + productFromRepository.getId() + " for user with email: "
@@ -395,10 +424,28 @@ public class ProductsService implements IProductsService {
                     productIdAuthDTO.getUserEmailAndRolesDTO()
             );
 
-            List<PriceRegionDTO> normalPrices =
-                    pricesService.getListOfPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
-            List<DiscountPriceRegionDTO> discountPrices =
-                    pricesService.getListOfDiscountPriceRegionDtoByListOfPrices(productFromRepository.getProductPrices());
+            List<PriceRegionDTO> normalPrices = productFromRepository.getProductPrices()
+                    .stream().
+                    map(
+                            e -> new PriceRegionDTO(
+                                    e.getPrice(),
+                                    e.getLocale()
+                            )
+                    ).
+                    collect(Collectors.toList());
+
+            List<DiscountPriceRegionDTO> discountPrices = productFromRepository.getProductPrices().
+                    stream().
+                    filter(e -> e.getDiscount() != null).
+                    map(
+                            e -> new DiscountPriceRegionDTO(
+                                    e.getDiscount().getDiscountPrice(),
+                                    e.getLocale(),
+                                    e.getDiscount().getStartUtcTime(),
+                                    e.getDiscount().getEndUtcTime()
+                            )
+                    ).
+                    collect(Collectors.toList());
 
             DeleteProductResponse response = new DeleteProductResponse(
                     productFromRepository.getId(),
@@ -410,7 +457,7 @@ public class ProductsService implements IProductsService {
                     productFromRepository.getCategories().stream().map(Category::getName).collect(Collectors.toList())
             );
 
-            pricesService.deleteAllProvidedPrices(productFromRepository.getProductPrices());
+            pricesBusinessService.deleteAllProductPricesForProduct(productFromRepository.getId());
             productFromRepository.setProductStatus(EProductStatus.DISCONTINUED);
             productRepository.flush();
 

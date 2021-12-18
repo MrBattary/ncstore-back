@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.service.cart;
 
+import com.netcracker.ncstore.dto.ActualProductPrice;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
-import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.CartItemDTO;
 import com.netcracker.ncstore.dto.CartPutDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
@@ -15,8 +15,8 @@ import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.service.cart.interfaces.ICartBusinessService;
 import com.netcracker.ncstore.service.cart.interfaces.ICartWebService;
 import com.netcracker.ncstore.service.order.interfaces.IOrderWebService;
-import com.netcracker.ncstore.service.price.IPricesService;
-import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
+import com.netcracker.ncstore.service.price.interfaces.IPricesBusinessService;
+import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class CartWebService implements ICartWebService {
     private final ICartBusinessService cartBusinessService;
     private final IPriceConversionService priceConversionService;
-    private final IPricesService pricesService;
+    private final IPricesBusinessService pricesService;
     private final IOrderWebService orderWebService;
 
     @Value("${security.anonymous_user_name}")
@@ -36,7 +36,7 @@ public class CartWebService implements ICartWebService {
 
     public CartWebService(final ICartBusinessService cartBusinessService,
                           final IPriceConversionService priceConversionService,
-                          final IPricesService pricesService,
+                          final IPricesBusinessService pricesService,
                           final IOrderWebService orderWebService) {
 
         this.cartBusinessService = cartBusinessService;
@@ -112,11 +112,11 @@ public class CartWebService implements ICartWebService {
 
     private CartItemResponse convertCartItemDTOToResponse(final CartItemDTO cartItemDTO,
                                                           final Locale locale) {
-        ActualProductPriceInRegionDTO priceForProduct =
+        ActualProductPrice priceForProduct =
                 pricesService.getActualPriceForProductInRegion(new ProductLocaleDTO(cartItemDTO.getProductId(), locale));
 
         ActualProductPriceConvertedForRegionDTO regionalPriceForProduct =
-                priceConversionService.convertActualUCPriceForRealPrice(priceForProduct);
+                priceConversionService.convertUCPriceForRealPrice(priceForProduct);
 
         return new CartItemResponse(
                 cartItemDTO.getProductId(),

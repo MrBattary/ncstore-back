@@ -61,11 +61,9 @@ public class ProductPrice {
             "/price)), 0)")
     private double discountPercent;
 
-    public ProductPrice(UUID id, double price, Locale locale, Product product, Discount discount) {
-        this.id = id;
+    public ProductPrice(double price, Locale locale, Product product) {
         this.price = price;
         this.locale = locale;
         this.product = product;
-        this.discount = discount;
     }
 }

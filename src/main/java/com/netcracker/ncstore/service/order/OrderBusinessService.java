@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.service.order;
 
+import com.netcracker.ncstore.dto.ActualProductPrice;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
-import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.OrderGetDTO;
 import com.netcracker.ncstore.dto.OrderGetPageDTO;
@@ -28,8 +28,8 @@ import com.netcracker.ncstore.repository.OrderItemRepository;
 import com.netcracker.ncstore.repository.OrderRepository;
 import com.netcracker.ncstore.service.order.interfaces.IOrderBusinessService;
 import com.netcracker.ncstore.service.payment.IPaymentService;
-import com.netcracker.ncstore.service.price.IPricesService;
-import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
+import com.netcracker.ncstore.service.price.interfaces.IPricesBusinessService;
+import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
 import com.netcracker.ncstore.service.product.IProductsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +41,6 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -55,20 +54,20 @@ public class OrderBusinessService implements IOrderBusinessService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final IProductsService productsService;
-    private final IPricesService pricesService;
+    private final IPricesBusinessService pricesBusinessService;
     private final IPriceConversionService priceConversionService;
     private final IPaymentService paymentService;
 
     public OrderBusinessService(final OrderRepository orderRepository,
                                 final OrderItemRepository orderItemRepository,
                                 final IProductsService productsService,
-                                final IPricesService pricesService,
+                                final IPricesBusinessService pricesBusinessService,
                                 final IPriceConversionService priceConversionService,
                                 final IPaymentService paymentService) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.productsService = productsService;
-        this.pricesService = pricesService;
+        this.pricesBusinessService = pricesBusinessService;
         this.priceConversionService = priceConversionService;
         this.paymentService = paymentService;
     }
@@ -148,17 +147,21 @@ public class OrderBusinessService implements IOrderBusinessService {
             double UCSum = 0;
 
             for (OrderItem item : order.getProducts()) {
-                ActualProductPriceInRegionDTO actualPrice = pricesService.getActualPriceForProductInRegion(
+                ActualProductPrice productPrice = pricesBusinessService.getActualPriceForProductInRegion(
                         new ProductLocaleDTO(
                                 item.getProduct().getId(),
                                 orderPayDTO.getRegion()
                         )
                 );
                 ActualProductPriceConvertedForRegionDTO convertedPrice =
-                        priceConversionService.convertActualUCPriceForRealPrice(actualPrice);
+                        priceConversionService.convertUCPriceForRealPrice(productPrice);
 
-                addMoneyToSupplierForProduct(item.getProduct().getId(), actualPrice.getRealPrice());
-                UCSum += actualPrice.getRealPrice();
+                addMoneyToSupplierForProduct(
+                        item.getProduct().getId(),
+                        productPrice.getProductPrice().getPriceWithDiscount()
+                );
+
+                UCSum += productPrice.getProductPrice().getPriceWithDiscount();
 
                 item.setItemStatus(EOrderItemStatus.PAID);
                 item.setPrice(convertedPrice.getRealPrice());

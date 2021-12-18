@@ -1,7 +1,7 @@
-package com.netcracker.ncstore.service.priceconverter;
+package com.netcracker.ncstore.service.priceconverter.interfaces;
 
+import com.netcracker.ncstore.dto.ActualProductPrice;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
-import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.UCPriceConvertedFromRealDTO;
 
@@ -34,11 +34,11 @@ public interface IPriceConversionService {
     UCPriceConvertedFromRealDTO convertRealPriceToUC(double realPrice, Locale regionOfPrice);
 
     /**
-     * Converts ActualProductPriceInRegionDTO to ActualProductPriceConvertedForRegionDTO
+     * Converts ProductPrice to ActualProductPriceConvertedForRegionDTO
      * which means converting normal and discount prices and adding currency symbol.
      *
-     * @param actualProductPriceInRegionDTO - ActualProductPriceInRegionDTO
-     * @return ActualProductPriceConvertedForRegionDTO containing converted prices
+     * @param actualProductPrice ProductPrice entity
+     * @return ActualProductPriceConvertedForRegionDTO containing converted prices for real money
      */
-    ActualProductPriceConvertedForRegionDTO convertActualUCPriceForRealPrice(ActualProductPriceInRegionDTO actualProductPriceInRegionDTO);
+    ActualProductPriceConvertedForRegionDTO convertUCPriceForRealPrice(ActualProductPrice actualProductPrice);
 }

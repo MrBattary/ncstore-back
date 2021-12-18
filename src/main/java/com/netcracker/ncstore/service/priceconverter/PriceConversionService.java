@@ -1,13 +1,17 @@
 package com.netcracker.ncstore.service.priceconverter;
 
+import com.netcracker.ncstore.dto.ActualProductPrice;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
-import com.netcracker.ncstore.dto.ActualProductPriceInRegionDTO;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.UCPriceConvertedFromRealDTO;
+import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.PriceConversionRate;
+import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.PriceConversionRateRepository;
+import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
 import com.netcracker.ncstore.util.converter.DoubleRounder;
 import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
+import com.netcracker.ncstore.util.validator.PriceValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -62,25 +66,29 @@ public class PriceConversionService implements IPriceConversionService {
     }
 
     @Override
-    public ActualProductPriceConvertedForRegionDTO convertActualUCPriceForRealPrice(ActualProductPriceInRegionDTO actualProductPriceInRegionDTO) {
-        Locale preferLocale = actualProductPriceInRegionDTO.getRequestedRegion();
-        Double discountPrice = actualProductPriceInRegionDTO.getDiscountPrice();
+    public ActualProductPriceConvertedForRegionDTO convertUCPriceForRealPrice(ActualProductPrice actualProductPrice) {
+        Locale region = actualProductPrice.getRequestedRegion();
+        ProductPrice productPrice = actualProductPrice.getProductPrice();
+        Discount discount = productPrice.getDiscount();
+
+        Double discountPrice = PriceValidator.getActualDiscountPrice(discount);
 
         if (discountPrice != null) {
-            discountPrice = convertUCPriceToRealPriceWithSymbol(actualProductPriceInRegionDTO.getDiscountPrice(), preferLocale).getPrice();
+            discountPrice = convertUCPriceToRealPriceWithSymbol(discountPrice, region).getPrice();
         }
 
         ConvertedPriceWithCurrencySymbolDTO convertedNormalPrice =
-                convertUCPriceToRealPriceWithSymbol(actualProductPriceInRegionDTO.getNormalPrice(), preferLocale);
+                convertUCPriceToRealPriceWithSymbol(productPrice.getPrice(), region);
 
         return new ActualProductPriceConvertedForRegionDTO(
-                actualProductPriceInRegionDTO.getProductId(),
-                actualProductPriceInRegionDTO.getProductName(),
+                productPrice.getProduct().getId(),
+                productPrice.getProduct().getName(),
                 convertedNormalPrice.getPrice(),
                 discountPrice,
                 convertedNormalPrice.getLocale(),
                 convertedNormalPrice.getSymbol(),
-                actualProductPriceInRegionDTO.getDiscountStartUtc(),
-                actualProductPriceInRegionDTO.getDiscountEndUtc());
+                discount == null ? null : discount.getStartUtcTime(),
+                discount == null ? null : discount.getEndUtcTime()
+        );
     }
 }

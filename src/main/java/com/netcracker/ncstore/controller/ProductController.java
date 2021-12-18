@@ -23,8 +23,7 @@ import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.service.category.interfaces.ICategoryBusinessService;
-import com.netcracker.ncstore.service.discount.IDiscountsService;
-import com.netcracker.ncstore.service.price.IPricesService;
+import com.netcracker.ncstore.service.price.interfaces.IPricesBusinessService;
 import com.netcracker.ncstore.service.product.IProductsService;
 import com.netcracker.ncstore.service.user.IUserService;
 import com.netcracker.ncstore.util.converter.ProductRequestConverter;
@@ -58,10 +57,9 @@ import java.util.stream.Collectors;
 public class ProductController {
     private final Logger log;
     private final IProductsService productsService;
-    private final IPricesService pricesService;
+    private final IPricesBusinessService pricesService;
     private final ICategoryBusinessService categoryService;
     private final IUserService userService;
-    private final IDiscountsService discountsService;
 
     /**
      * Constructor
@@ -69,16 +67,14 @@ public class ProductController {
      * TODO: In the future, any services should be the arguments of constructor
      */
     public ProductController(final IProductsService productsService,
-                             final IPricesService pricesService,
+                             final IPricesBusinessService pricesService,
                              final ICategoryBusinessService categoryService,
-                             final IUserService userService,
-                             final IDiscountsService discountsService) {
+                             final IUserService userService) {
         this.log = LoggerFactory.getLogger(ProductController.class);
         this.productsService = productsService;
         this.pricesService = pricesService;
         this.categoryService = categoryService;
         this.userService = userService;
-        this.discountsService = discountsService;
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
@@ -143,7 +139,7 @@ public class ProductController {
             priceRegionDTOS.add(new PriceRegionDTO(p.getPrice(), p.getLocale()));
 
             try {
-                DiscountDTO discountDTO = discountsService.getDiscountForPrice(p.getId());
+                DiscountDTO discountDTO = pricesService.getDiscountForPrice(p.getId());
                 discountPriceRegionDTOS.add(new DiscountPriceRegionDTO(
                         discountDTO.getDiscountPrice(),
                         p.getLocale(),

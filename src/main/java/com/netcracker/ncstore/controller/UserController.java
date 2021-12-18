@@ -7,7 +7,7 @@ import com.netcracker.ncstore.dto.request.UserAddBalanceRequest;
 import com.netcracker.ncstore.dto.request.UserChangePasswordRequest;
 import com.netcracker.ncstore.dto.response.UserAddBalanceResponse;
 import com.netcracker.ncstore.dto.response.UserBalanceResponse;
-import com.netcracker.ncstore.service.priceconverter.IPriceConversionService;
+import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
 import com.netcracker.ncstore.service.user.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

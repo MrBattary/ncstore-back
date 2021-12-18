@@ -33,11 +33,6 @@ public class UserController {
     private final IUserService userService;
     private final IPriceConversionService priceConversionService;
 
-    /**
-     * Constructor
-     * <p>
-     * TODO: In the future, any services should be the arguments of constructor
-     */
     public UserController(final IUserService userService,
                           final IPriceConversionService priceConversionService) {
         this.userService = userService;
@@ -45,8 +40,11 @@ public class UserController {
     }
 
     @PostMapping(value = "/balance")
-    @ResponseBody
-    public ResponseEntity<UserAddBalanceResponse> addMoneyToOwnBalance(@RequestBody UserAddBalanceRequest request, Principal principal, Locale locale) {
+    public ResponseEntity<UserAddBalanceResponse> addMoneyToOwnBalance(@RequestBody final UserAddBalanceRequest request,
+                                                                       final Principal principal,
+                                                                       final Locale locale) {
+        log.info("REQUEST: to add " + request.getPaymentAmount() + " money in locale " + locale.toLanguageTag() + " to balance for user with email " + principal.getName());
+
         AddBalanceDTO addBalanceDTO = new AddBalanceDTO(
                 principal.getName(),
                 request.getPaymentAmount(),
@@ -56,18 +54,29 @@ public class UserController {
 
         double newBalance = userService.addMoneyToUserBalance(addBalanceDTO);
 
-        ConvertedPriceWithCurrencySymbolDTO convertedBalance =
-                priceConversionService.convertUCPriceToRealPriceWithSymbol(newBalance, locale);
+        ConvertedPriceWithCurrencySymbolDTO convertedBalance = priceConversionService.convertUCPriceToRealPriceWithSymbol(
+                newBalance,
+                locale
+        );
 
         UserAddBalanceResponse response = new UserAddBalanceResponse(
                 convertedBalance.getPrice(),
-                convertedBalance.getSymbol());
+                convertedBalance.getSymbol()
+        );
 
-        return ResponseEntity.ok().body(response);
+        log.info("RESPONSE: to add " + request.getPaymentAmount() + " money in locale " + locale.toLanguageTag() + " to balance for user with email " + principal.getName());
+
+        return ResponseEntity.
+                ok().
+                body(response);
     }
 
     @GetMapping(value = "/balance")
-    public ResponseEntity<UserBalanceResponse> getUserBalance(Principal principal, Locale locale) {
+    public ResponseEntity<UserBalanceResponse> getUserBalance(final Principal principal,
+                                                              final Locale locale) {
+
+        log.info("REQUEST: to get balance for user with email " + principal.getName());
+
         double balance = userService.getUserBalance(principal.getName());
 
         ConvertedPriceWithCurrencySymbolDTO convertedBalance =
@@ -78,12 +87,19 @@ public class UserController {
                 convertedBalance.getSymbol()
         );
 
-        return ResponseEntity.ok().body(response);
+        log.info("RESPONSE: to get balance for user with email " + principal.getName());
+
+        return ResponseEntity.
+                ok().
+                body(response);
     }
 
     @PostMapping(value = "/password")
-    @ResponseBody
-    public ResponseEntity<?> changeOwnPassword(@RequestBody UserChangePasswordRequest request, Principal principal) {
+    public ResponseEntity<?> changeOwnPassword(@RequestBody final UserChangePasswordRequest request,
+                                               final Principal principal) {
+
+        log.info("REQUEST: to change password from user with email " + principal.getName());
+
         ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO(
                 request.getOldPassword(),
                 request.getNewPassword(),
@@ -92,7 +108,11 @@ public class UserController {
 
         userService.changeUserPassword(changePasswordDTO);
 
-        return ResponseEntity.noContent().build();
+        log.info("RESPONSE: to change password from user with email " + principal.getName());
+
+        return ResponseEntity.
+                noContent().
+                build();
     }
 
 }

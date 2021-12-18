@@ -39,6 +39,7 @@ public class CartController {
 
     @GetMapping
     public ResponseEntity<List<CartItemResponse>> getShoppingCartProducts(final Locale locale) {
+        log.info("REQUEST: to get product from cart for user " + SecurityContextHolder.getContext().getAuthentication().getName());
 
         CartGetRequest request = new CartGetRequest(
                 locale,
@@ -46,6 +47,8 @@ public class CartController {
         );
 
         List<CartItemResponse> response = cartService.getCartItems(request);
+
+        log.info("RESPONSE: to get product from cart for user " + SecurityContextHolder.getContext().getAuthentication().getName());
 
         return ResponseEntity.
                 ok().
@@ -57,6 +60,8 @@ public class CartController {
     public ResponseEntity<CartItemResponse> addProductToShoppingCart(@RequestBody final CartPutBody body,
                                                                      final Locale locale) {
 
+        log.info("REQUEST: to add product to cart for user " + SecurityContextHolder.getContext().getAuthentication().getName());
+
         CartPutRequest request = new CartPutRequest(
                 body.getProductId(),
                 body.getProductCount(),
@@ -65,6 +70,8 @@ public class CartController {
         );
 
         CartItemResponse response = cartService.putCartItem(request);
+
+        log.info("RESPONSE: to add product to cart for user " + SecurityContextHolder.getContext().getAuthentication().getName());
 
         return ResponseEntity.
                 ok().
@@ -76,6 +83,8 @@ public class CartController {
     public ResponseEntity<?> deleteProductFromCart(@PathVariable final UUID productId,
                                                    final Locale locale) {
 
+        log.info("REQUEST: to get delete product from cart for user " + SecurityContextHolder.getContext().getAuthentication().getName());
+
         CartDeleteRequest request = new CartDeleteRequest(
                 productId,
                 SecurityContextHolder.getContext().getAuthentication().getName(),
@@ -83,6 +92,8 @@ public class CartController {
         );
 
         CartItemResponse response = cartService.deleteCartItem(request);
+
+        log.info("RESPONSE: to get delete product from cart for user " + SecurityContextHolder.getContext().getAuthentication().getName());
 
         if (response == null) {
             return ResponseEntity.noContent().build();
@@ -98,6 +109,9 @@ public class CartController {
     @PostMapping
     public ResponseEntity<OrderInfoResponse> checkout(@RequestBody CartCheckoutBody body,
                                                       final Locale locale) {
+
+        log.info("REQUEST: to get checkout cart for user " + SecurityContextHolder.getContext().getAuthentication().getName());
+
         CartCheckoutRequest request = new CartCheckoutRequest(
                 body.isUseBalance(),
                 body.getNonce(),
@@ -106,6 +120,8 @@ public class CartController {
         );
 
         OrderInfoResponse response = cartService.checkoutCartForUser(request);
+
+        log.info("RESPONSE: to get checkout cart for user " + SecurityContextHolder.getContext().getAuthentication().getName());
 
         return ResponseEntity.
                 ok().

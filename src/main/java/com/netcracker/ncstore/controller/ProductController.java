@@ -20,7 +20,11 @@ import com.netcracker.ncstore.util.enumeration.ESortRule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,8 +51,7 @@ public class ProductController {
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
-    @RequestMapping(value = "/products", method = RequestMethod.GET)
-    @ResponseBody
+    @GetMapping(value = "/products")
     public ResponseEntity<List<ProductsGetPaginationResponse>> getProductsWithPagination(
             @RequestParam(defaultValue = "", required = false) final String categoryNames,
             @RequestParam(defaultValue = "", required = false) final String searchText,
@@ -81,9 +84,7 @@ public class ProductController {
                 body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/createProduct
-    @RequestMapping(value = "/products", method = RequestMethod.POST)
-    @ResponseBody
+    @PostMapping(value = "/products")
     public ResponseEntity<ProductCreateResponse> createProduct(@RequestBody final ProductCreateBody body,
                                                                final Principal principal) {
         log.info("REQUEST: to create product for user with email " + principal.getName());
@@ -107,9 +108,7 @@ public class ProductController {
                 body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.3#/Product/getProduct
-    @RequestMapping(value = "/products/{productId}", method = RequestMethod.GET)
-    @ResponseBody
+    @GetMapping(value = "/products/{productId}")
     public ResponseEntity<ProductGetInfoResponse> getProduct(@PathVariable final UUID productId,
                                                              final Locale locale) {
         log.info("REQUEST: to get product data by id: " + productId);
@@ -128,8 +127,7 @@ public class ProductController {
                 body(response);
     }
 
-    @RequestMapping(value = "/products/{productId}/detailed", method = RequestMethod.GET)
-    @ResponseBody
+    @GetMapping(value = "/products/{productId}/detailed")
     public ResponseEntity<ProductGetDetailedResponse> getProductDetailed(@PathVariable final UUID productId,
                                                                          final Principal principal) {
         log.info("REQUEST: to get detailed product data by id: " + productId);
@@ -148,9 +146,7 @@ public class ProductController {
                 body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.3#/Product/updateProduct
-    @RequestMapping(value = "/products/{productId}", method = RequestMethod.PUT)
-    @ResponseBody
+    @PutMapping(value = "/products/{productId}")
     public ResponseEntity<ProductUpdateResponse> updateProduct(@PathVariable final UUID productId,
                                                                @RequestBody final ProductUpdateRequest body,
                                                                final Principal principal) {
@@ -176,9 +172,7 @@ public class ProductController {
                 body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.3#/Product/deleteProduct
-    @RequestMapping(value = "/products/{productId}", method = RequestMethod.DELETE)
-    @ResponseBody
+    @DeleteMapping(value = "/products/{productId}")
     public ResponseEntity<ProductDeleteResponse> deleteProduct(@PathVariable final UUID productId,
                                                                final Principal principal) {
         log.info("REQUEST: to delete product with id: " + productId);

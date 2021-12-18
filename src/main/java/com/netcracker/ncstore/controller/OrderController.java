@@ -29,13 +29,13 @@ public class OrderController {
         this.orderWebService = orderWebService;
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.4#/Order/getOrders
     @GetMapping
     public ResponseEntity<List<OrderGetResponse>> getOrdersWithPagination(@RequestParam final int page,
                                                                           @RequestParam final int size,
                                                                           final Principal principal) {
-        OrderGetRequest request = new OrderGetRequest(page, size, principal.getName());
         log.info("REQUEST: to get orders for user with email" + principal.getName() + " on page: " + page + " with size: " + size);
+
+        OrderGetRequest request = new OrderGetRequest(page, size, principal.getName());
 
         List<OrderGetResponse> response = orderWebService.getOrders(request);
 
@@ -47,12 +47,15 @@ public class OrderController {
                 body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.4#/Order/getOrder
     @GetMapping(value = "/{orderId}")
     public ResponseEntity<OrderInfoResponse> getOrder(@PathVariable final UUID orderId, Principal principal) {
+        log.info("REQUEST: to get order with UUID " + orderId + " requested by user with email " + principal.getName());
+
         OrderInfoGetRequest request = new OrderInfoGetRequest(orderId, principal.getName());
 
         OrderInfoResponse response = orderWebService.getSpecificOrder(request);
+
+        log.info("RESPONSE: to get order with UUID " + orderId + " requested by user with email " + principal.getName());
 
         return ResponseEntity.
                 ok().

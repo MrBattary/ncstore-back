@@ -26,11 +26,11 @@ public class CompanyController {
 
     @GetMapping(value = "/info")
     public ResponseEntity<CompanyDetailedInfoResponse> getCompanyInfo(Principal principal) {
-        log.info("REQUEST: to get Company detailed info for user " + principal.getName());
+        log.info("REQUEST: to get self Company info for user " + principal.getName());
 
         CompanyDetailedInfoResponse response = userService.getDetailedCompanyInfo(principal.getName());
 
-        log.info("RESPONSE: to get Company detailed info for user " + principal.getName());
+        log.info("RESPONSE: to get self Company info for user " + principal.getName());
 
         return ResponseEntity.ok().body(response);
     }

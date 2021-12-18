@@ -28,9 +28,9 @@ import com.netcracker.ncstore.repository.OrderItemRepository;
 import com.netcracker.ncstore.repository.OrderRepository;
 import com.netcracker.ncstore.service.order.interfaces.IOrderBusinessService;
 import com.netcracker.ncstore.service.payment.IPaymentService;
-import com.netcracker.ncstore.service.price.interfaces.IPricesBusinessService;
+import com.netcracker.ncstore.service.price.interfaces.IPricesDataService;
 import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
-import com.netcracker.ncstore.service.product.IProductsService;
+import com.netcracker.ncstore.service.product.interfaces.IProductDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -53,21 +53,21 @@ public class OrderBusinessService implements IOrderBusinessService {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
-    private final IProductsService productsService;
-    private final IPricesBusinessService pricesBusinessService;
+    private final IProductDataService productDataService;
+    private final IPricesDataService pricesDataService;
     private final IPriceConversionService priceConversionService;
     private final IPaymentService paymentService;
 
     public OrderBusinessService(final OrderRepository orderRepository,
                                 final OrderItemRepository orderItemRepository,
-                                final IProductsService productsService,
-                                final IPricesBusinessService pricesBusinessService,
+                                final IProductDataService productDataService,
+                                final IPricesDataService pricesDataService,
                                 final IPriceConversionService priceConversionService,
                                 final IPaymentService paymentService) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
-        this.productsService = productsService;
-        this.pricesBusinessService = pricesBusinessService;
+        this.productDataService = productDataService;
+        this.pricesDataService = pricesDataService;
         this.priceConversionService = priceConversionService;
         this.paymentService = paymentService;
     }
@@ -110,7 +110,7 @@ public class OrderBusinessService implements IOrderBusinessService {
                 for (int i = 0; i < e.getValue(); i++) {
                     OrderItem orderItem = new OrderItem(
                             order,
-                            productsService.loadProductEntityById(e.getKey())
+                            productDataService.loadProductEntityById(e.getKey())
                     );
                     orderItemList.add(orderItem);
                 }
@@ -147,14 +147,14 @@ public class OrderBusinessService implements IOrderBusinessService {
             double UCSum = 0;
 
             for (OrderItem item : order.getProducts()) {
-                ActualProductPrice productPrice = pricesBusinessService.getActualPriceForProductInRegion(
+                ActualProductPrice productPrice = pricesDataService.getActualPriceForProductInRegion(
                         new ProductLocaleDTO(
                                 item.getProduct().getId(),
                                 orderPayDTO.getRegion()
                         )
                 );
                 ActualProductPriceConvertedForRegionDTO convertedPrice =
-                        priceConversionService.convertUCPriceForRealPrice(productPrice);
+                        priceConversionService.getActualConvertedPriceForProductInRegion(productPrice);
 
                 addMoneyToSupplierForProduct(
                         item.getProduct().getId(),
@@ -242,7 +242,7 @@ public class OrderBusinessService implements IOrderBusinessService {
     }
 
     private void addMoneyToSupplierForProduct(final UUID productId, final double amount) {
-        Product product = productsService.loadProductEntityById(productId);
+        Product product = productDataService.loadProductEntityById(productId);
         User supplier = product.getSupplier();
         double supplierMoney = amount * (1 - ownerPercent);
         double shopOwnerMoney = amount * ownerPercent;
@@ -258,7 +258,7 @@ public class OrderBusinessService implements IOrderBusinessService {
         }
         for (Map.Entry<UUID, Integer> e : orderCreateDTO.getProductsToBuyWithCount().entrySet()) {
             try {
-                Product product = productsService.loadProductEntityById(e.getKey());
+                Product product = productDataService.loadProductEntityById(e.getKey());
                 if (!product.getProductStatus().equals(EProductStatus.IN_STOCK)) {
                     throw new OrderServiceValidationException("Product with UUID " + e.getKey() + " has status " + product.getProductStatus().toString() + ". ");
                 }

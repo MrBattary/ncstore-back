@@ -1,19 +1,14 @@
 package com.netcracker.ncstore.service.price;
 
-import com.netcracker.ncstore.dto.ActualProductPrice;
-import com.netcracker.ncstore.dto.ProductLocaleDTO;
+import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
+import com.netcracker.ncstore.dto.PriceRegionDTO;
+import com.netcracker.ncstore.dto.ProductPricesPopulateProductDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.DiscountedProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
-import com.netcracker.ncstore.dto.data.DiscountDTO;
-import com.netcracker.ncstore.dto.data.ProductPriceDTO;
-import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
-import com.netcracker.ncstore.exception.DiscountServiceValidationException;
 import com.netcracker.ncstore.exception.PricesServiceCreationException;
-import com.netcracker.ncstore.exception.PricesServiceNotFoundException;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
 import com.netcracker.ncstore.model.Discount;
-import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.DiscountRepository;
 import com.netcracker.ncstore.repository.ProductPriceRepository;
@@ -26,8 +21,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -35,22 +32,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PricesBusinessService implements IPricesBusinessService {
     private final ProductPriceRepository productPriceRepository;
-    private final ProductRepository productRepository;
     private final DiscountRepository discountRepository;
-    @Value("${locale.default.code}")
-    private String defaultLocaleCode;
 
     public PricesBusinessService(final ProductPriceRepository productPriceRepository,
-                                 final ProductRepository productRepository,
                                  final DiscountRepository discountRepository) {
         this.productPriceRepository = productPriceRepository;
-        this.productRepository = productRepository;
         this.discountRepository = discountRepository;
     }
 
 
     @Override
-    public ProductPrice createProductPrice(ProductPriceCreateDTO productPriceCreateDTO) throws PricesServiceCreationException {
+    public ProductPrice createProductPrice(ProductPriceCreateDTO productPriceCreateDTO) throws PricesServiceValidationException {
         try {
             if (!PriceValidator.isPriceValid(productPriceCreateDTO.getPrice())) {
                 throw new PricesServiceValidationException("Provided price is not valid. ");
@@ -59,43 +51,41 @@ public class PricesBusinessService implements IPricesBusinessService {
                 throw new PricesServiceValidationException("Provided locale is not valid. ");
             }
 
-            //TODO refactor when product service refactored
-            Product product = productRepository.findById(productPriceCreateDTO.getProductId()).orElse(null);
-            if (productPriceCreateDTO.getProductId() == null) {
-                throw new PricesServiceValidationException("Provided product does not exist. ");
-            }
-
             return productPriceRepository.save(
                     new ProductPrice(
                             productPriceCreateDTO.getPrice(),
                             productPriceCreateDTO.getRegion(),
-                            product
+                            productPriceCreateDTO.getProduct()
                     )
             );
 
         } catch (PricesServiceValidationException e) {
-            throw new PricesServiceCreationException("Unable to create price for product. " + e.getMessage(), e);
+            log.warn("Error while creating product price for product. " + e.getMessage());
+            throw e;
         }
     }
 
     @Override
-    public Discount createDiscountForProduct(DiscountCreateDTO discountCreateDTO) throws PricesServiceCreationException {
+    public Discount createDiscountForProduct(DiscountCreateDTO discountCreateDTO) throws PricesServiceValidationException {
         try {
+            log.info("Creating discount for product with UUID "+discountCreateDTO.getProduct().getId() +" in region " + discountCreateDTO.getRegion());
             if (!PriceValidator.isPriceValid(discountCreateDTO.getDiscountPrice())) {
-                throw new DiscountServiceValidationException("Provided price is not valid. ");
+                throw new PricesServiceValidationException("Provided price is not valid. ");
             }
 
             ProductPrice productPrice = productPriceRepository.findByProductIDAndLocale(
-                    discountCreateDTO.getProductId(),
+                    discountCreateDTO.getProduct().getId(),
                     discountCreateDTO.getRegion()
             );
 
             if (productPrice == null) {
-                throw new DiscountServiceValidationException("Product price for provided product and locale does not exist. ");
+                throw new PricesServiceValidationException("Product price for provided product and locale does not exist. ");
             }
             if (productPrice.getDiscount() != null) {
-                throw new DiscountServiceValidationException("Discount for this product already exists. ");
+                throw new PricesServiceValidationException("Discount for this product already exists. ");
             }
+
+            log.info("Succesfully created discount for product with UUID "+discountCreateDTO.getProduct().getId());
 
             return discountRepository.save(
                     new Discount(
@@ -105,25 +95,27 @@ public class PricesBusinessService implements IPricesBusinessService {
                             productPrice
                     )
             );
-        } catch (DiscountServiceValidationException e) {
-            throw new PricesServiceCreationException("Unable to create discount for product. " + e.getMessage(), e);
+
+        } catch (PricesServiceValidationException e) {
+            log.warn("Error while creating discount for product. " + e.getMessage());
+            throw e;
         }
     }
 
     @Override
     @Transactional
-    public ProductPrice createDiscountedProductPrice(DiscountedProductPriceCreateDTO discountedProductPriceCreateDTO) throws PricesServiceCreationException {
+    public ProductPrice createDiscountedProductPrice(DiscountedProductPriceCreateDTO discountedProductPriceCreateDTO) throws PricesServiceValidationException {
         ProductPrice productPrice = createProductPrice(
                 new ProductPriceCreateDTO(
                         discountedProductPriceCreateDTO.getRegularPrice(),
                         discountedProductPriceCreateDTO.getRegion(),
-                        discountedProductPriceCreateDTO.getProductId()
+                        discountedProductPriceCreateDTO.getProduct()
                 )
         );
 
         Discount discount = createDiscountForProduct(
                 new DiscountCreateDTO(
-                        discountedProductPriceCreateDTO.getProductId(),
+                        discountedProductPriceCreateDTO.getProduct(),
                         discountedProductPriceCreateDTO.getRegion(),
                         discountedProductPriceCreateDTO.getDiscountPrice(),
                         discountedProductPriceCreateDTO.getStartUtcTime(),
@@ -137,27 +129,48 @@ public class PricesBusinessService implements IPricesBusinessService {
     }
 
     @Override
-    public ActualProductPrice getActualPriceForProductInRegion(final ProductLocaleDTO productLocale) {
-        Locale locale = productLocale.getLocale();
+    @Transactional
+    public List<ProductPrice> populateProductWithPrices(ProductPricesPopulateProductDTO dto) {
+        List<ProductPrice> productPrices = new ArrayList<>();
 
-        ProductPrice productPrice = productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
-                locale);
+        Map<Locale, DiscountPriceRegionDTO> localeDiscountPriceRegionDTOMap =
+                dto.getDiscountPrices().
+                        stream().
+                        collect(
+                                Collectors.toMap(DiscountPriceRegionDTO::getRegion, e -> e)
+                        );
 
-        if (productPrice == null) {
-            locale = Locale.forLanguageTag(defaultLocaleCode);
-            productPrice = productPriceRepository.findByProductIDAndLocale(productLocale.getProductId(),
-                    locale);
+        for (PriceRegionDTO priceRegionDTO : dto.getRegularPrices()) {
+            DiscountPriceRegionDTO discountPriceRegionDTO =
+                    localeDiscountPriceRegionDTOMap.get(priceRegionDTO.getRegion());
+
+            ProductPrice productPrice;
+
+            if (discountPriceRegionDTO != null) {
+                productPrice = createDiscountedProductPrice(
+                        new DiscountedProductPriceCreateDTO(
+                                dto.getProduct(),
+                                priceRegionDTO.getRegion(),
+                                priceRegionDTO.getPrice(),
+                                discountPriceRegionDTO.getPrice(),
+                                discountPriceRegionDTO.getStartUtcTime(),
+                                discountPriceRegionDTO.getEndUtcTime()
+                        )
+                );
+            } else {
+                productPrice = createProductPrice(
+                        new ProductPriceCreateDTO(
+                                priceRegionDTO.getPrice(),
+                                priceRegionDTO.getRegion(),
+                                dto.getProduct()
+                        )
+                );
+            }
+
+            productPrices.add(productPrice);
         }
 
-        if(productPrice==null){
-            throw new PricesServiceNotFoundException("Product does not exists or has no price for default locale. ");
-        }
-
-        return new ActualProductPrice(
-                productPrice,
-                productLocale.getLocale(),
-                locale
-        );
+        return productPrices;
     }
 
     @Override
@@ -170,22 +183,5 @@ public class PricesBusinessService implements IPricesBusinessService {
     @Transactional
     public void deleteAllProductPricesForProduct(UUID productId) {
         productPriceRepository.deleteByProductId(productId);
-    }
-
-    @Override
-    public List<ProductPriceDTO> getPricesForProduct(UUID productId) {
-        return productPriceRepository.findByProductId(productId).
-                stream().
-                map(ProductPriceDTO::new).
-                collect(Collectors.toList());
-    }
-
-    @Override
-    public DiscountDTO getDiscountForPrice(UUID productPriceId) throws DiscountServiceNotFoundException {
-        Discount discount = discountRepository.findById(productPriceId).orElse(null);
-        if (discount == null) {
-            throw new DiscountServiceNotFoundException();
-        }
-        return new DiscountDTO(discount);
     }
 }

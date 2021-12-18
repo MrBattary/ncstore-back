@@ -21,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,5 +64,14 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
 
-
+    public Product(String name, String description, Product parentProduct, User supplier, EProductStatus productStatus, List<Category> categories) {
+        this.name = name;
+        this.description = description;
+        this.creationUtcTime = Instant.now();
+        this.parentProduct = parentProduct;
+        this.supplier = supplier;
+        this.productStatus = productStatus;
+        this.productPrices = new ArrayList<>();
+        this.categories = categories;
+    }
 }

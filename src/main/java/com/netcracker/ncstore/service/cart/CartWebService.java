@@ -112,11 +112,9 @@ public class CartWebService implements ICartWebService {
 
     private CartItemResponse convertCartItemDTOToResponse(final CartItemDTO cartItemDTO,
                                                           final Locale locale) {
-        ActualProductPrice priceForProduct =
-                pricesService.getActualPriceForProductInRegion(new ProductLocaleDTO(cartItemDTO.getProductId(), locale));
 
         ActualProductPriceConvertedForRegionDTO regionalPriceForProduct =
-                priceConversionService.convertUCPriceForRealPrice(priceForProduct);
+                priceConversionService.getActualConvertedPriceForProductInRegion(new ProductLocaleDTO(cartItemDTO.getProductId(), locale));
 
         return new CartItemResponse(
                 cartItemDTO.getProductId(),

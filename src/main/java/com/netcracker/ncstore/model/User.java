@@ -54,4 +54,13 @@ public class User {
         this.balance = balance;
         this.roles = roles;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof User){
+            return ((User)obj).getId().equals(id);
+        }else{
+            return false;
+        }
+    }
 }

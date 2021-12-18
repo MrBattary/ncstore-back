@@ -3,7 +3,9 @@ package com.netcracker.ncstore.service.priceconverter.interfaces;
 import com.netcracker.ncstore.dto.ActualProductPrice;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.UCPriceConvertedFromRealDTO;
+import com.netcracker.ncstore.exception.PriceConversionServiceNotFoundException;
 
 import java.util.Locale;
 
@@ -34,11 +36,23 @@ public interface IPriceConversionService {
     UCPriceConvertedFromRealDTO convertRealPriceToUC(double realPrice, Locale regionOfPrice);
 
     /**
+     * Converts ActualProductPrice to ActualProductPriceConvertedForRegionDTO
+     * which means converting normal and discount prices and adding currency symbol.
+     *
+     * @param actualProductPrice ActualProductPrice
+     * @return ActualProductPriceConvertedForRegionDTO containing converted prices for real money
+     */
+    ActualProductPriceConvertedForRegionDTO getActualConvertedPriceForProductInRegion(ActualProductPrice actualProductPrice);
+
+    /**
      * Converts ProductPrice to ActualProductPriceConvertedForRegionDTO
      * which means converting normal and discount prices and adding currency symbol.
      *
+     * If no price for requested locale found returns price for default locale.
+     *
      * @param actualProductPrice ProductPrice entity
      * @return ActualProductPriceConvertedForRegionDTO containing converted prices for real money
+     * @throws PriceConversionServiceNotFoundException when product, price or conversion not found
      */
-    ActualProductPriceConvertedForRegionDTO convertUCPriceForRealPrice(ActualProductPrice actualProductPrice);
+    ActualProductPriceConvertedForRegionDTO getActualConvertedPriceForProductInRegion(ProductLocaleDTO productLocaleDTO) throws PriceConversionServiceNotFoundException;
 }

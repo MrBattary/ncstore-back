@@ -1,5 +1,4 @@
-package com.netcracker.ncstore.dto.response;
-
+package com.netcracker.ncstore.dto.body;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
@@ -12,12 +11,15 @@ import lombok.extern.jackson.Jacksonized;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * DTO containing request body for product PUT request
+ */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class UpdateProductResponse {
+public class ProductUpdateBody {
     private final UUID productId;
     private final String productName;
     private final String productDescription;

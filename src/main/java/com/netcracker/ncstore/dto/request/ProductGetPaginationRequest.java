@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public class ProductGetRequest {
+public class ProductGetPaginationRequest {
     private final List<String> categoriesNames;
     private final String searchText;
     private final int page;

@@ -11,16 +11,18 @@ import lombok.extern.jackson.Jacksonized;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This DTO contains all update
+ * product response information
+ */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class GetProductResponse {
+public class ProductUpdateResponse {
     private final UUID productId;
     private final String productName;
-    private final UUID supplierId;
-    private final String supplierName;
     private final String productDescription;
     private final List<PriceRegionDTO> normalPrices;
     private final List<DiscountPriceRegionDTO> discountPrices;

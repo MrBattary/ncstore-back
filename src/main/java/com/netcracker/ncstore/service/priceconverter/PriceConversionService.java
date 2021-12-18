@@ -3,11 +3,15 @@ package com.netcracker.ncstore.service.priceconverter;
 import com.netcracker.ncstore.dto.ActualProductPrice;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
+import com.netcracker.ncstore.dto.ProductLocaleDTO;
 import com.netcracker.ncstore.dto.UCPriceConvertedFromRealDTO;
+import com.netcracker.ncstore.exception.PriceConversionServiceNotFoundException;
+import com.netcracker.ncstore.exception.PricesServiceNotFoundException;
 import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.PriceConversionRate;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.PriceConversionRateRepository;
+import com.netcracker.ncstore.service.price.interfaces.IPricesDataService;
 import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
 import com.netcracker.ncstore.util.converter.DoubleRounder;
 import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
@@ -22,13 +26,16 @@ import java.util.Locale;
 @Slf4j
 public class PriceConversionService implements IPriceConversionService {
     private final PriceConversionRateRepository priceConversionRateRepository;
+    private final IPricesDataService pricesDataService;
     private final Locale defaultLocale;
 
     private final int decimalPlacesRound = 2;
 
     public PriceConversionService(final PriceConversionRateRepository priceConversionRateRepository,
+                                  final IPricesDataService pricesDataService,
                                   final @Value("${locale.default.code}") String defaultLocaleCode) {
         this.priceConversionRateRepository = priceConversionRateRepository;
+        this.pricesDataService = pricesDataService;
         defaultLocale = Locale.forLanguageTag(defaultLocaleCode);
     }
 
@@ -66,7 +73,7 @@ public class PriceConversionService implements IPriceConversionService {
     }
 
     @Override
-    public ActualProductPriceConvertedForRegionDTO convertUCPriceForRealPrice(ActualProductPrice actualProductPrice) {
+    public ActualProductPriceConvertedForRegionDTO getActualConvertedPriceForProductInRegion(ActualProductPrice actualProductPrice) {
         Locale region = actualProductPrice.getRequestedRegion();
         ProductPrice productPrice = actualProductPrice.getProductPrice();
         Discount discount = productPrice.getDiscount();
@@ -90,5 +97,18 @@ public class PriceConversionService implements IPriceConversionService {
                 discount == null ? null : discount.getStartUtcTime(),
                 discount == null ? null : discount.getEndUtcTime()
         );
+    }
+
+    @Override
+    public ActualProductPriceConvertedForRegionDTO getActualConvertedPriceForProductInRegion(ProductLocaleDTO productLocaleDTO) throws PriceConversionServiceNotFoundException {
+        try {
+            ActualProductPrice actualProductPrice =
+                    pricesDataService.getActualPriceForProductInRegion(productLocaleDTO);
+
+            return getActualConvertedPriceForProductInRegion(actualProductPrice);
+        }catch (PricesServiceNotFoundException notFoundException){
+            throw new PriceConversionServiceNotFoundException("Can not convert price. "+ notFoundException.getMessage(), notFoundException);
+        }
+
     }
 }

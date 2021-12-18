@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.dto.create;
 
+import com.netcracker.ncstore.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,5 +15,5 @@ import java.util.UUID;
 public class ProductPriceCreateDTO {
     private final double price;
     private final Locale region;
-    private final UUID productId;
+    private final Product product;
 }

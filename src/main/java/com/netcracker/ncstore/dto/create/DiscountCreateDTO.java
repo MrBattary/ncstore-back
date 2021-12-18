@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.dto.create;
 
+import com.netcracker.ncstore.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,7 +11,7 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class DiscountCreateDTO {
-    private final UUID productId;
+    private final Product product;
     private final Locale region;
     private final double discountPrice;
     private final Instant startUtcTime;

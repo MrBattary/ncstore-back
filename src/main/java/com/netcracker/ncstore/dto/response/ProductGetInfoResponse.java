@@ -1,27 +1,31 @@
 package com.netcracker.ncstore.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
-import com.netcracker.ncstore.dto.PriceRegionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-@AllArgsConstructor
 @Getter
-public class DeleteProductResponse {
+@AllArgsConstructor
+public class ProductGetInfoResponse {
     private final UUID productId;
+    private final UUID supplierId;
+    private final String supplierName;
     private final String productName;
     private final String productDescription;
-    private final List<PriceRegionDTO> normalPrices;
-    private final List<DiscountPriceRegionDTO> discountPrices;
+    private final double normalPrice;
+    private final Double discountPrice;
+    private final String priceCurrency;
+    private final Instant startUtcTime;
+    private final Instant endUtcTime;
     private final UUID parentProductId;
     private final List<String> categoriesNames;
 }

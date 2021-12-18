@@ -20,7 +20,7 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class CreateProductResponse {
+public class ProductCreateResponse {
     private final UUID productId;
     private final UUID supplierId;
     private final String productName;

@@ -1,4 +1,4 @@
-package com.netcracker.ncstore.dto.request;
+package com.netcracker.ncstore.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.netcracker.ncstore.dto.DiscountPriceRegionDTO;
@@ -11,14 +11,17 @@ import lombok.extern.jackson.Jacksonized;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This DTO contains all delete
+ * product response information
+ */
 @Jacksonized
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
-public class ProductUpdateRequest {
+public class ProductDeleteResponse {
     private final UUID productId;
-    private final String emailOfIssuer;
     private final String productName;
     private final String productDescription;
     private final List<PriceRegionDTO> normalPrices;

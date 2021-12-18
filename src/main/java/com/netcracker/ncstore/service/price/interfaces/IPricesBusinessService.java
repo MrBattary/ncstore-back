@@ -1,15 +1,11 @@
 package com.netcracker.ncstore.service.price.interfaces;
 
-import com.netcracker.ncstore.dto.ActualProductPrice;
-import com.netcracker.ncstore.dto.ProductLocaleDTO;
+import com.netcracker.ncstore.dto.ProductPricesPopulateProductDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.DiscountedProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
-import com.netcracker.ncstore.dto.data.DiscountDTO;
-import com.netcracker.ncstore.dto.data.ProductPriceDTO;
-import com.netcracker.ncstore.exception.DiscountServiceNotFoundException;
 import com.netcracker.ncstore.exception.PricesServiceCreationException;
-import com.netcracker.ncstore.exception.PricesServiceNotFoundException;
+import com.netcracker.ncstore.exception.PricesServiceValidationException;
 import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.ProductPrice;
 
@@ -27,16 +23,18 @@ public interface IPricesBusinessService {
      * @return created ProductPrice entity
      * @throws PricesServiceCreationException when it is impossible to create product price with provided data
      */
-    ProductPrice createProductPrice(final ProductPriceCreateDTO productPriceCreateDTO) throws PricesServiceCreationException;
+    ProductPrice createProductPrice(final ProductPriceCreateDTO productPriceCreateDTO)
+            throws PricesServiceValidationException;
 
     /**
      * Creates new Discount entity based on provided parameters.
      *
-     * @param discountCreateDTO  DTO containing info for crating new entity
+     * @param discountCreateDTO DTO containing info for crating new entity
      * @return created Discount entity
      * @throws PricesServiceCreationException when it is impossible to create disocunt with provided data
      */
-    Discount createDiscountForProduct(final DiscountCreateDTO discountCreateDTO) throws PricesServiceCreationException;
+    Discount createDiscountForProduct(final DiscountCreateDTO discountCreateDTO)
+            throws PricesServiceValidationException;
 
     /**
      * Creates new ProductPrice entity and new Discount entity based on provided parameters.
@@ -45,24 +43,19 @@ public interface IPricesBusinessService {
      * @return created ProductPrice entity. Discount entity is mapped for ProductPrice entity using One-To-One.
      * @throws PricesServiceCreationException when it is impossible to create product price and discount entities with provided data
      */
-    ProductPrice createDiscountedProductPrice(final DiscountedProductPriceCreateDTO discountedProductPriceCreateDTO) throws PricesServiceCreationException;
+    ProductPrice createDiscountedProductPrice(final DiscountedProductPriceCreateDTO discountedProductPriceCreateDTO)
+            throws PricesServiceValidationException;
 
     /**
-     * Returns price of specified product in specified region.
-     * If no price for provided product in specified region exists
-     * returns price for default region default
+     * Populates product with provided prices.
      *
-     * @param productLocale DTO containing ProductID and Locale
-     * @return ProductPrice
-     * @throws PricesServiceNotFoundException if provided product does not exist
+     * @param dto DTO containing product and lists of regular and discount prices
+     * @return List<ProductPrice> containing created prices
      */
-    ActualProductPrice getActualPriceForProductInRegion(final ProductLocaleDTO productLocale) throws PricesServiceNotFoundException;
+    List<ProductPrice> populateProductWithPrices(final ProductPricesPopulateProductDTO dto)
+            throws PricesServiceValidationException;
 
     void deleteProductPrice(ProductPrice productPrice);
-    void deleteAllProductPricesForProduct(UUID productId);
 
-    //TODO delete this useless method when products service + product controller refactored
-    List<ProductPriceDTO> getPricesForProduct(UUID productId);
-    //TODO delete this useless method when products service + product controller refactored
-    DiscountDTO getDiscountForPrice(final UUID productPriceId) throws DiscountServiceNotFoundException;
+    void deleteAllProductPricesForProduct(UUID productId);
 }

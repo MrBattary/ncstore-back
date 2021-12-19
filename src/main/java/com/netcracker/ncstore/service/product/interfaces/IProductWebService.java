@@ -12,9 +12,9 @@ import com.netcracker.ncstore.dto.response.ProductGetDetailedResponse;
 import com.netcracker.ncstore.dto.response.ProductGetInfoResponse;
 import com.netcracker.ncstore.dto.response.ProductUpdateResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
-import com.netcracker.ncstore.exception.GeneralBadRequestException;
-import com.netcracker.ncstore.exception.GeneralNotFoundException;
-import com.netcracker.ncstore.exception.GeneralPermissionDeniedException;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
+import com.netcracker.ncstore.exception.general.GeneralNotFoundException;
+import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
 
 import java.util.List;
 

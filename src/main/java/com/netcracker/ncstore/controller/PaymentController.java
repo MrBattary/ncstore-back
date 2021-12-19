@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.response.PaymentGetResponse;
-import com.netcracker.ncstore.service.payment.IPaymentService;
+import com.netcracker.ncstore.service.payment.interfaces.IPaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

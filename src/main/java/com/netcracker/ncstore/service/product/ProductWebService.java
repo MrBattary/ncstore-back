@@ -20,9 +20,9 @@ import com.netcracker.ncstore.dto.response.ProductGetDetailedResponse;
 import com.netcracker.ncstore.dto.response.ProductGetInfoResponse;
 import com.netcracker.ncstore.dto.response.ProductUpdateResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
-import com.netcracker.ncstore.exception.GeneralBadRequestException;
-import com.netcracker.ncstore.exception.GeneralNotFoundException;
-import com.netcracker.ncstore.exception.GeneralPermissionDeniedException;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
+import com.netcracker.ncstore.exception.general.GeneralNotFoundException;
+import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
 import com.netcracker.ncstore.exception.ProductServicePermissionException;
 import com.netcracker.ncstore.exception.ProductServiceValidationException;
@@ -31,12 +31,11 @@ import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
-import com.netcracker.ncstore.service.price.interfaces.IPricesBusinessService;
 import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
 import com.netcracker.ncstore.service.product.interfaces.IProductDataService;
 import com.netcracker.ncstore.service.product.interfaces.IProductBusinessService;
 import com.netcracker.ncstore.service.product.interfaces.IProductWebService;
-import com.netcracker.ncstore.service.user.IUserService;
+import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -50,16 +49,16 @@ import java.util.stream.Collectors;
 public class ProductWebService implements IProductWebService {
     private final IProductBusinessService productsBusinessService;
     private final IProductDataService productDataService;
-    private final IUserService userService;
+    private final IUserDataService userDataService;
     private final IPriceConversionService priceConversionService;
 
     public ProductWebService(final IProductBusinessService productsBusinessService,
                              final IProductDataService productDataService,
-                             final IUserService userService,
+                             final IUserDataService userDataService,
                              final IPriceConversionService priceConversionService) {
         this.productsBusinessService = productsBusinessService;
         this.productDataService = productDataService;
-        this.userService = userService;
+        this.userDataService = userDataService;
         this.priceConversionService = priceConversionService;
     }
 
@@ -96,7 +95,7 @@ public class ProductWebService implements IProductWebService {
                             product.getId(),
                             product.getName(),
                             product.getSupplier().getId(),
-                            userService.getSupplierNameByUserId(product.getSupplier().getId()),
+                            userDataService.getSupplierNameByUserId(product.getSupplier().getId()),
                             convertedPrice.getNormalConvertedPrice(),
                             convertedPrice.getDiscountConvertedPrice(),
                             convertedPrice.getCurrencySymbol()
@@ -111,9 +110,7 @@ public class ProductWebService implements IProductWebService {
     @Override
     public ProductCreateResponse createNewProductInStore(ProductCreateRequest request) {
         try {
-            User supplier = userService.loadUserEntityByEmail(
-                    request.getEmailOfIssuer()
-            );
+            User supplier = userDataService.getUserByEmail(request.getEmailOfIssuer());
 
             ProductCreateDTO createDTO = new ProductCreateDTO(
                     supplier,
@@ -149,9 +146,7 @@ public class ProductWebService implements IProductWebService {
     public ProductUpdateResponse updateExistingProduct(ProductUpdateRequest request)
             throws GeneralPermissionDeniedException, GeneralNotFoundException, GeneralBadRequestException {
         try {
-            User supplier = userService.loadUserEntityByEmail(
-                    request.getEmailOfIssuer()
-            );
+            User supplier = userDataService.getUserByEmail(request.getEmailOfIssuer());
 
             ProductUpdateDTO updateDTO = new ProductUpdateDTO(
                     request.getProductId(),
@@ -190,9 +185,7 @@ public class ProductWebService implements IProductWebService {
     public ProductDeleteResponse deleteProductFromStore(ProductDeleteRequest request)
             throws GeneralPermissionDeniedException, GeneralNotFoundException {
         try {
-            User supplier = userService.loadUserEntityByEmail(
-                    request.getEmailOfIssuer()
-            );
+            User supplier = userDataService.getUserByEmail(request.getEmailOfIssuer());
 
             ProductDiscontinueDTO productDiscontinueDTO = new ProductDiscontinueDTO(
                     request.getProductId(),
@@ -232,7 +225,7 @@ public class ProductWebService implements IProductWebService {
             return new ProductGetInfoResponse(
                     product.getId(),
                     product.getSupplier().getId(),
-                    userService.getSupplierNameByUserId(product.getSupplier().getId()),
+                    userDataService.getSupplierNameByUserId(product.getSupplier().getId()),
                     product.getName(),
                     product.getDescription(),
                     convertedPrice.getNormalConvertedPrice(),
@@ -251,9 +244,7 @@ public class ProductWebService implements IProductWebService {
     @Override
     public ProductGetDetailedResponse getDetailedProductInfo(ProductGetDetailedRequest request) {
         try{
-            User supplier = userService.loadUserEntityByEmail(
-                    request.getEmailOfIssuer()
-            );
+            User supplier = userDataService.getUserByEmail(request.getEmailOfIssuer());
 
             Product product = productDataService.loadProductEntityById(request.getProductId());
 
@@ -265,7 +256,7 @@ public class ProductWebService implements IProductWebService {
                     product.getId(),
                     product.getName(),
                     product.getSupplier().getId(),
-                    userService.getSupplierNameByUserId(product.getSupplier().getId()),
+                    userDataService.getSupplierNameByUserId(product.getSupplier().getId()),
                     product.getDescription(),
                     convertProductPriceListToPriceRegionDTOList(product.getProductPrices()),
                     convertProductPriceListToDiscountPriceRegionDTOList(product.getProductPrices()),

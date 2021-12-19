@@ -1,8 +1,9 @@
 package com.netcracker.ncstore.controller;
 
+import com.netcracker.ncstore.dto.request.PersonDetailedInfoRequest;
 import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonInfoResponse;
-import com.netcracker.ncstore.service.user.IUserService;
+import com.netcracker.ncstore.service.user.interfaces.web.IPersonWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,17 +19,22 @@ import java.util.UUID;
 @Slf4j
 @RequestMapping(value = "/person")
 public class PersonController {
-    private final IUserService userService;
+    private final IPersonWebService personWebService;
 
-    public PersonController(final IUserService userService) {
-        this.userService = userService;
+    public PersonController(IPersonWebService personWebService) {
+        this.personWebService = personWebService;
     }
 
     @GetMapping(value = "/info")
     public ResponseEntity<PersonDetailedInfoResponse> getPersonInfo(Principal principal) {
         log.info("REQUEST: to get self Person info for user " + principal.getName());
 
-        PersonDetailedInfoResponse response = userService.getDetailedPersonInfo(principal.getName());
+        PersonDetailedInfoRequest request = new PersonDetailedInfoRequest(
+                principal.getName(),
+                principal.getName()
+        );
+
+        PersonDetailedInfoResponse response = personWebService.getDetailedPersonInfo(request);
 
         log.info("RESPONSE: to get self Person info for user " + principal.getName());
 
@@ -44,7 +50,7 @@ public class PersonController {
     public ResponseEntity<PersonInfoResponse> getConcretePersonInfo(@PathVariable final UUID userId) {
         log.info("REQUEST: to get Person info of user with UUID " + userId);
 
-        PersonInfoResponse response = userService.getBasisPersonInfo(userId);
+        PersonInfoResponse response = personWebService.getPublicPersonInfo(userId);
 
         log.info("RESPONSE: to get Person info of user with UUID " + userId);
 

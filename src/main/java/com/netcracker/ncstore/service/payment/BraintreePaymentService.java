@@ -1,6 +1,8 @@
 package com.netcracker.ncstore.service.payment;
 
 import com.braintreegateway.BraintreeGateway;
+import com.braintreegateway.Customer;
+import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.MerchantAccount;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
@@ -9,6 +11,7 @@ import com.braintreegateway.ValidationError;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
 import com.netcracker.ncstore.exception.PaymentServiceCurrencyNotSupportedException;
 import com.netcracker.ncstore.exception.PaymentServiceException;
+import com.netcracker.ncstore.service.payment.interfaces.IPaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

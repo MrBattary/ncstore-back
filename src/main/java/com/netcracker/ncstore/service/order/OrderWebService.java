@@ -11,9 +11,9 @@ import com.netcracker.ncstore.dto.request.OrderInfoGetRequest;
 import com.netcracker.ncstore.dto.response.OrderGetResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.dto.response.OrderItemInfoResponse;
-import com.netcracker.ncstore.exception.GeneralBadRequestException;
-import com.netcracker.ncstore.exception.GeneralNotFoundException;
-import com.netcracker.ncstore.exception.GeneralPermissionDeniedException;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
+import com.netcracker.ncstore.exception.general.GeneralNotFoundException;
+import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
 import com.netcracker.ncstore.exception.OrderServiceNotFoundException;
 import com.netcracker.ncstore.exception.OrderServiceOrderCompletionException;
 import com.netcracker.ncstore.exception.OrderServiceOrderCreationException;
@@ -23,7 +23,7 @@ import com.netcracker.ncstore.model.Order;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.service.order.interfaces.IOrderBusinessService;
 import com.netcracker.ncstore.service.order.interfaces.IOrderWebService;
-import com.netcracker.ncstore.service.user.IUserService;
+import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
 import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,12 +39,12 @@ import java.util.stream.Collectors;
 @Service
 public class OrderWebService implements IOrderWebService {
     private final IOrderBusinessService orderBusinessService;
-    private final IUserService userService;
+    private final IUserDataService userDataService;
 
     public OrderWebService(final IOrderBusinessService orderBusinessService,
-                           final IUserService userService) {
+                           final IUserDataService userDataService) {
         this.orderBusinessService = orderBusinessService;
-        this.userService = userService;
+        this.userDataService = userDataService;
     }
 
 
@@ -93,9 +93,7 @@ public class OrderWebService implements IOrderWebService {
                             )
                     );
 
-            User customer = userService.loadUserEntityByEmail(
-                    request.getCustomerEmail()
-            );
+            User customer = userDataService.getUserByEmail(request.getCustomerEmail());
 
             OrderCreateDTO orderCreateDTO = new OrderCreateDTO(
                     products,

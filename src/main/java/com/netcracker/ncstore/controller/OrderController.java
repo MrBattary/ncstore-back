@@ -33,13 +33,13 @@ public class OrderController {
     public ResponseEntity<List<OrderGetResponse>> getOrdersWithPagination(@RequestParam final int page,
                                                                           @RequestParam final int size,
                                                                           final Principal principal) {
-        log.info("REQUEST: to get orders for user with email" + principal.getName() + " on page: " + page + " with size: " + size);
+        log.info("REQUEST: to get orders for user with email " + principal.getName() + " on page: " + page + " with size: " + size);
 
         OrderGetRequest request = new OrderGetRequest(page, size, principal.getName());
 
         List<OrderGetResponse> response = orderWebService.getOrders(request);
 
-        log.info("RESPONSE: to get orders for user with email" + principal.getName() + " on page: " + page + " with size: " + size);
+        log.info("RESPONSE: to get orders for user with email " + principal.getName() + " on page: " + page + " with size: " + size);
 
         return ResponseEntity.
                 ok().

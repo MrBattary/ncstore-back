@@ -27,7 +27,7 @@ import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.repository.OrderItemRepository;
 import com.netcracker.ncstore.repository.OrderRepository;
 import com.netcracker.ncstore.service.order.interfaces.IOrderBusinessService;
-import com.netcracker.ncstore.service.payment.IPaymentService;
+import com.netcracker.ncstore.service.payment.interfaces.IPaymentService;
 import com.netcracker.ncstore.service.price.interfaces.IPricesDataService;
 import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
 import com.netcracker.ncstore.service.product.interfaces.IProductDataService;
@@ -230,7 +230,8 @@ public class OrderBusinessService implements IOrderBusinessService {
                 transactionId = paymentService.proceedPaymentInRealMoney(new PaymentProceedDTO(
                                 BigDecimal.valueOf(priceInRealMoney.getPrice()),
                                 orderPayDTO.getNonce(),
-                                priceInRealMoney.getLocale()
+                                priceInRealMoney.getLocale(),
+                                order.getUser().getId()
                         )
                 );
             } catch (PaymentServiceException e) {

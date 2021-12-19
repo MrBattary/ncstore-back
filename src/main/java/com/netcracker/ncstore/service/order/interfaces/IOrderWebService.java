@@ -5,9 +5,9 @@ import com.netcracker.ncstore.dto.request.OrderGetRequest;
 import com.netcracker.ncstore.dto.request.OrderInfoGetRequest;
 import com.netcracker.ncstore.dto.response.OrderGetResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
-import com.netcracker.ncstore.exception.GeneralBadRequestException;
-import com.netcracker.ncstore.exception.GeneralNotFoundException;
-import com.netcracker.ncstore.exception.GeneralPermissionDeniedException;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
+import com.netcracker.ncstore.exception.general.GeneralNotFoundException;
+import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
 
 import java.util.List;
 

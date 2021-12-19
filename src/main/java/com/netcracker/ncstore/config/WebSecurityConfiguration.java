@@ -116,11 +116,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(new JwtAuthenticationProvider(jwtTokenService));
     }
 
-    /**
-     * Abstract factory for the password encoder
-     *
-     * @return - PasswordEncoder realization
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -131,12 +126,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new DefaultHttpFirewall();
     }
 
-    /**
-     * Abstract factory for the JWT token service
-     *
-     * @param settings - settings
-     * @return - JwtTokenService realization
-     */
     @Bean
     @Primary
     public IJwtTokenService jwtTokenService(final JwtSettings settings) {

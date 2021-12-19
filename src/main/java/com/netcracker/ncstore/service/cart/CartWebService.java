@@ -1,6 +1,5 @@
 package com.netcracker.ncstore.service.cart;
 
-import com.netcracker.ncstore.dto.ActualProductPrice;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.CartItemDTO;
 import com.netcracker.ncstore.dto.CartPutDTO;
@@ -15,7 +14,6 @@ import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.service.cart.interfaces.ICartBusinessService;
 import com.netcracker.ncstore.service.cart.interfaces.ICartWebService;
 import com.netcracker.ncstore.service.order.interfaces.IOrderWebService;
-import com.netcracker.ncstore.service.price.interfaces.IPricesBusinessService;
 import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

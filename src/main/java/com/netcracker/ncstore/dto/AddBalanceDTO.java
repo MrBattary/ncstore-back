@@ -3,7 +3,6 @@ package com.netcracker.ncstore.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Currency;
 import java.util.Locale;
 
 @AllArgsConstructor

@@ -4,7 +4,6 @@ import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
 import com.netcracker.ncstore.model.Category;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Interface for all business services that work with Category Entity

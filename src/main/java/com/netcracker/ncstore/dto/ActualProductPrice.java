@@ -1,7 +1,6 @@
 package com.netcracker.ncstore.dto;
 
 import com.netcracker.ncstore.model.ProductPrice;
-import com.netcracker.ncstore.util.validator.PriceValidator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

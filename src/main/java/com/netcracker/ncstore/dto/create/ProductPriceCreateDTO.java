@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Locale;
-import java.util.UUID;
 
 /**
  * This DTO stores information needed for creating new ProductPrice

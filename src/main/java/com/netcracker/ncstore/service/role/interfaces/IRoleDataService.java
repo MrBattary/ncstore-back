@@ -4,8 +4,6 @@ import com.netcracker.ncstore.exception.RoleServiceNotFoundException;
 import com.netcracker.ncstore.model.Role;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 
-import java.util.List;
-
 /**
  * Interacts with repositories of roles
  * Responsible for operations with Role

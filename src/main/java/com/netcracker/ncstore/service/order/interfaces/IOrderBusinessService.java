@@ -9,11 +9,8 @@ import com.netcracker.ncstore.exception.OrderServiceOrderCompletionException;
 import com.netcracker.ncstore.exception.OrderServiceOrderCreationException;
 import com.netcracker.ncstore.exception.OrderServiceOrderPaymentException;
 import com.netcracker.ncstore.exception.OrderServicePermissionException;
-import com.netcracker.ncstore.exception.OrderServiceValidationException;
 import com.netcracker.ncstore.model.Order;
-import org.hibernate.annotations.Target;
 import org.springframework.data.domain.Page;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 

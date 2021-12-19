@@ -1,8 +1,6 @@
 package com.netcracker.ncstore.service.payment;
 
 import com.braintreegateway.BraintreeGateway;
-import com.braintreegateway.Customer;
-import com.braintreegateway.CustomerRequest;
 import com.braintreegateway.MerchantAccount;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;

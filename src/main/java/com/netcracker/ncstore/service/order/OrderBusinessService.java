@@ -23,7 +23,6 @@ import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.EOrderItemStatus;
 import com.netcracker.ncstore.model.enumerations.EOrderStatus;
-import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.repository.OrderItemRepository;
 import com.netcracker.ncstore.repository.OrderRepository;
 import com.netcracker.ncstore.service.order.interfaces.IOrderBusinessService;

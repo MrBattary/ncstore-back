@@ -1,6 +1,5 @@
 package com.netcracker.ncstore.service.category.interfaces;
 
-import com.netcracker.ncstore.dto.data.CategoryDTO;
 import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
 import com.netcracker.ncstore.model.Category;
 
@@ -19,14 +18,6 @@ public interface ICategoryBusinessService {
      * @throws CategoryServiceNotFoundException - when no category with provided name exists
      */
     Category getCategoryByName(final String name) throws CategoryServiceNotFoundException;
-
-    /**
-     * Return list of Categories for product with provided ID
-     *
-     * @param productId - the UUID of product
-     * @return List of Category entities
-     */
-    List<Category> getCategoriesForProduct(final UUID productId);
 
     /**
      * Returns all categories form database

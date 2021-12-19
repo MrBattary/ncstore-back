@@ -33,7 +33,6 @@ public class ProductsDataService implements IProductDataService {
     @Override
     public Page<Product> getPageOfProductsUsingFilterAndSortParameters(ProductsPageRequestDTO productsPageRequest) {
         Pageable productsPageable;
-        Page<Product> productsPage;
 
         productsPageable = PageRequest.of(
                 productsPageRequest.getPage(),
@@ -68,12 +67,13 @@ public class ProductsDataService implements IProductDataService {
     }
 
     @Override
-    public boolean checkIfProductIsOnSale(UUID id) {
-        return doesProductExist(id) && productRepository.getById(id).getProductStatus().equals(EProductStatus.IN_STOCK);
+    public boolean checkIfProductIsOnSale(UUID id) throws ProductServiceNotFoundException {
+        Product product = getProductById(id);
+        return product.getProductStatus().equals(EProductStatus.IN_STOCK);
     }
 
     @Override
-    public Product loadProductEntityById(UUID id) throws ProductServiceNotFoundException {
+    public Product getProductById(UUID id) throws ProductServiceNotFoundException {
         return productRepository.
                 findById(id).
                 orElseThrow(

@@ -11,6 +11,4 @@ import java.util.UUID;
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
     Optional<Category> findByName(String name);
 
-    @Query("select c from Category c left join c.products products where products.id = ?1")
-    List<Category> findByProductId(UUID id);
 }

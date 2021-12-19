@@ -110,7 +110,7 @@ public class OrderBusinessService implements IOrderBusinessService {
                 for (int i = 0; i < e.getValue(); i++) {
                     OrderItem orderItem = new OrderItem(
                             order,
-                            productDataService.loadProductEntityById(e.getKey())
+                            productDataService.getProductById(e.getKey())
                     );
                     orderItemList.add(orderItem);
                 }
@@ -243,7 +243,7 @@ public class OrderBusinessService implements IOrderBusinessService {
     }
 
     private void addMoneyToSupplierForProduct(final UUID productId, final double amount) {
-        Product product = productDataService.loadProductEntityById(productId);
+        Product product = productDataService.getProductById(productId);
         User supplier = product.getSupplier();
         double supplierMoney = amount * (1 - ownerPercent);
         double shopOwnerMoney = amount * ownerPercent;
@@ -259,9 +259,8 @@ public class OrderBusinessService implements IOrderBusinessService {
         }
         for (Map.Entry<UUID, Integer> e : orderCreateDTO.getProductsToBuyWithCount().entrySet()) {
             try {
-                Product product = productDataService.loadProductEntityById(e.getKey());
-                if (!product.getProductStatus().equals(EProductStatus.IN_STOCK)) {
-                    throw new OrderServiceValidationException("Product with UUID " + e.getKey() + " has status " + product.getProductStatus().toString() + ". ");
+                if(!productDataService.checkIfProductIsOnSale(e.getKey())){
+                    throw new OrderServiceValidationException("Product with UUID " + e.getKey() + " is not for sale. ");
                 }
             } catch (ProductServiceNotFoundException exception) {
                 throw new OrderServiceValidationException(exception.getMessage());

@@ -7,13 +7,12 @@ import com.netcracker.ncstore.dto.ProductDiscontinueDTO;
 import com.netcracker.ncstore.dto.ProductPricesPopulateProductDTO;
 import com.netcracker.ncstore.dto.ProductUpdateDTO;
 import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
-import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
-import com.netcracker.ncstore.exception.ProductServiceCreationException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundExpectedException;
 import com.netcracker.ncstore.exception.ProductServicePermissionException;
 import com.netcracker.ncstore.exception.ProductServiceValidationException;
+import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.User;
@@ -54,7 +53,8 @@ public class ProductBusinessService implements IProductBusinessService {
 
     @Override
     @Transactional
-    public Product createProduct(ProductCreateDTO productCreateDTO) throws ProductServiceCreationException {
+    public Product createProduct(ProductCreateDTO productCreateDTO)
+            throws ProductServiceValidationException, ProductServicePermissionException,CategoryServiceNotFoundException,PricesServiceValidationException {
         try {
             User creator = productCreateDTO.getSupplier();
             log.info("Creation of new product for user with UUID " + creator.getId() + " begins");
@@ -103,7 +103,8 @@ public class ProductBusinessService implements IProductBusinessService {
 
     @Override
     @Transactional
-    public Product updateExistingProduct(ProductUpdateDTO productUpdateDTO) throws ProductServiceNotFoundException, ProductServicePermissionException, ProductServiceValidationException {
+    public Product updateExistingProduct(ProductUpdateDTO productUpdateDTO)
+            throws ProductServiceNotFoundException, ProductServicePermissionException, ProductServiceValidationException {
         try {
             log.info("Updating product UUID "+productUpdateDTO.getProductId()+"  by the request of the user with UUID " + productUpdateDTO.getIssuer().getId());
 
@@ -157,7 +158,8 @@ public class ProductBusinessService implements IProductBusinessService {
 
     @Override
     @Transactional
-    public Product discontinueProductSales(ProductDiscontinueDTO productDiscontinueDTO) throws ProductServiceNotFoundExpectedException, ProductServicePermissionException {
+    public Product discontinueProductSales(ProductDiscontinueDTO productDiscontinueDTO)
+            throws ProductServiceNotFoundExpectedException, ProductServicePermissionException {
         try {
             log.info("Discontinuing product with UUID "+
                     productDiscontinueDTO.getProductId()+" by the request of the user with UUID " + productDiscontinueDTO.getIssuer().getId());

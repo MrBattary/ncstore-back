@@ -3,6 +3,8 @@ package com.netcracker.ncstore.service.product.interfaces;
 import com.netcracker.ncstore.dto.ProductCreateDTO;
 import com.netcracker.ncstore.dto.ProductDiscontinueDTO;
 import com.netcracker.ncstore.dto.ProductUpdateDTO;
+import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
+import com.netcracker.ncstore.exception.PricesServiceValidationException;
 import com.netcracker.ncstore.exception.ProductServicePermissionException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundExpectedException;
@@ -21,7 +23,7 @@ public interface IProductBusinessService {
      * @throws ProductServiceValidationException if provided data is not valid
      */
     Product createProduct(final ProductCreateDTO productCreateDTO)
-            throws ProductServiceValidationException;
+            throws ProductServiceValidationException, ProductServicePermissionException, CategoryServiceNotFoundException, PricesServiceValidationException;
 
     /**
      * Update existing product

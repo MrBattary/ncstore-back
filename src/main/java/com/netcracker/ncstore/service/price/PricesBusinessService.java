@@ -6,18 +6,15 @@ import com.netcracker.ncstore.dto.ProductPricesPopulateProductDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.DiscountedProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
-import com.netcracker.ncstore.exception.PricesServiceCreationException;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
 import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.repository.DiscountRepository;
 import com.netcracker.ncstore.repository.ProductPriceRepository;
-import com.netcracker.ncstore.repository.ProductRepository;
 import com.netcracker.ncstore.service.price.interfaces.IPricesBusinessService;
 import com.netcracker.ncstore.util.validator.LocaleValidator;
 import com.netcracker.ncstore.util.validator.PriceValidator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

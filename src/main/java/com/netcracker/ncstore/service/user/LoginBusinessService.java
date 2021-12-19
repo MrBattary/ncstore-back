@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.service.user;
 
 import com.netcracker.ncstore.dto.LoginSuccessDTO;
-import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
+import com.netcracker.ncstore.dto.JWTTokenCreateDTO;
 import com.netcracker.ncstore.dto.UserEmailPasswordSignInDTO;
 import com.netcracker.ncstore.exception.UserServiceLoginException;
 import com.netcracker.ncstore.model.Role;
@@ -58,7 +58,7 @@ public class LoginBusinessService implements IUserLoginService {
     private String getToken(User user) {
         log.info("Generating token for user with email "+user.getEmail());
         return jwtTokenService.createToken(
-                new UserEmailAndRolesDTO(
+                new JWTTokenCreateDTO(
                         user.getEmail(),
                         user.getRoles().
                                 stream().

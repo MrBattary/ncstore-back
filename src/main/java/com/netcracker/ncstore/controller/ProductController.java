@@ -1,6 +1,7 @@
 package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.body.ProductCreateBody;
+import com.netcracker.ncstore.dto.body.ProductUpdateBody;
 import com.netcracker.ncstore.dto.request.ProductCreateRequest;
 import com.netcracker.ncstore.dto.request.ProductDeleteRequest;
 import com.netcracker.ncstore.dto.request.ProductGetDetailedRequest;
@@ -148,7 +149,7 @@ public class ProductController {
 
     @PutMapping(value = "/products/{productId}")
     public ResponseEntity<ProductUpdateResponse> updateProduct(@PathVariable final UUID productId,
-                                                               @RequestBody final ProductUpdateRequest body,
+                                                               @RequestBody final ProductUpdateBody body,
                                                                final Principal principal) {
         log.info("REQUEST: to update product with id: " + productId);
 

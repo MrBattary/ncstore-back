@@ -5,7 +5,6 @@ import com.netcracker.ncstore.dto.ChangePasswordDTO;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
 import com.netcracker.ncstore.exception.PaymentServiceException;
 import com.netcracker.ncstore.exception.UserServiceBalancePaymentException;
-import com.netcracker.ncstore.exception.UserServiceChangePasswordException;
 import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServicePasswordChangingException;
 import com.netcracker.ncstore.model.User;
@@ -63,7 +62,7 @@ public class UserBusinessService implements IUserBusinessService {
             throw notFoundException;
         } catch (PaymentServiceException paymentServiceException) {
             log.error("Can not add money to balance of user with email " + addBalanceDTO.getEmail() + " due to payment error: " + paymentServiceException.getMessage());
-            throw new UserServiceChangePasswordException("Unable to add money to balance due to unsuccessful payment. " + paymentServiceException.getMessage(), paymentServiceException);
+            throw new UserServiceBalancePaymentException("Unable to add money to balance due to unsuccessful payment. " + paymentServiceException.getMessage(), paymentServiceException);
         }
     }
 
@@ -85,10 +84,10 @@ public class UserBusinessService implements IUserBusinessService {
 
         } catch (IllegalArgumentException illegalArgumentException) {
             log.error("User with email " + changePasswordDTO.getEmail() + " tried to change password, but old password was incorrect");
-            throw new UserServiceChangePasswordException("Can not change password. " + illegalArgumentException.getMessage(), illegalArgumentException);
+            throw new UserServicePasswordChangingException("Can not change password. " + illegalArgumentException.getMessage(), illegalArgumentException);
         } catch (UserServiceNotFoundException notFoundException) {
             log.error("Password change was requested for user with email " + changePasswordDTO.getEmail() + " but such user does not exist. ");
-            throw new UserServiceChangePasswordException("Can not change password. " + notFoundException.getMessage(), notFoundException);
+            throw new UserServicePasswordChangingException("Can not change password. " + notFoundException.getMessage(), notFoundException);
         }
     }
 }

@@ -11,9 +11,7 @@ import lombok.extern.jackson.Jacksonized;
 import java.util.List;
 import java.util.UUID;
 
-@Jacksonized
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
+
 @AllArgsConstructor
 @Getter
 public class ProductUpdateRequest {

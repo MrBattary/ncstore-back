@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 public class CartWebService implements ICartWebService {
     private final ICartBusinessService cartBusinessService;
     private final IPriceConversionService priceConversionService;
-    private final IPricesBusinessService pricesService;
     private final IOrderWebService orderWebService;
 
     @Value("${security.anonymous_user_name}")
@@ -36,12 +35,10 @@ public class CartWebService implements ICartWebService {
 
     public CartWebService(final ICartBusinessService cartBusinessService,
                           final IPriceConversionService priceConversionService,
-                          final IPricesBusinessService pricesService,
                           final IOrderWebService orderWebService) {
 
         this.cartBusinessService = cartBusinessService;
         this.priceConversionService = priceConversionService;
-        this.pricesService = pricesService;
         this.orderWebService = orderWebService;
     }
 

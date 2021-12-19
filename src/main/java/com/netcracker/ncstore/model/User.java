@@ -24,7 +24,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 public class User {
-    //TODO: need to implement UserDetails but no spring security yet
     @Id
     @GeneratedValue
     private UUID id;

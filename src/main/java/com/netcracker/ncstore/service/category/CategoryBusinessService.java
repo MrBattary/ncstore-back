@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -27,12 +26,6 @@ public class CategoryBusinessService implements ICategoryBusinessService {
                 orElseThrow(
                         () -> new CategoryServiceNotFoundException("Unable to find category with name " + name)
                 );
-    }
-
-    @Override
-    public List<Category> getCategoriesForProduct(UUID productId) {
-        return categoryRepository.
-                findByProductId(productId);
     }
 
     @Override

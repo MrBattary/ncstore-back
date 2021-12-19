@@ -4,7 +4,6 @@ import com.netcracker.ncstore.dto.ProductPricesPopulateProductDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.DiscountedProductPriceCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
-import com.netcracker.ncstore.exception.PricesServiceCreationException;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
 import com.netcracker.ncstore.model.Discount;
 import com.netcracker.ncstore.model.ProductPrice;
@@ -21,7 +20,7 @@ public interface IPricesBusinessService {
      *
      * @param productPriceCreateDTO DTO containing info for crating new entity
      * @return created ProductPrice entity
-     * @throws PricesServiceCreationException when it is impossible to create product price with provided data
+     * @throws PricesServiceValidationException when provided data for price is invalid
      */
     ProductPrice createProductPrice(final ProductPriceCreateDTO productPriceCreateDTO)
             throws PricesServiceValidationException;
@@ -31,7 +30,7 @@ public interface IPricesBusinessService {
      *
      * @param discountCreateDTO DTO containing info for crating new entity
      * @return created Discount entity
-     * @throws PricesServiceCreationException when it is impossible to create disocunt with provided data
+     * @throws PricesServiceValidationException when provided data for discount is invalid
      */
     Discount createDiscountForProduct(final DiscountCreateDTO discountCreateDTO)
             throws PricesServiceValidationException;
@@ -41,7 +40,7 @@ public interface IPricesBusinessService {
      *
      * @param discountedProductPriceCreateDTO DTO containing info for crating new product price and discount entities
      * @return created ProductPrice entity. Discount entity is mapped for ProductPrice entity using One-To-One.
-     * @throws PricesServiceCreationException when it is impossible to create product price and discount entities with provided data
+     * @throws PricesServiceValidationException when provided data is invalid
      */
     ProductPrice createDiscountedProductPrice(final DiscountedProductPriceCreateDTO discountedProductPriceCreateDTO)
             throws PricesServiceValidationException;
@@ -51,6 +50,7 @@ public interface IPricesBusinessService {
      *
      * @param dto DTO containing product and lists of regular and discount prices
      * @return List<ProductPrice> containing created prices
+     * @throws PricesServiceValidationException when provided data is invalid
      */
     List<ProductPrice> populateProductWithPrices(final ProductPricesPopulateProductDTO dto)
             throws PricesServiceValidationException;

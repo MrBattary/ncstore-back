@@ -45,5 +45,5 @@ public interface IProductDataService {
      * @return product entity with provided UUID
      * @throws ProductServiceNotFoundException when product no found
      */
-    Product loadProductEntityById(UUID id) throws ProductServiceNotFoundException;
+    Product getProductById(UUID id) throws ProductServiceNotFoundException;
 }

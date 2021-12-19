@@ -213,7 +213,7 @@ public class ProductWebService implements IProductWebService {
     @Override
     public ProductGetInfoResponse getProductInfo(ProductGetInfoRequest request) {
         try {
-            Product product = productDataService.loadProductEntityById(request.getProductId());
+            Product product = productDataService.getProductById(request.getProductId());
 
             ActualProductPriceConvertedForRegionDTO convertedPrice = priceConversionService.getActualConvertedPriceForProductInRegion(
                     new ProductLocaleDTO(
@@ -246,7 +246,7 @@ public class ProductWebService implements IProductWebService {
         try{
             User supplier = userDataService.getUserByEmail(request.getEmailOfIssuer());
 
-            Product product = productDataService.loadProductEntityById(request.getProductId());
+            Product product = productDataService.getProductById(request.getProductId());
 
             if(!product.getSupplier().equals(supplier)){
                 throw new GeneralPermissionDeniedException("Only owner of product can view detailed info. ");

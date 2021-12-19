@@ -3,9 +3,9 @@ package com.netcracker.ncstore.service.user.web;
 import com.netcracker.ncstore.dto.request.PersonDetailedInfoRequest;
 import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonInfoResponse;
+import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.general.GeneralNotFoundException;
 import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
-import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.model.Person;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
@@ -51,7 +51,7 @@ public class PersonWebService implements IPersonWebService {
                     RolesConverter.rolesListToRoleNamesList(user.getRoles())
             );
 
-        }catch (UserServiceNotFoundException notFoundException){
+        } catch (UserServiceNotFoundException notFoundException) {
             throw new GeneralNotFoundException(notFoundException.getMessage(), notFoundException);
         }
     }
@@ -85,7 +85,7 @@ public class PersonWebService implements IPersonWebService {
                     birthday,
                     RolesConverter.rolesListToRoleNamesList(user.getRoles())
             );
-        }catch (UserServiceNotFoundException notFoundException){
+        } catch (UserServiceNotFoundException notFoundException) {
             throw new GeneralNotFoundException(notFoundException.getMessage(), notFoundException);
         }
     }

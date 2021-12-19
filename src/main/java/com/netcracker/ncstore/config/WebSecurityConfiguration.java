@@ -33,12 +33,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final AccessDeniedHandler accessDeniedHandler;
     private final LogoutSuccessHandler logoutSuccessHandler;
 
-    /**
-     * Constructor
-     *
-     * @param jwtTokenService - JWT Token Service
-     * @param logoutSuccessHandler
-     */
     public WebSecurityConfiguration(final IJwtTokenService jwtTokenService,
                                     final AccessDeniedHandler accessDeniedHandler,
                                     final LogoutSuccessHandler logoutSuccessHandler) {
@@ -86,19 +80,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/products/{\\d+}").permitAll()
                 .and()
-                .authorizeRequests().antMatchers( HttpMethod.GET,"/cart").permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/cart").permitAll()
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.PUT,"/cart").permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.PUT, "/cart").permitAll()
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.DELETE,"/cart/{\\d+}").permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.DELETE, "/cart/{\\d+}").permitAll()
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/category").permitAll()
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.GET,"/person/info/{\\d+}").permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/person/info/{\\d+}").permitAll()
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/company/info/{\\d+}").permitAll()
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.POST,"/cart").hasAuthority("CUSTOMER")
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/cart").hasAuthority("CUSTOMER")
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/products/{\\d+}/detailed").hasAuthority("SUPPLIER")
                 .and()

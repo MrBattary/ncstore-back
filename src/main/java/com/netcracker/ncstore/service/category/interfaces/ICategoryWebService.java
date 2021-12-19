@@ -10,6 +10,7 @@ import java.util.List;
 public interface ICategoryWebService {
     /**
      * Returns List of all categories
+     *
      * @return DTO containing HTTP response for category GET
      */
     List<CategoryGetResponse> getAllCategoriesResponse();

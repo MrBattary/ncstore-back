@@ -41,7 +41,7 @@ public class RegistrationBusinessService implements IUserRegistrationService {
     public Person registerUserAsPersonUsingEmailAndPassword(PersonRegisterPasswordEmailDTO request)
             throws UserServiceRegistrationException {
 
-        log.info("Start registering new person with email "+request.getEmail());
+        log.info("Start registering new person with email " + request.getEmail());
 
         User user = registerUserUsingEmailAndPassword(
                 new RegisterUserDTO(
@@ -61,7 +61,7 @@ public class RegistrationBusinessService implements IUserRegistrationService {
                 )
         );
 
-        log.info("Successfully registered new person with email "+request.getEmail());
+        log.info("Successfully registered new person with email " + request.getEmail());
 
         return person;
 
@@ -72,7 +72,7 @@ public class RegistrationBusinessService implements IUserRegistrationService {
     public Company registerUserAsCompanyUsingEmailAndPassword(CompanyRegisterPasswordEmailDTO request)
             throws UserServiceRegistrationException {
 
-        log.info("Start registering new company with email "+request.getEmail());
+        log.info("Start registering new company with email " + request.getEmail());
 
         User user = registerUserUsingEmailAndPassword(
                 new RegisterUserDTO(
@@ -91,7 +91,7 @@ public class RegistrationBusinessService implements IUserRegistrationService {
                 )
         );
 
-        log.info("Successfully registered new company with email "+request.getEmail());
+        log.info("Successfully registered new company with email " + request.getEmail());
 
         return company;
     }
@@ -124,8 +124,8 @@ public class RegistrationBusinessService implements IUserRegistrationService {
             log.info("Successfully added user with email " + registerUserDTO.getEmail() + " to database");
 
             return user;
-        }catch (UserServiceRegistrationException e){
-            log.warn("Unable to add user with email "+registerUserDTO.getEmail()+" to database");
+        } catch (UserServiceRegistrationException e) {
+            log.warn("Unable to add user with email " + registerUserDTO.getEmail() + " to database");
             throw e;
         }
     }

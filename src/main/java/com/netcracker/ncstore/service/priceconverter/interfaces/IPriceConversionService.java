@@ -21,7 +21,7 @@ public interface IPriceConversionService {
      * Also, returned price is rounded to two decimal places
      *
      * @param priceInUC - priceInUC in UC which will be converted
-     * @param region - to which regional priceInUC UC value will be converted
+     * @param region    - to which regional priceInUC UC value will be converted
      * @return converted UC value for specified region with Currency symbol for taht region
      */
     ConvertedPriceWithCurrencySymbolDTO convertUCPriceToRealPriceWithSymbol(double priceInUC, Locale region);
@@ -29,7 +29,7 @@ public interface IPriceConversionService {
     /**
      * Converts price in specified region back to UC
      *
-     * @param realPrice - regional price in real currency
+     * @param realPrice     - regional price in real currency
      * @param regionOfPrice - region
      * @return DTO containing converted price value, requested locale and actual locale. Actual locale is different if no conversion rate for that locale specified.
      */
@@ -47,10 +47,10 @@ public interface IPriceConversionService {
     /**
      * Converts ProductPrice to ActualProductPriceConvertedForRegionDTO
      * which means converting normal and discount prices and adding currency symbol.
-     *
+     * <p>
      * If no price for requested locale found returns price for default locale.
      *
-     * @param actualProductPrice ProductPrice entity
+     * @param productLocaleDTO ProductPrice entity
      * @return ActualProductPriceConvertedForRegionDTO containing converted prices for real money
      * @throws PriceConversionServiceNotFoundException when product, price or conversion not found
      */

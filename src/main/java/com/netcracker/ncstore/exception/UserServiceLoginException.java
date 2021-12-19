@@ -3,7 +3,7 @@ package com.netcracker.ncstore.exception;
 /**
  * Used when there is some exception while login
  */
-public class UserServiceLoginException extends RuntimeException{
+public class UserServiceLoginException extends RuntimeException {
     public UserServiceLoginException() {
     }
 

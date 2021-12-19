@@ -3,7 +3,7 @@ package com.netcracker.ncstore.exception;
 /**
  * Used when request for creating order contains invalid data
  */
-public class OrderServiceValidationException extends RuntimeException{
+public class OrderServiceValidationException extends RuntimeException {
     public OrderServiceValidationException() {
     }
 

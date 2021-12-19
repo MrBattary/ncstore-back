@@ -24,19 +24,20 @@ import java.util.Collections;
 public abstract class AJwtAuthFilter extends AbstractAuthenticationProcessingFilter {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private String anonymousUserName = "ANONYMOUS";
-
-    private Authentication anonymousToken() {
-        return new AnonymousAuthenticationToken(anonymousUserName, anonymousUserName,
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_"+anonymousUserName)));
-    }
+    private final String anonymousUserName = "ANONYMOUS";
 
     /**
      * Constructor
+     *
      * @param matcher - matcher type
      */
     AJwtAuthFilter(final RequestMatcher matcher) {
         super(matcher);
+    }
+
+    private Authentication anonymousToken() {
+        return new AnonymousAuthenticationToken(anonymousUserName, anonymousUserName,
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + anonymousUserName)));
     }
 
     @Override
@@ -54,6 +55,7 @@ public abstract class AJwtAuthFilter extends AbstractAuthenticationProcessingFil
 
     /**
      * Take token
+     *
      * @param request - web request
      * @return - Token
      * @throws AuthenticationException - Authentication failed
@@ -66,8 +68,7 @@ public abstract class AJwtAuthFilter extends AbstractAuthenticationProcessingFil
             final HttpServletResponse response,
             final FilterChain chain,
             final Authentication authResult)
-            throws IOException, ServletException
-    {
+            throws IOException, ServletException {
         SecurityContextHolder.getContext().setAuthentication(authResult);
         chain.doFilter(request, response);
     }

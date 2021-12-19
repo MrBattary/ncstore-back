@@ -15,10 +15,9 @@ import java.util.Locale;
 @Service
 @Slf4j
 public class PricesDataService implements IPricesDataService {
+    private final ProductPriceRepository productPriceRepository;
     @Value("${locale.default.code}")
     private String defaultLocaleCode;
-
-    private final ProductPriceRepository productPriceRepository;
 
     public PricesDataService(ProductPriceRepository productPriceRepository) {
         this.productPriceRepository = productPriceRepository;
@@ -37,7 +36,7 @@ public class PricesDataService implements IPricesDataService {
                     locale);
         }
 
-        if(productPrice==null){
+        if (productPrice == null) {
             throw new PricesServiceNotFoundException("Product does not exists or has no price for default locale. ");
         }
 

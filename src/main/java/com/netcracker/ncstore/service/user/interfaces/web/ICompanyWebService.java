@@ -11,5 +11,6 @@ import java.util.UUID;
  */
 public interface ICompanyWebService {
     CompanyDetailedInfoResponse getDetailedCompanyInfo(CompanyDetailedInfoRequest request);
+
     CompanyInfoResponse getPublicCompanyInfo(UUID companyId);
 }

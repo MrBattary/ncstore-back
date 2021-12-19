@@ -54,7 +54,7 @@ public class UserBusinessService implements IUserBusinessService {
 
             user.setBalance(user.getBalance() + addBalanceDTO.getAmountToAddInUC());
 
-            log.info("Successfully finished balance payment procedure for user with UUID " + user.getId() + " for amount of " + addBalanceDTO.getAmountToAddInRealMoney() + " in final locale "+Currency.getInstance(addBalanceDTO.getLocale()).getCurrencyCode());
+            log.info("Successfully finished balance payment procedure for user with UUID " + user.getId() + " for amount of " + addBalanceDTO.getAmountToAddInRealMoney() + " in final locale " + Currency.getInstance(addBalanceDTO.getLocale()).getCurrencyCode());
             return user.getBalance();
 
         } catch (UserServiceNotFoundException notFoundException) {

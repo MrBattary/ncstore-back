@@ -21,7 +21,7 @@ import java.util.List;
 @Setter
 public class SignUpPersonBody {
     private final String email;
-    private String password;
+    private final String password;
     private final String nickName;
     private final String firstName;
     private final String lastName;

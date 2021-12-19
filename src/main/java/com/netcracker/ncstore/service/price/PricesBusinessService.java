@@ -65,7 +65,7 @@ public class PricesBusinessService implements IPricesBusinessService {
     @Override
     public Discount createDiscountForProduct(DiscountCreateDTO discountCreateDTO) throws PricesServiceValidationException {
         try {
-            log.info("Creating discount for product with UUID "+discountCreateDTO.getProduct().getId() +" in region " + discountCreateDTO.getRegion());
+            log.info("Creating discount for product with UUID " + discountCreateDTO.getProduct().getId() + " in region " + discountCreateDTO.getRegion());
             if (!PriceValidator.isPriceValid(discountCreateDTO.getDiscountPrice())) {
                 throw new PricesServiceValidationException("Provided price is not valid. ");
             }
@@ -82,7 +82,7 @@ public class PricesBusinessService implements IPricesBusinessService {
                 throw new PricesServiceValidationException("Discount for this product already exists. ");
             }
 
-            log.info("Succesfully created discount for product with UUID "+discountCreateDTO.getProduct().getId());
+            log.info("Succesfully created discount for product with UUID " + discountCreateDTO.getProduct().getId());
 
             return discountRepository.save(
                     new Discount(

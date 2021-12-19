@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Main application entry point
- *
+ * <p>
  * Suppress because Main class has one 'public static void main' method,
  * so PMD decides its utility class, checks private construction and final modifier and flags the error.
  */

@@ -3,7 +3,7 @@ package com.netcracker.ncstore.exception;
 /**
  * Used when some error happens while adding money to user's balance
  */
-public class UserServiceBalancePaymentException extends RuntimeException{
+public class UserServiceBalancePaymentException extends RuntimeException {
     public UserServiceBalancePaymentException() {
     }
 

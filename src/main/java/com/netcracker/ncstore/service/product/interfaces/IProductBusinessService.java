@@ -5,9 +5,9 @@ import com.netcracker.ncstore.dto.ProductDiscontinueDTO;
 import com.netcracker.ncstore.dto.ProductUpdateDTO;
 import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
 import com.netcracker.ncstore.exception.PricesServiceValidationException;
-import com.netcracker.ncstore.exception.ProductServicePermissionException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundExpectedException;
+import com.netcracker.ncstore.exception.ProductServicePermissionException;
 import com.netcracker.ncstore.exception.ProductServiceValidationException;
 import com.netcracker.ncstore.model.Product;
 

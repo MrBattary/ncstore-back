@@ -11,11 +11,14 @@ import java.time.Duration;
 public interface IJwtTokenService {
     /**
      * Getter for token duration
+     *
      * @return - token duration
      */
     Duration getTokenExpiredIn();
+
     /**
      * Parses the token
+     *
      * @param token - the token string to parse
      * @return - authenticated data
      */
@@ -23,6 +26,7 @@ public interface IJwtTokenService {
 
     /**
      * Creates new Token for user
+     *
      * @param userLoginAndRolesDTO - dto
      * @return - signed token
      */

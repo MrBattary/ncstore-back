@@ -1,12 +1,12 @@
 package com.netcracker.ncstore.service.user.web;
 
-import com.netcracker.ncstore.dto.create.PersonRegisterPasswordEmailDTO;
 import com.netcracker.ncstore.dto.create.CompanyRegisterPasswordEmailDTO;
+import com.netcracker.ncstore.dto.create.PersonRegisterPasswordEmailDTO;
 import com.netcracker.ncstore.dto.request.RegisterCompanyRequest;
 import com.netcracker.ncstore.dto.request.RegisterPersonRequest;
-import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
 import com.netcracker.ncstore.exception.RoleServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServiceRegistrationException;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
 import com.netcracker.ncstore.model.Role;
 import com.netcracker.ncstore.service.role.interfaces.IRoleDataService;
 import com.netcracker.ncstore.service.user.interfaces.IUserRegistrationService;
@@ -29,7 +29,7 @@ public class RegistrationWebService implements IRegistrationWebService {
 
 
     @Override
-    public void registerPerson(RegisterPersonRequest request) throws GeneralBadRequestException{
+    public void registerPerson(RegisterPersonRequest request) throws GeneralBadRequestException {
         try {
 
             List<Role> roleList = roleNamesToRoles(request.getRoles());
@@ -54,7 +54,7 @@ public class RegistrationWebService implements IRegistrationWebService {
     }
 
     @Override
-    public void registerCompany(RegisterCompanyRequest request) throws GeneralBadRequestException{
+    public void registerCompany(RegisterCompanyRequest request) throws GeneralBadRequestException {
         try {
             List<Role> roleList = roleNamesToRoles(request.getRoles());
 
@@ -76,7 +76,7 @@ public class RegistrationWebService implements IRegistrationWebService {
 
     }
 
-    private List<Role> roleNamesToRoles(List<String> roleNames) throws RoleServiceNotFoundException{
+    private List<Role> roleNamesToRoles(List<String> roleNames) throws RoleServiceNotFoundException {
         return roleNames.
                 stream().
                 map(roleService::getRoleByName).

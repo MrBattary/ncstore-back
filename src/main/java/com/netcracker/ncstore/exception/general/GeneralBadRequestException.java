@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.exception.general;
 
-public class GeneralBadRequestException extends RuntimeException{
+public class GeneralBadRequestException extends RuntimeException {
     public GeneralBadRequestException() {
     }
 

@@ -47,15 +47,14 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class OrderBusinessService implements IOrderBusinessService {
-    @Value("${store.sales_percentage}")
-    private double ownerPercent;
-
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final IProductDataService productDataService;
     private final IPricesDataService pricesDataService;
     private final IPriceConversionService priceConversionService;
     private final IPaymentService paymentService;
+    @Value("${store.sales_percentage}")
+    private double ownerPercent;
 
     public OrderBusinessService(final OrderRepository orderRepository,
                                 final OrderItemRepository orderItemRepository,
@@ -258,7 +257,7 @@ public class OrderBusinessService implements IOrderBusinessService {
         }
         for (Map.Entry<UUID, Integer> e : orderCreateDTO.getProductsToBuyWithCount().entrySet()) {
             try {
-                if(!productDataService.checkIfProductIsOnSale(e.getKey())){
+                if (!productDataService.checkIfProductIsOnSale(e.getKey())) {
                     throw new OrderServiceValidationException("Product with UUID " + e.getKey() + " is not for sale. ");
                 }
             } catch (ProductServiceNotFoundException exception) {

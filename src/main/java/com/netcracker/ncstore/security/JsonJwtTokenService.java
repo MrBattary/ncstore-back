@@ -30,6 +30,7 @@ public class JsonJwtTokenService implements IJwtTokenService {
 
     /**
      * Constructor
+     *
      * @param settings - token settings
      */
     public JsonJwtTokenService(final JwtSettings settings) {

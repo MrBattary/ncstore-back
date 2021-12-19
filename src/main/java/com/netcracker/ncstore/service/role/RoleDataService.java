@@ -21,7 +21,7 @@ public class RoleDataService implements IRoleDataService {
     public Role getRoleByName(ERoleName name) throws RoleServiceNotFoundException {
         return roleRepository.
                 findByRoleName(name).
-                orElseThrow(()->new RoleServiceNotFoundException("Role with name "+name.toString()+" not found. "));
+                orElseThrow(() -> new RoleServiceNotFoundException("Role with name " + name.toString() + " not found. "));
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class RegisterCompanyRequest {
     private final String email;
-    private String password;
+    private final String password;
     private final String companyName;
     private final LocalDate foundationDate;
     private final List<String> roles;

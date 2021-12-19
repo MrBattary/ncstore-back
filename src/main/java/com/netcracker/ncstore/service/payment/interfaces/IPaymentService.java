@@ -9,6 +9,7 @@ import com.netcracker.ncstore.exception.PaymentServiceException;
 public interface IPaymentService {
     /**
      * method to get token
+     *
      * @return payment token
      */
     String getPaymentToken();

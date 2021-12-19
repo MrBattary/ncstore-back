@@ -20,20 +20,20 @@ import com.netcracker.ncstore.dto.response.ProductGetDetailedResponse;
 import com.netcracker.ncstore.dto.response.ProductGetInfoResponse;
 import com.netcracker.ncstore.dto.response.ProductUpdateResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
-import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
-import com.netcracker.ncstore.exception.general.GeneralNotFoundException;
-import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
 import com.netcracker.ncstore.exception.ProductServicePermissionException;
 import com.netcracker.ncstore.exception.ProductServiceValidationException;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
+import com.netcracker.ncstore.exception.general.GeneralNotFoundException;
+import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.ProductPrice;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
-import com.netcracker.ncstore.service.product.interfaces.IProductDataService;
 import com.netcracker.ncstore.service.product.interfaces.IProductBusinessService;
+import com.netcracker.ncstore.service.product.interfaces.IProductDataService;
 import com.netcracker.ncstore.service.product.interfaces.IProductWebService;
 import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
 import lombok.extern.slf4j.Slf4j;
@@ -233,7 +233,7 @@ public class ProductWebService implements IProductWebService {
                     convertedPrice.getCurrencySymbol(),
                     convertedPrice.getDiscountStartUtc(),
                     convertedPrice.getDiscountEndUtc(),
-                    product.getParentProduct()==null ? null : product.getParentProduct().getId(),
+                    product.getParentProduct() == null ? null : product.getParentProduct().getId(),
                     convertCategoryListToNameList(product.getCategories())
             );
         } catch (ProductServiceNotFoundException notFoundException) {
@@ -243,12 +243,12 @@ public class ProductWebService implements IProductWebService {
 
     @Override
     public ProductGetDetailedResponse getDetailedProductInfo(ProductGetDetailedRequest request) {
-        try{
+        try {
             User supplier = userDataService.getUserByEmail(request.getEmailOfIssuer());
 
             Product product = productDataService.getProductById(request.getProductId());
 
-            if(!product.getSupplier().equals(supplier)){
+            if (!product.getSupplier().equals(supplier)) {
                 throw new GeneralPermissionDeniedException("Only owner of product can view detailed info. ");
             }
 

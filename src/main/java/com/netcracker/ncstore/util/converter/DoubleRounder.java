@@ -7,13 +7,13 @@ public abstract class DoubleRounder {
     /**
      * Used to round double value to N decimal places.
      *
-     * @param value - double to be rounded
+     * @param value  - double to be rounded
      * @param places - decimal places
      * @return rounded double
      * @throws IllegalArgumentException - when places < 0
      */
     public static double round(double value, int places) throws IllegalArgumentException {
-        if (places < 0){
+        if (places < 0) {
             throw new IllegalArgumentException();
         }
 

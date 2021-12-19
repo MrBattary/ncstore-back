@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.exception;
 
-public class PricesServiceNotFoundException extends RuntimeException{
+public class PricesServiceNotFoundException extends RuntimeException {
     public PricesServiceNotFoundException() {
     }
 

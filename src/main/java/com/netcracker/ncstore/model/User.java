@@ -48,9 +48,9 @@ public class User {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof User){
-            return ((User)obj).getId().equals(id);
-        }else{
+        if (obj instanceof User) {
+            return ((User) obj).getId().equals(id);
+        } else {
             return false;
         }
     }

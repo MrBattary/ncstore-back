@@ -4,8 +4,8 @@ import com.netcracker.ncstore.dto.LoginSuccessDTO;
 import com.netcracker.ncstore.dto.UserEmailPasswordSignInDTO;
 import com.netcracker.ncstore.dto.request.SignInEmailPasswordRequest;
 import com.netcracker.ncstore.dto.response.SignInResponse;
-import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
 import com.netcracker.ncstore.exception.UserServiceLoginException;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
 import com.netcracker.ncstore.model.enumerations.EUserType;
 import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
 import com.netcracker.ncstore.service.user.interfaces.IUserLoginService;
@@ -45,7 +45,7 @@ public class LoginWebService implements ILoginWebService {
                     RolesConverter.rolesListToRoleNamesList(loginSuccessDTO.getUser().getRoles()),
                     loginSuccessDTO.getToken()
             );
-        }catch (UserServiceLoginException loginException){
+        } catch (UserServiceLoginException loginException) {
             throw new GeneralBadRequestException(loginException.getMessage(), loginException);
         }
     }

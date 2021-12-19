@@ -18,7 +18,7 @@ public class JWTTokenCreateDTO {
 
     public List<String> getUserRoleNames() {
         List<String> stringList = new ArrayList<>(roles.size());
-        for(ERoleName roleName: roles){
+        for (ERoleName roleName : roles) {
             stringList.add(roleName.toString());
         }
         return stringList;

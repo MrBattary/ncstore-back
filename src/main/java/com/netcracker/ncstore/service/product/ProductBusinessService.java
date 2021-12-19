@@ -36,12 +36,11 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ProductBusinessService implements IProductBusinessService {
-    @Value("${locale.default.code}")
-    private String defaultLocaleCode;
-
     private final ProductRepository productRepository;
     private final ICategoryBusinessService categoryBusinessService;
     private final IPricesBusinessService pricesBusinessService;
+    @Value("${locale.default.code}")
+    private String defaultLocaleCode;
 
     public ProductBusinessService(final ProductRepository productRepository,
                                   final ICategoryBusinessService categoryBusinessService,
@@ -54,7 +53,7 @@ public class ProductBusinessService implements IProductBusinessService {
     @Override
     @Transactional
     public Product createProduct(ProductCreateDTO productCreateDTO)
-            throws ProductServiceValidationException, ProductServicePermissionException,CategoryServiceNotFoundException,PricesServiceValidationException {
+            throws ProductServiceValidationException, ProductServicePermissionException, CategoryServiceNotFoundException, PricesServiceValidationException {
         try {
             User creator = productCreateDTO.getSupplier();
             log.info("Creation of new product for user with UUID " + creator.getId() + " begins");
@@ -106,7 +105,7 @@ public class ProductBusinessService implements IProductBusinessService {
     public Product updateExistingProduct(ProductUpdateDTO productUpdateDTO)
             throws ProductServiceNotFoundException, ProductServicePermissionException, ProductServiceValidationException {
         try {
-            log.info("Updating product UUID "+productUpdateDTO.getProductId()+"  by the request of the user with UUID " + productUpdateDTO.getIssuer().getId());
+            log.info("Updating product UUID " + productUpdateDTO.getProductId() + "  by the request of the user with UUID " + productUpdateDTO.getIssuer().getId());
 
             Product productFromRepository = productRepository.
                     findById(productUpdateDTO.getProductId()).
@@ -161,8 +160,8 @@ public class ProductBusinessService implements IProductBusinessService {
     public Product discontinueProductSales(ProductDiscontinueDTO productDiscontinueDTO)
             throws ProductServiceNotFoundExpectedException, ProductServicePermissionException {
         try {
-            log.info("Discontinuing product with UUID "+
-                    productDiscontinueDTO.getProductId()+" by the request of the user with UUID " + productDiscontinueDTO.getIssuer().getId());
+            log.info("Discontinuing product with UUID " +
+                    productDiscontinueDTO.getProductId() + " by the request of the user with UUID " + productDiscontinueDTO.getIssuer().getId());
 
             Product productFromRepository = productRepository.
                     findById(productDiscontinueDTO.getProductId()).
@@ -175,7 +174,7 @@ public class ProductBusinessService implements IProductBusinessService {
             pricesBusinessService.deleteAllProductPricesForProduct(productFromRepository.getId());
             productFromRepository.setProductStatus(EProductStatus.DISCONTINUED);
 
-            log.info("Successfully discontinued product with UUID "+productFromRepository.getId());
+            log.info("Successfully discontinued product with UUID " + productFromRepository.getId());
 
             return productFromRepository;
 
@@ -206,7 +205,7 @@ public class ProductBusinessService implements IProductBusinessService {
         validateProductPrices(productUpdateDTO.getPrices(), productUpdateDTO.getDiscountPrices());
     }
 
-    private void validateSupplierToModifyProduct(User supplier, Product product){
+    private void validateSupplierToModifyProduct(User supplier, Product product) {
         if (!supplier.equals(product.getSupplier())) {
             throw new GeneralPermissionDeniedException("Only owner of product can update product. ");
         }

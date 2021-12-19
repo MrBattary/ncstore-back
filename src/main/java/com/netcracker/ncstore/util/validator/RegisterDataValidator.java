@@ -14,6 +14,7 @@ public abstract class RegisterDataValidator {
 
     /**
      * Checks if email valid
+     *
      * @param email full email address
      * @return true if email is valid
      */
@@ -28,7 +29,7 @@ public abstract class RegisterDataValidator {
      * @param password password
      * @return true if password is valid
      */
-    public static boolean isPasswordValid(final String password){
+    public static boolean isPasswordValid(final String password) {
         boolean flag = true;
         flag = password.length() < 8;
         //more here
@@ -40,9 +41,9 @@ public abstract class RegisterDataValidator {
      * Returns string containing text description about password requirements.
      * Used for correct user response.
      *
-     * @return
+     * @return String containing password requirements
      */
-    public static String getPasswordRequirementsAsText(){
+    public static String getPasswordRequirementsAsText() {
         return "Must be at least 8 symbols long. ";
         //more here
     }

@@ -26,13 +26,11 @@ import java.util.stream.Collectors;
 @SessionScope
 @Slf4j
 public class SessionCartBusinessService implements ICartBusinessService {
-    private String userEmail;
-
-    @Value("${security.anonymous_user_name}")
-    private String anonymousUserName;
-
     private final Map<UUID, Integer> cartMap;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private String userEmail;
+    @Value("${security.anonymous_user_name}")
+    private String anonymousUserName;
 
     public SessionCartBusinessService(final CartRepository cartRepository,
                                       final ApplicationEventPublisher applicationEventPublisher) {
@@ -111,7 +109,7 @@ public class SessionCartBusinessService implements ICartBusinessService {
     @PreDestroy
     public void saveCart() {
         if (userEmail != null && cartMap != null) {
-            CartServiceSessionEndedEvent event = new CartServiceSessionEndedEvent(this, new HashMap(cartMap), userEmail);
+            CartServiceSessionEndedEvent event = new CartServiceSessionEndedEvent(this, new HashMap<>(cartMap), userEmail);
             applicationEventPublisher.publishEvent(event);
         }
     }

@@ -25,7 +25,7 @@ public class CartServiceSessionEndedEventListener implements ApplicationListener
 
     public CartServiceSessionEndedEventListener(final CartRepository cartRepository,
                                                 final CartItemRepository cartItemRepository,
-                                                final IUserDataService userDataService ) {
+                                                final IUserDataService userDataService) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.userDataService = userDataService;

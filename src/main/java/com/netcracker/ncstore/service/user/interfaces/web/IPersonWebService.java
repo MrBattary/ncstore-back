@@ -11,5 +11,6 @@ import java.util.UUID;
  */
 public interface IPersonWebService {
     PersonDetailedInfoResponse getDetailedPersonInfo(PersonDetailedInfoRequest request);
+
     PersonInfoResponse getPublicPersonInfo(UUID personId);
 }

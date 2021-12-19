@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.service.user;
 
-import com.netcracker.ncstore.dto.LoginSuccessDTO;
 import com.netcracker.ncstore.dto.JWTTokenCreateDTO;
+import com.netcracker.ncstore.dto.LoginSuccessDTO;
 import com.netcracker.ncstore.dto.UserEmailPasswordSignInDTO;
 import com.netcracker.ncstore.exception.UserServiceLoginException;
 import com.netcracker.ncstore.model.Role;
@@ -32,7 +32,7 @@ public class LoginBusinessService implements IUserLoginService {
 
     @Override
     public LoginSuccessDTO loginUsingEmailAndPassword(UserEmailPasswordSignInDTO request) throws UserServiceLoginException {
-        log.info("Started login operation for user with email "+request.getEmail());
+        log.info("Started login operation for user with email " + request.getEmail());
         try {
             User user = userRepository.findByEmail(request.getEmail()).orElseThrow(IllegalArgumentException::new);
 
@@ -42,7 +42,7 @@ public class LoginBusinessService implements IUserLoginService {
 
             String token = getToken(user);
 
-            log.info("Login operation for user with email "+request.getEmail() +" completed successfully");
+            log.info("Login operation for user with email " + request.getEmail() + " completed successfully");
 
             return new LoginSuccessDTO(
                     token,
@@ -56,7 +56,7 @@ public class LoginBusinessService implements IUserLoginService {
     }
 
     private String getToken(User user) {
-        log.info("Generating token for user with email "+user.getEmail());
+        log.info("Generating token for user with email " + user.getEmail());
         return jwtTokenService.createToken(
                 new JWTTokenCreateDTO(
                         user.getEmail(),

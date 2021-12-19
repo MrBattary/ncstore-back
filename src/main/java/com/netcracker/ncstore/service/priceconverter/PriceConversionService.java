@@ -106,8 +106,8 @@ public class PriceConversionService implements IPriceConversionService {
                     pricesDataService.getActualPriceForProductInRegion(productLocaleDTO);
 
             return getActualConvertedPriceForProductInRegion(actualProductPrice);
-        }catch (PricesServiceNotFoundException notFoundException){
-            throw new PriceConversionServiceNotFoundException("Can not convert price. "+ notFoundException.getMessage(), notFoundException);
+        } catch (PricesServiceNotFoundException notFoundException) {
+            throw new PriceConversionServiceNotFoundException("Can not convert price. " + notFoundException.getMessage(), notFoundException);
         }
 
     }

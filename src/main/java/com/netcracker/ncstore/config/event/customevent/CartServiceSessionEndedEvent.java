@@ -9,8 +9,8 @@ import java.util.UUID;
 @Getter
 public class CartServiceSessionEndedEvent extends ApplicationEvent {
 
-    private Map<UUID, Integer> itemsToSafe;
-    private String userEmail;
+    private final Map<UUID, Integer> itemsToSafe;
+    private final String userEmail;
 
     public CartServiceSessionEndedEvent(Object source, Map<UUID, Integer> itemsToSafe, String userEmail) {
         super(source);

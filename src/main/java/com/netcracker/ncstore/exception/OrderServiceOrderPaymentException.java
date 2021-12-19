@@ -3,7 +3,7 @@ package com.netcracker.ncstore.exception;
 /**
  * Used when it is impossible to pay the order
  */
-public class OrderServiceOrderPaymentException extends RuntimeException{
+public class OrderServiceOrderPaymentException extends RuntimeException {
     public OrderServiceOrderPaymentException() {
     }
 

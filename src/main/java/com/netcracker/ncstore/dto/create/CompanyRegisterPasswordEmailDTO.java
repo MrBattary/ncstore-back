@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 public class CompanyRegisterPasswordEmailDTO {
     private final String email;
-    private String password;
+    private final String password;
     private final String companyName;
     private final String description;
     private final LocalDate foundationDate;

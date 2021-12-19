@@ -3,7 +3,7 @@ package com.netcracker.ncstore.exception;
 /**
  * Used when there is an exception while creating order
  */
-public class OrderServiceOrderCreationException extends RuntimeException{
+public class OrderServiceOrderCreationException extends RuntimeException {
     public OrderServiceOrderCreationException() {
     }
 

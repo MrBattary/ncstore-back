@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 public class PersonRegisterPasswordEmailDTO {
     private final String email;
-    private String password;
+    private final String password;
     private final String nickName;
     private final String firstName;
     private final String lastName;

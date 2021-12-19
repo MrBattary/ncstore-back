@@ -3,7 +3,7 @@ package com.netcracker.ncstore.exception;
 /**
  * Used when there is some error while changing user's password
  */
-public class UserServicePasswordChangingException extends RuntimeException{
+public class UserServicePasswordChangingException extends RuntimeException {
     public UserServicePasswordChangingException() {
     }
 

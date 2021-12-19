@@ -5,18 +5,23 @@ import com.netcracker.ncstore.dto.ChangePasswordDTO;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.UCPriceConvertedFromRealDTO;
 import com.netcracker.ncstore.dto.request.UserAddBalanceRequest;
+import com.netcracker.ncstore.dto.request.UserAddRoleRequest;
 import com.netcracker.ncstore.dto.request.UserBalanceGetRequest;
 import com.netcracker.ncstore.dto.request.UserChangePasswordRequest;
 import com.netcracker.ncstore.dto.response.UserAddBalanceResponse;
 import com.netcracker.ncstore.dto.response.UserBalanceGetResponse;
+import com.netcracker.ncstore.exception.RoleServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServiceBalancePaymentException;
 import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServicePasswordChangingException;
+import com.netcracker.ncstore.exception.UserServiceValidationException;
 import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
 import com.netcracker.ncstore.exception.general.GeneralNotFoundException;
 import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
+import com.netcracker.ncstore.model.Role;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
+import com.netcracker.ncstore.service.role.interfaces.IRoleDataService;
 import com.netcracker.ncstore.service.user.interfaces.IUserBusinessService;
 import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
 import com.netcracker.ncstore.service.user.interfaces.web.IUserBaseWebService;
@@ -30,17 +35,20 @@ public class UserBaseWebService implements IUserBaseWebService {
     private final IUserBusinessService userBusinessService;
     private final IUserDataService userDataService;
     private final IPriceConversionService priceConversionService;
+    private final IRoleDataService roleDataService;
 
     public UserBaseWebService(final IUserBusinessService userBusinessService,
                               final IUserDataService userDataService,
-                              final IPriceConversionService priceConversionService) {
+                              final IPriceConversionService priceConversionService,
+                              final IRoleDataService roleDataService) {
         this.userBusinessService = userBusinessService;
         this.userDataService = userDataService;
         this.priceConversionService = priceConversionService;
+        this.roleDataService = roleDataService;
     }
 
     @Override
-    public UserAddBalanceResponse addMoneyToUserBalance(UserAddBalanceRequest request) {
+    public UserAddBalanceResponse addMoneyToUserBalance(UserAddBalanceRequest request) throws GeneralBadRequestException, GeneralNotFoundException {
         try {
             UCPriceConvertedFromRealDTO UCAmountToAdd = priceConversionService.convertRealPriceToUC(
                     request.getPaymentAmount(),
@@ -61,13 +69,15 @@ public class UserBaseWebService implements IUserBaseWebService {
                     newBalance,
                     LocaleToCurrencyConverter.getCurrencySymbolByLocale(UCAmountToAdd.getActualLocale())
             );
-        } catch (UserServiceBalancePaymentException e) {
-            throw new GeneralBadRequestException(e.getMessage(), e);
+        } catch (UserServiceBalancePaymentException paymentException) {
+            throw new GeneralBadRequestException(paymentException.getMessage(), paymentException);
+        } catch (UserServiceNotFoundException notFoundException) {
+            throw new GeneralNotFoundException(notFoundException.getMessage(), notFoundException);
         }
     }
 
     @Override
-    public void changePasswordForUser(UserChangePasswordRequest request) {
+    public void changePasswordForUser(UserChangePasswordRequest request) throws GeneralBadRequestException {
         try {
             ChangePasswordDTO changePasswordDTO = new ChangePasswordDTO(
                     request.getOldPassword(),
@@ -82,7 +92,7 @@ public class UserBaseWebService implements IUserBaseWebService {
     }
 
     @Override
-    public UserBalanceGetResponse getBalanceOfUser(UserBalanceGetRequest request) {
+    public UserBalanceGetResponse getBalanceOfUser(UserBalanceGetRequest request) throws GeneralNotFoundException, GeneralPermissionDeniedException {
         try {
             User user = userDataService.getUserByEmail(request.getEmailOfUser());
 
@@ -102,6 +112,21 @@ public class UserBaseWebService implements IUserBaseWebService {
 
         } catch (UserServiceNotFoundException notFoundException) {
             throw new GeneralNotFoundException(notFoundException.getMessage(), notFoundException);
+        }
+    }
+
+    @Override
+    public void addRoleToUser(UserAddRoleRequest request) throws GeneralNotFoundException, GeneralBadRequestException {
+        try {
+            User user = userDataService.getUserByEmail(request.getEmail());
+            Role roleToAdd = roleDataService.getRoleByName(request.getNameOfNewuserRole());
+
+            userBusinessService.addRoleToUser(user, roleToAdd);
+
+        } catch (UserServiceNotFoundException | RoleServiceNotFoundException notFoundException) {
+            throw new GeneralNotFoundException(notFoundException.getMessage(), notFoundException);
+        } catch (UserServiceValidationException validationException) {
+            throw new GeneralBadRequestException(validationException.getMessage(), validationException);
         }
     }
 }

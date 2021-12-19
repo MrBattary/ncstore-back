@@ -5,6 +5,9 @@ import com.netcracker.ncstore.dto.ChangePasswordDTO;
 import com.netcracker.ncstore.exception.UserServiceBalancePaymentException;
 import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServicePasswordChangingException;
+import com.netcracker.ncstore.exception.UserServiceValidationException;
+import com.netcracker.ncstore.model.Role;
+import com.netcracker.ncstore.model.User;
 
 public interface IUserBusinessService {
     /**
@@ -23,4 +26,14 @@ public interface IUserBusinessService {
      * @throws UserServicePasswordChangingException when can not change password
      */
     void changeUserPassword(ChangePasswordDTO changePasswordDTO) throws UserServicePasswordChangingException;
+
+    /**
+     * Changes roles for user
+     *
+     * @param user  user
+     * @param role new roles
+     * @return User with changed roles
+     * @throws UserServiceValidationException when roles can not be added to user
+     */
+    User addRoleToUser(User user, Role role) throws UserServiceValidationException;
 }

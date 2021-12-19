@@ -34,7 +34,7 @@ public class LoginController {
 
         SignInResponse response = loginWebService.signInByEmailAndPassword(request);
 
-        log.info("RESPONSE REQUEST: to signin " + body.getEmail() + " user");
+        log.info("RESPONSE: to signin " + body.getEmail() + " user");
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
     }

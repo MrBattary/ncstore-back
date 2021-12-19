@@ -2,7 +2,9 @@ package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.body.UserAddBalanceBody;
 import com.netcracker.ncstore.dto.body.UserChangePasswordBody;
+import com.netcracker.ncstore.dto.body.UserGainRoleBody;
 import com.netcracker.ncstore.dto.request.UserAddBalanceRequest;
+import com.netcracker.ncstore.dto.request.UserAddRoleRequest;
 import com.netcracker.ncstore.dto.request.UserBalanceGetRequest;
 import com.netcracker.ncstore.dto.request.UserChangePasswordRequest;
 import com.netcracker.ncstore.dto.response.UserAddBalanceResponse;
@@ -93,6 +95,24 @@ public class UserController {
 
         log.info("RESPONSE: to change password from user with email " + principal.getName());
 
+        return ResponseEntity.
+                noContent().
+                build();
+    }
+
+    @PostMapping(value = "/gainrole")
+    public ResponseEntity<?> gainNewRole(@RequestBody UserGainRoleBody body,
+                                         final Principal principal) {
+        log.info("REQUEST: to gain new role " + body.getRoleName() + " from user with email " + principal.getName());
+
+        UserAddRoleRequest request = new UserAddRoleRequest(
+                principal.getName(),
+                body.getRoleName().toUpperCase(Locale.ROOT)
+        );
+
+        userWebService.addRoleToUser(request);
+
+        log.info("RESPONSE: to gain new role " + body.getRoleName() + " from user with email " + principal.getName());
         return ResponseEntity.
                 noContent().
                 build();

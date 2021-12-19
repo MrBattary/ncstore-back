@@ -7,7 +7,12 @@ import com.netcracker.ncstore.exception.PaymentServiceException;
 import com.netcracker.ncstore.exception.UserServiceBalancePaymentException;
 import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServicePasswordChangingException;
+import com.netcracker.ncstore.exception.UserServiceValidationException;
+import com.netcracker.ncstore.model.Person;
+import com.netcracker.ncstore.model.Role;
 import com.netcracker.ncstore.model.User;
+import com.netcracker.ncstore.model.enumerations.ERoleName;
+import com.netcracker.ncstore.repository.UserRepository;
 import com.netcracker.ncstore.service.payment.interfaces.IPaymentService;
 import com.netcracker.ncstore.service.user.interfaces.IUserBusinessService;
 import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
@@ -18,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -25,13 +31,16 @@ public class UserBusinessService implements IUserBusinessService {
     private final IUserDataService userDataService;
     private final PasswordEncoder passwordEncoder;
     private final IPaymentService paymentService;
+    private final UserRepository userRepository;
 
     public UserBusinessService(final IUserDataService userDataService,
                                final PasswordEncoder passwordEncoder,
-                               final IPaymentService paymentService) {
+                               final IPaymentService paymentService,
+                               final UserRepository userRepository) {
         this.userDataService = userDataService;
         this.passwordEncoder = passwordEncoder;
         this.paymentService = paymentService;
+        this.userRepository = userRepository;
     }
 
 
@@ -83,11 +92,43 @@ public class UserBusinessService implements IUserBusinessService {
             log.info("Successfully changed password for user with email " + changePasswordDTO.getEmail());
 
         } catch (IllegalArgumentException illegalArgumentException) {
-            log.error("User with email " + changePasswordDTO.getEmail() + " tried to change password, but old password was incorrect");
+            log.error("User with email " + changePasswordDTO.getEmail() + " tried to change password, but old password was incorrect. ");
             throw new UserServicePasswordChangingException("Can not change password. " + illegalArgumentException.getMessage(), illegalArgumentException);
         } catch (UserServiceNotFoundException notFoundException) {
             log.error("Password change was requested for user with email " + changePasswordDTO.getEmail() + " but such user does not exist. ");
             throw new UserServicePasswordChangingException("Can not change password. " + notFoundException.getMessage(), notFoundException);
         }
+    }
+
+    @Override
+    @Transactional
+    public User addRoleToUser(User user, Role role) throws UserServiceValidationException {
+        if (role.getRoleName().equals(ERoleName.SUPPLIER)) {
+            if (userDataService.isPerson(user.getId())) {
+                Person person = userDataService.getPerson(user.getId());
+                if (person.getFirstName() == null || person.getLastName() == null || person.getBirthday() == null) {
+                    throw new UserServiceValidationException("Person must have firstname, lastname and birthday to have role supplier. ");
+                }
+            }
+        }
+
+        if (role.getRoleName().equals(ERoleName.ADMIN)) {
+            throw new UserServiceValidationException("User can not become admin. ");
+        }
+
+        List<Role> newRoles = user.getRoles();
+
+        if (newRoles.stream().anyMatch(e -> e.getRoleName().equals(role.getRoleName()))) {
+            throw new UserServiceValidationException("User already have role " + role.getRoleName() + ". ");
+        }
+
+        newRoles.add(role);
+
+        log.info("giving role "+role.getRoleName() +" to user with UUID "+user.getId());
+
+        user.setRoles(newRoles);
+        userRepository.flush();
+
+        return user;
     }
 }

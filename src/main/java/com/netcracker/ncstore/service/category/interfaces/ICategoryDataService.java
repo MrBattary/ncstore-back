@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Interface for all business services that work with Category Entity
  */
-public interface ICategoryBusinessService {
+public interface ICategoryDataService {
     /**
      * Return real Category entity by name
      *

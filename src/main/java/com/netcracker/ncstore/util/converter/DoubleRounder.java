@@ -12,7 +12,11 @@ public abstract class DoubleRounder {
      * @return rounded double
      * @throws IllegalArgumentException - when places < 0
      */
-    public static double round(double value, int places) throws IllegalArgumentException {
+    public static Double round(Double value, int places) throws IllegalArgumentException {
+        if (value == null) {
+            return null;
+        }
+
         if (places < 0) {
             throw new IllegalArgumentException();
         }

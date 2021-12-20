@@ -7,6 +7,7 @@ import com.netcracker.ncstore.exception.UserServiceRegistrationException;
 import com.netcracker.ncstore.model.Company;
 import com.netcracker.ncstore.model.Person;
 import com.netcracker.ncstore.model.User;
+import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.CompanyRepository;
 import com.netcracker.ncstore.repository.PersonRepository;
 import com.netcracker.ncstore.repository.UserRepository;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Slf4j
@@ -109,6 +111,12 @@ public class RegistrationBusinessService implements IUserRegistrationService {
             }
             if (RegisterDataValidator.isPasswordValid(registerUserDTO.getPassword())) {
                 throw new UserServiceRegistrationException("Password do not meet requirements. " + RegisterDataValidator.getPasswordRequirementsAsText());
+            }
+            if(CollectionUtils.isEmpty(registerUserDTO.getRoles())){
+                throw new UserServiceRegistrationException("No roles for user specified. ");
+            }
+            if(registerUserDTO.getRoles().stream().anyMatch(e->e.getRoleName().equals(ERoleName.ADMIN))){
+                throw new UserServiceRegistrationException("User can not register as admin. ");
             }
 
             String encodedPassword = passwordEncoder.encode(registerUserDTO.getPassword());

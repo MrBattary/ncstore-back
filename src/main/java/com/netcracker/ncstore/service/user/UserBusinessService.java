@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Currency;
 import java.util.List;
 
@@ -106,7 +107,7 @@ public class UserBusinessService implements IUserBusinessService {
         if (role.getRoleName().equals(ERoleName.SUPPLIER)) {
             if (userDataService.isPerson(user.getId())) {
                 Person person = userDataService.getPerson(user.getId());
-                if (person.getFirstName() == null || person.getLastName() == null || person.getBirthday() == null) {
+                if (!isPersonInfoGoodForSupplier(person)) {
                     throw new UserServiceValidationException("Person must have firstname, lastname and birthday to have role supplier. ");
                 }
             }
@@ -130,5 +131,14 @@ public class UserBusinessService implements IUserBusinessService {
         userRepository.flush();
 
         return user;
+    }
+
+    private boolean isPersonInfoGoodForSupplier(Person person){
+        return person.getFirstName() != null
+                && person.getLastName() != null
+                && person.getBirthday() != null
+                && !person.getFirstName().equals("")
+                && !person.getLastName().equals("")
+                && !person.getBirthday().isAfter(LocalDate.now());
     }
 }

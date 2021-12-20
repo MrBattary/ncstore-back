@@ -12,6 +12,7 @@ import com.netcracker.ncstore.service.role.interfaces.IRoleDataService;
 import com.netcracker.ncstore.service.user.interfaces.IUserRegistrationService;
 import com.netcracker.ncstore.service.user.interfaces.web.IRegistrationWebService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +57,9 @@ public class RegistrationWebService implements IRegistrationWebService {
     @Override
     public void registerCompany(RegisterCompanyRequest request) throws GeneralBadRequestException {
         try {
+            if(CollectionUtils.isEmpty(request.getRoles())){
+                throw new GeneralBadRequestException("Roles list is empty. ");
+            }
             List<Role> roleList = roleNamesToRoles(request.getRoles());
 
             CompanyRegisterPasswordEmailDTO dto = new CompanyRegisterPasswordEmailDTO(

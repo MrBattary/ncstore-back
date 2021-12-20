@@ -25,6 +25,7 @@ import com.netcracker.ncstore.service.role.interfaces.IRoleDataService;
 import com.netcracker.ncstore.service.user.interfaces.IUserBusinessService;
 import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
 import com.netcracker.ncstore.service.user.interfaces.web.IUserBaseWebService;
+import com.netcracker.ncstore.util.converter.DoubleRounder;
 import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -65,8 +66,13 @@ public class UserBaseWebService implements IUserBaseWebService {
 
             double newBalance = userBusinessService.addMoneyToUserBalance(addBalanceDTO);
 
-            return new UserAddBalanceResponse(
+            ConvertedPriceWithCurrencySymbolDTO convertedBalance = priceConversionService.convertUCPriceToRealPriceWithSymbol(
                     newBalance,
+                    request.getLocale()
+            );
+
+            return new UserAddBalanceResponse(
+                    DoubleRounder.round(convertedBalance.getPrice(), 2),
                     LocaleToCurrencyConverter.getCurrencySymbolByLocale(UCAmountToAdd.getActualLocale())
             );
         } catch (UserServiceBalancePaymentException paymentException) {
@@ -106,7 +112,7 @@ public class UserBaseWebService implements IUserBaseWebService {
             );
 
             return new UserBalanceGetResponse(
-                    user.getBalance(),
+                    DoubleRounder.round(convertedBalance.getPrice(), 2),
                     convertedBalance.getSymbol()
             );
 

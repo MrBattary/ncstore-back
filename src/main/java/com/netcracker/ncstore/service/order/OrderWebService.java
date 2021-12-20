@@ -22,8 +22,10 @@ import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException
 import com.netcracker.ncstore.model.Order;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.service.order.interfaces.IOrderBusinessService;
+import com.netcracker.ncstore.service.order.interfaces.IOrderDataService;
 import com.netcracker.ncstore.service.order.interfaces.IOrderWebService;
 import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
+import com.netcracker.ncstore.util.converter.DoubleRounder;
 import com.netcracker.ncstore.util.converter.LocaleToCurrencyConverter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,11 +42,14 @@ import java.util.stream.Collectors;
 public class OrderWebService implements IOrderWebService {
     private final IOrderBusinessService orderBusinessService;
     private final IUserDataService userDataService;
+    private final IOrderDataService orderDataService;
 
     public OrderWebService(final IOrderBusinessService orderBusinessService,
-                           final IUserDataService userDataService) {
+                           final IUserDataService userDataService,
+                           final IOrderDataService orderDataService) {
         this.orderBusinessService = orderBusinessService;
         this.userDataService = userDataService;
+        this.orderDataService = orderDataService;
     }
 
 
@@ -53,7 +58,7 @@ public class OrderWebService implements IOrderWebService {
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), Sort.by("creationUtcTime").descending());
         OrderGetPageDTO getPageDTO = new OrderGetPageDTO(pageable, request.getEmail());
 
-        Page<Order> ordersPage = orderBusinessService.getOrdersForUserWithPagination(getPageDTO);
+        Page<Order> ordersPage = orderDataService.getOrdersForUserWithPagination(getPageDTO);
 
         return ordersPage.
                 getContent().
@@ -69,10 +74,13 @@ public class OrderWebService implements IOrderWebService {
 
     @Override
     public OrderInfoResponse getSpecificOrder(final OrderInfoGetRequest request) {
-        OrderGetDTO getDTO = new OrderGetDTO(request.getOrderId(), request.getEmail());
+        OrderGetDTO getDTO = new OrderGetDTO(
+                request.getOrderId(),
+                request.getEmail()
+        );
 
         try {
-            Order order = orderBusinessService.getSpecificOrderForUser(getDTO);
+            Order order = orderDataService.getSpecificOrderForUser(getDTO);
             return convertOrderToInfoResponse(order);
         } catch (OrderServiceNotFoundException notFoundException) {
             throw new GeneralNotFoundException(notFoundException.getMessage(), notFoundException);
@@ -127,7 +135,7 @@ public class OrderWebService implements IOrderWebService {
                                 e.getProduct().getId(),
                                 e.getProduct().getName(),
                                 e.getProduct().getSupplier().getId(),
-                                e.getPrice(),
+                                DoubleRounder.round(e.getLocalizedPrice(), 2),
                                 e.getPriceLocale() == null ? null : LocaleToCurrencyConverter.getCurrencySymbolByLocale(e.getPriceLocale()),
                                 e.getLicenseKey(),
                                 e.getItemStatus()

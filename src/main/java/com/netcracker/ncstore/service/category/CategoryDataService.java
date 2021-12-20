@@ -3,7 +3,7 @@ package com.netcracker.ncstore.service.category;
 import com.netcracker.ncstore.exception.CategoryServiceNotFoundException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.repository.CategoryRepository;
-import com.netcracker.ncstore.service.category.interfaces.ICategoryBusinessService;
+import com.netcracker.ncstore.service.category.interfaces.ICategoryDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +11,10 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class CategoryBusinessService implements ICategoryBusinessService {
+public class CategoryDataService implements ICategoryDataService {
     private final CategoryRepository categoryRepository;
 
-    public CategoryBusinessService(final CategoryRepository categoryRepository) {
+    public CategoryDataService(final CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 

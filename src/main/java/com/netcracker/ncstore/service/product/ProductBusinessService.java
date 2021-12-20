@@ -19,7 +19,7 @@ import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.repository.ProductRepository;
-import com.netcracker.ncstore.service.category.interfaces.ICategoryBusinessService;
+import com.netcracker.ncstore.service.category.interfaces.ICategoryDataService;
 import com.netcracker.ncstore.service.price.interfaces.IPricesBusinessService;
 import com.netcracker.ncstore.service.product.interfaces.IProductBusinessService;
 import com.netcracker.ncstore.util.validator.PriceValidator;
@@ -37,16 +37,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProductBusinessService implements IProductBusinessService {
     private final ProductRepository productRepository;
-    private final ICategoryBusinessService categoryBusinessService;
+    private final ICategoryDataService categoryDataService;
     private final IPricesBusinessService pricesBusinessService;
     @Value("${locale.default.code}")
     private String defaultLocaleCode;
 
     public ProductBusinessService(final ProductRepository productRepository,
-                                  final ICategoryBusinessService categoryBusinessService,
+                                  final ICategoryDataService categoryDataService,
                                   final IPricesBusinessService pricesBusinessService) {
         this.productRepository = productRepository;
-        this.categoryBusinessService = categoryBusinessService;
+        this.categoryDataService = categoryDataService;
         this.pricesBusinessService = pricesBusinessService;
     }
 
@@ -68,7 +68,7 @@ public class ProductBusinessService implements IProductBusinessService {
             List<Category> categories =
                     productCreateDTO.getCategoriesNames().
                             stream().
-                            map(categoryBusinessService::getCategoryByName).
+                            map(categoryDataService::getCategoryByName).
                             collect(Collectors.toList());
 
             Product product = productRepository.save(new Product(
@@ -124,7 +124,7 @@ public class ProductBusinessService implements IProductBusinessService {
             List<Category> categories =
                     productUpdateDTO.getCategoriesNames().
                             stream().
-                            map(categoryBusinessService::getCategoryByName).
+                            map(categoryDataService::getCategoryByName).
                             collect(Collectors.toList());
 
             productFromRepository.setName(productUpdateDTO.getName());

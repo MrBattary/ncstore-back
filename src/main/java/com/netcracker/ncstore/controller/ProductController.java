@@ -7,14 +7,17 @@ import com.netcracker.ncstore.dto.request.ProductDeleteRequest;
 import com.netcracker.ncstore.dto.request.ProductGetDetailedRequest;
 import com.netcracker.ncstore.dto.request.ProductGetInfoRequest;
 import com.netcracker.ncstore.dto.request.ProductGetPaginationRequest;
+import com.netcracker.ncstore.dto.request.ProductGetStatisticsRequest;
 import com.netcracker.ncstore.dto.request.ProductUpdateRequest;
 import com.netcracker.ncstore.dto.response.ProductCreateResponse;
 import com.netcracker.ncstore.dto.response.ProductDeleteResponse;
 import com.netcracker.ncstore.dto.response.ProductGetDetailedResponse;
 import com.netcracker.ncstore.dto.response.ProductGetInfoResponse;
+import com.netcracker.ncstore.dto.response.ProductGetStatisticsResponse;
 import com.netcracker.ncstore.dto.response.ProductUpdateResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
 import com.netcracker.ncstore.service.product.interfaces.IProductWebService;
+import com.netcracker.ncstore.service.statistics.interfaces.IProductStatisticsService;
 import com.netcracker.ncstore.util.converter.ProductRequestConverter;
 import com.netcracker.ncstore.util.enumeration.ESortOrder;
 import com.netcracker.ncstore.util.enumeration.ESortRule;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,15 +45,16 @@ import java.util.stream.Collectors;
  */
 @RestController
 @Slf4j
+@RequestMapping(value = "/products")
 public class ProductController {
     private final IProductWebService productWebService;
 
-    public ProductController(IProductWebService productWebService) {
+    public ProductController(final IProductWebService productWebService) {
         this.productWebService = productWebService;
     }
 
     // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Product/getProducts
-    @GetMapping(value = "/products")
+    @GetMapping
     public ResponseEntity<List<ProductsGetPaginationResponse>> getProductsWithPagination(
             @RequestParam(defaultValue = "", required = false) final String categoryNames,
             @RequestParam(defaultValue = "", required = false) final String searchText,
@@ -82,7 +87,26 @@ public class ProductController {
                 body(response);
     }
 
-    @PostMapping(value = "/products")
+    @GetMapping(value = "/{productId}")
+    public ResponseEntity<ProductGetInfoResponse> getProduct(@PathVariable final UUID productId,
+                                                             final Locale locale) {
+        log.info("REQUEST: to get product data by id: " + productId);
+
+        ProductGetInfoRequest request = new ProductGetInfoRequest(
+                productId,
+                locale
+        );
+
+        ProductGetInfoResponse response = productWebService.getProductInfo(request);
+
+        log.info("RESPONSE: to get product data by id: " + productId);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
+    }
+
+    @PostMapping
     public ResponseEntity<ProductCreateResponse> createProduct(@RequestBody final ProductCreateBody body,
                                                                final Principal principal) {
         log.info("REQUEST: to create product for user with email " + principal.getName());
@@ -106,45 +130,7 @@ public class ProductController {
                 body(response);
     }
 
-    @GetMapping(value = "/products/{productId}")
-    public ResponseEntity<ProductGetInfoResponse> getProduct(@PathVariable final UUID productId,
-                                                             final Locale locale) {
-        log.info("REQUEST: to get product data by id: " + productId);
-
-        ProductGetInfoRequest request = new ProductGetInfoRequest(
-                productId,
-                locale
-        );
-
-        ProductGetInfoResponse response = productWebService.getProductInfo(request);
-
-        log.info("RESPONSE: to get product data by id: " + productId);
-        return ResponseEntity.
-                ok().
-                contentType(MediaType.APPLICATION_JSON).
-                body(response);
-    }
-
-    @GetMapping(value = "/products/{productId}/detailed")
-    public ResponseEntity<ProductGetDetailedResponse> getProductDetailed(@PathVariable final UUID productId,
-                                                                         final Principal principal) {
-        log.info("REQUEST: to get detailed product data by id: " + productId);
-
-        ProductGetDetailedRequest request = new ProductGetDetailedRequest(
-                productId,
-                principal.getName()
-        );
-
-        ProductGetDetailedResponse response = productWebService.getDetailedProductInfo(request);
-
-        log.info("RESPONSE: to get detailed product data by id: " + productId);
-        return ResponseEntity.
-                ok().
-                contentType(MediaType.APPLICATION_JSON).
-                body(response);
-    }
-
-    @PutMapping(value = "/products/{productId}")
+    @PutMapping(value = "/{productId}")
     public ResponseEntity<ProductUpdateResponse> updateProduct(@PathVariable final UUID productId,
                                                                @RequestBody final ProductUpdateBody body,
                                                                final Principal principal) {
@@ -170,7 +156,7 @@ public class ProductController {
                 body(response);
     }
 
-    @DeleteMapping(value = "/products/{productId}")
+    @DeleteMapping(value = "/{productId}")
     public ResponseEntity<ProductDeleteResponse> deleteProduct(@PathVariable final UUID productId,
                                                                final Principal principal) {
         log.info("REQUEST: to delete product with id: " + productId);
@@ -183,6 +169,46 @@ public class ProductController {
         ProductDeleteResponse response = productWebService.deleteProductFromStore(request);
 
         log.info("RESPONSE: to delete product with id: " + productId);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
+    }
+
+    @GetMapping(value = "/{productId}/detailed")
+    public ResponseEntity<ProductGetDetailedResponse> getProductDetailed(@PathVariable final UUID productId,
+                                                                         final Principal principal) {
+        log.info("REQUEST: to get detailed product data by id: " + productId);
+
+        ProductGetDetailedRequest request = new ProductGetDetailedRequest(
+                productId,
+                principal.getName()
+        );
+
+        ProductGetDetailedResponse response = productWebService.getDetailedProductInfo(request);
+
+        log.info("RESPONSE: to get detailed product data by id: " + productId);
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
+    }
+
+    @GetMapping(value = "/{productId}/statistics")
+    public ResponseEntity<ProductGetStatisticsResponse> getProductStatistics(@PathVariable final UUID productId,
+                                                                             final Principal principal){
+
+        log.info("REQUEST: to get statistics for product with id: " + productId);
+
+        ProductGetStatisticsRequest request = new ProductGetStatisticsRequest(
+                principal.getName(),
+                productId
+        );
+
+        ProductGetStatisticsResponse response = productWebService.getStatisticsForProduct(request);
+
+        log.info("RESPONSE: to get statistics for product with id: " + productId);
+
         return ResponseEntity.
                 ok().
                 contentType(MediaType.APPLICATION_JSON).

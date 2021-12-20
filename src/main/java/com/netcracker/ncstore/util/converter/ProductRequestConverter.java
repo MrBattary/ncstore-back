@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
  * and there is no need to create instance of it
  */
 public abstract class ProductRequestConverter {
-    public static List<String> convertCategoriesStringToList(String stringOfCategoriesIDs) {
-        if (!stringOfCategoriesIDs.equals("")) {
+    public static List<String> convertCategoriesStringToList(String stringOfCategoriesNames) {
+        if (!stringOfCategoriesNames.equals("")) {
             try {
-                return Arrays.stream(stringOfCategoriesIDs.split("\\|")).collect(Collectors.toList());
+                return Arrays.stream(stringOfCategoriesNames.split("\\|")).collect(Collectors.toList());
             } catch (IllegalArgumentException e) {
-                throw new RequestParametersInvalidException("Provided UUID is not valid.");
+                throw new RequestParametersInvalidException("Provided name is not valid.");
             }
         } else {
             return new ArrayList<>();

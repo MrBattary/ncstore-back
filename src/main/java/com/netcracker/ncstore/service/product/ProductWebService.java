@@ -6,6 +6,7 @@ import com.netcracker.ncstore.dto.PriceRegionDTO;
 import com.netcracker.ncstore.dto.ProductCreateDTO;
 import com.netcracker.ncstore.dto.ProductDiscontinueDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
+import com.netcracker.ncstore.dto.ProductStatisticsReportDTO;
 import com.netcracker.ncstore.dto.ProductUpdateDTO;
 import com.netcracker.ncstore.dto.ProductsPageRequestDTO;
 import com.netcracker.ncstore.dto.request.ProductCreateRequest;
@@ -13,11 +14,13 @@ import com.netcracker.ncstore.dto.request.ProductDeleteRequest;
 import com.netcracker.ncstore.dto.request.ProductGetDetailedRequest;
 import com.netcracker.ncstore.dto.request.ProductGetInfoRequest;
 import com.netcracker.ncstore.dto.request.ProductGetPaginationRequest;
+import com.netcracker.ncstore.dto.request.ProductGetStatisticsRequest;
 import com.netcracker.ncstore.dto.request.ProductUpdateRequest;
 import com.netcracker.ncstore.dto.response.ProductCreateResponse;
 import com.netcracker.ncstore.dto.response.ProductDeleteResponse;
 import com.netcracker.ncstore.dto.response.ProductGetDetailedResponse;
 import com.netcracker.ncstore.dto.response.ProductGetInfoResponse;
+import com.netcracker.ncstore.dto.response.ProductGetStatisticsResponse;
 import com.netcracker.ncstore.dto.response.ProductUpdateResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
@@ -35,7 +38,9 @@ import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversion
 import com.netcracker.ncstore.service.product.interfaces.IProductBusinessService;
 import com.netcracker.ncstore.service.product.interfaces.IProductDataService;
 import com.netcracker.ncstore.service.product.interfaces.IProductWebService;
+import com.netcracker.ncstore.service.statistics.interfaces.IProductStatisticsService;
 import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
+import com.netcracker.ncstore.util.converter.DoubleRounder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -51,15 +56,18 @@ public class ProductWebService implements IProductWebService {
     private final IProductDataService productDataService;
     private final IUserDataService userDataService;
     private final IPriceConversionService priceConversionService;
+    private final IProductStatisticsService productStatisticsService;
 
     public ProductWebService(final IProductBusinessService productsBusinessService,
                              final IProductDataService productDataService,
                              final IUserDataService userDataService,
-                             final IPriceConversionService priceConversionService) {
+                             final IPriceConversionService priceConversionService,
+                             final IProductStatisticsService productStatisticsService) {
         this.productsBusinessService = productsBusinessService;
         this.productDataService = productDataService;
         this.userDataService = userDataService;
         this.priceConversionService = priceConversionService;
+        this.productStatisticsService = productStatisticsService;
     }
 
 
@@ -96,8 +104,8 @@ public class ProductWebService implements IProductWebService {
                             product.getName(),
                             product.getSupplier().getId(),
                             userDataService.getSupplierNameByUserId(product.getSupplier().getId()),
-                            convertedPrice.getNormalConvertedPrice(),
-                            convertedPrice.getDiscountConvertedPrice(),
+                            DoubleRounder.round(convertedPrice.getNormalConvertedPrice(), 2),
+                            DoubleRounder.round(convertedPrice.getDiscountConvertedPrice(), 2),
                             convertedPrice.getCurrencySymbol()
                     );
 
@@ -228,8 +236,8 @@ public class ProductWebService implements IProductWebService {
                     userDataService.getSupplierNameByUserId(product.getSupplier().getId()),
                     product.getName(),
                     product.getDescription(),
-                    convertedPrice.getNormalConvertedPrice(),
-                    convertedPrice.getDiscountConvertedPrice(),
+                    DoubleRounder.round(convertedPrice.getNormalConvertedPrice(), 2),
+                    DoubleRounder.round(convertedPrice.getDiscountConvertedPrice(), 2),
                     convertedPrice.getCurrencySymbol(),
                     convertedPrice.getDiscountStartUtc(),
                     convertedPrice.getDiscountEndUtc(),
@@ -269,12 +277,29 @@ public class ProductWebService implements IProductWebService {
         }
     }
 
+    @Override
+    public ProductGetStatisticsResponse getStatisticsForProduct(ProductGetStatisticsRequest request) {
+        Product product = productDataService.getProductById(request.getProductId());
+
+        if (!product.getSupplier().getEmail().equals(request.getEmailOfIssuer())) {
+            throw new GeneralPermissionDeniedException("Only supplier of product can view statistics of that product. ");
+        }
+
+        ProductStatisticsReportDTO productStatisticsReportDTO =
+                productStatisticsService.getStatisticsReportForProduct(request.getProductId());
+
+        return new ProductGetStatisticsResponse(
+                productStatisticsReportDTO.getTotalSalesAmount(),
+                productStatisticsReportDTO.getTotalRevenue()
+        );
+    }
+
     private List<PriceRegionDTO> convertProductPriceListToPriceRegionDTOList(List<ProductPrice> productPrices) {
         return productPrices.
                 stream().
                 map(
                         e -> new PriceRegionDTO(
-                                e.getPrice(),
+                                DoubleRounder.round(e.getPrice(), 2),
                                 e.getLocale()
                         )
                 ).
@@ -287,7 +312,7 @@ public class ProductWebService implements IProductWebService {
                 filter(e -> e.getDiscount() != null).
                 map(
                         e -> new DiscountPriceRegionDTO(
-                                e.getDiscount().getDiscountPrice(),
+                                DoubleRounder.round(e.getDiscount().getDiscountPrice(), 2),
                                 e.getLocale(),
                                 e.getDiscount().getStartUtcTime(),
                                 e.getDiscount().getEndUtcTime()

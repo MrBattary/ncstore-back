@@ -30,7 +30,8 @@ public class OrderItem {
     @Id
     @GeneratedValue
     private UUID id;
-    private double price;
+    private double localizedPrice;
+    private double priceUc;
     private Locale priceLocale;
     private String licenseKey;
 

@@ -4,7 +4,6 @@ import com.netcracker.ncstore.dto.ActualProductPrice;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
 import com.netcracker.ncstore.dto.OrderGetDTO;
-import com.netcracker.ncstore.dto.OrderGetPageDTO;
 import com.netcracker.ncstore.dto.OrderPayDTO;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
 import com.netcracker.ncstore.dto.ProductLocaleDTO;
@@ -26,13 +25,13 @@ import com.netcracker.ncstore.model.enumerations.EOrderStatus;
 import com.netcracker.ncstore.repository.OrderItemRepository;
 import com.netcracker.ncstore.repository.OrderRepository;
 import com.netcracker.ncstore.service.order.interfaces.IOrderBusinessService;
+import com.netcracker.ncstore.service.order.interfaces.IOrderDataService;
 import com.netcracker.ncstore.service.payment.interfaces.IPaymentService;
 import com.netcracker.ncstore.service.price.interfaces.IPricesDataService;
 import com.netcracker.ncstore.service.priceconverter.interfaces.IPriceConversionService;
 import com.netcracker.ncstore.service.product.interfaces.IProductDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -53,6 +52,8 @@ public class OrderBusinessService implements IOrderBusinessService {
     private final IPricesDataService pricesDataService;
     private final IPriceConversionService priceConversionService;
     private final IPaymentService paymentService;
+    private final IOrderDataService orderDataService;
+
     @Value("${store.sales_percentage}")
     private double ownerPercent;
 
@@ -61,34 +62,16 @@ public class OrderBusinessService implements IOrderBusinessService {
                                 final IProductDataService productDataService,
                                 final IPricesDataService pricesDataService,
                                 final IPriceConversionService priceConversionService,
-                                final IPaymentService paymentService) {
+                                final IPaymentService paymentService,
+                                final IOrderDataService orderDataService) {
+
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.productDataService = productDataService;
         this.pricesDataService = pricesDataService;
         this.priceConversionService = priceConversionService;
         this.paymentService = paymentService;
-    }
-
-
-    @Override
-    public Page<Order> getOrdersForUserWithPagination(final OrderGetPageDTO orderGetPageDTO) {
-        return orderRepository.findByUserEmail(orderGetPageDTO.getEmail(), orderGetPageDTO.getPageable());
-    }
-
-    @Override
-    public Order getSpecificOrderForUser(OrderGetDTO orderGetDTO) throws OrderServiceNotFoundException, OrderServicePermissionException {
-        UUID orderId = orderGetDTO.getOrderId();
-        Order order = orderRepository.
-                findById(orderId).orElseThrow(
-                        () -> new OrderServiceNotFoundException("Requested order does not exist. ")
-                );
-
-        if (order.getUser().getEmail().equals(orderGetDTO.getEmail())) {
-            return order;
-        } else {
-            throw new OrderServicePermissionException("Requested order does not belong to provided user. ");
-        }
+        this.orderDataService = orderDataService;
     }
 
     @Override
@@ -135,7 +118,7 @@ public class OrderBusinessService implements IOrderBusinessService {
         log.info("Started payment for order with UUID " + orderPayDTO.getOrderId());
 
         try {
-            Order order = getSpecificOrderForUser(
+            Order order = orderDataService.getSpecificOrderForUser(
                     new OrderGetDTO(
                             orderPayDTO.getOrderId(),
                             orderPayDTO.getEmail()
@@ -162,7 +145,8 @@ public class OrderBusinessService implements IOrderBusinessService {
                 UCSum += productPrice.getProductPrice().getPriceWithDiscount();
 
                 item.setItemStatus(EOrderItemStatus.PAID);
-                item.setPrice(convertedPrice.getRealPrice());
+                item.setLocalizedPrice(convertedPrice.getRealPrice());
+                item.setPriceUc(productPrice.getProductPrice().getPriceWithDiscount());
                 item.setPriceLocale(convertedPrice.getRegion());
             }
 

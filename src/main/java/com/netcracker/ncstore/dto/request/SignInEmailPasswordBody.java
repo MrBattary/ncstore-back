@@ -9,9 +9,6 @@ import lombok.extern.jackson.Jacksonized;
 /**
  * Sign in request with email and password
  */
-@Jacksonized
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
 public class SignInEmailPasswordBody {

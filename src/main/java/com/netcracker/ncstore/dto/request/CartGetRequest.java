@@ -8,9 +8,6 @@ import lombok.extern.jackson.Jacksonized;
 
 import java.util.Locale;
 
-@Jacksonized
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
 public class CartGetRequest {

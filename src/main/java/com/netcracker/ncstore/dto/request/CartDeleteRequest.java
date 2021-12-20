@@ -9,9 +9,6 @@ import lombok.extern.jackson.Jacksonized;
 import java.util.Locale;
 import java.util.UUID;
 
-@Jacksonized
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
 public class CartDeleteRequest {

@@ -16,9 +16,6 @@ import java.util.UUID;
  * DTO containing information about product that will
  * be added to store.
  */
-@Jacksonized
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
 public class ProductCreateRequest {

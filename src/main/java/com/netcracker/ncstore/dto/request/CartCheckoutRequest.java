@@ -11,9 +11,6 @@ import java.util.Locale;
 /**
  * DTO containing information about how to checkout user
  */
-@Jacksonized
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
 public class CartCheckoutRequest {

@@ -17,10 +17,9 @@ import com.netcracker.ncstore.dto.response.ProductGetStatisticsResponse;
 import com.netcracker.ncstore.dto.response.ProductUpdateResponse;
 import com.netcracker.ncstore.dto.response.ProductsGetPaginationResponse;
 import com.netcracker.ncstore.service.product.interfaces.IProductWebService;
-import com.netcracker.ncstore.service.statistics.interfaces.IProductStatisticsService;
 import com.netcracker.ncstore.util.converter.ProductRequestConverter;
 import com.netcracker.ncstore.util.enumeration.ESortOrder;
-import com.netcracker.ncstore.util.enumeration.ESortRule;
+import com.netcracker.ncstore.util.enumeration.EProductSortRule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -71,12 +70,8 @@ public class ProductController {
                 "', by search text='" + searchText + "', for supplierId='" + supplierId + "', order by " + sort + " " + sortOrder + ", on: " + page + " page, with " + size + " size");
 
 
-        ESortRule sortEnum = ProductRequestConverter.convertSortRuleStringToEnum(sort);
-        ESortOrder sortOrderEnum = ProductRequestConverter.convertSortOrderStringToEnum(sortOrder);
-
-
         ProductGetPaginationRequest productGetPaginationRequest =
-                new ProductGetPaginationRequest(categories, searchText, page, size, locale, sortEnum, sortOrderEnum, supplierId);
+                new ProductGetPaginationRequest(categories, searchText, page, size, locale, sort, sortOrder, supplierId);
 
         List<ProductsGetPaginationResponse> response = productWebService.getPageOfFilteredAndSortedProducts(productGetPaginationRequest);
 

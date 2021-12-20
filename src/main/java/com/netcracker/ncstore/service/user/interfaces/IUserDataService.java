@@ -21,6 +21,15 @@ public interface IUserDataService {
     String getSupplierNameByUserId(final UUID userId) throws UserServiceNotFoundException;
 
     /**
+     * Returns public name for provided user
+     *
+     * @param userId the UUID of user
+     * @return public name for that user
+     * @throws UserServiceNotFoundException when user with such UUID does not exist
+     */
+    String getPublicNameForUser(final UUID userId) throws UserServiceNotFoundException;
+
+    /**
      * Returns Company entity based on provided userId
      *
      * @param userId the id of user whose company data is needed

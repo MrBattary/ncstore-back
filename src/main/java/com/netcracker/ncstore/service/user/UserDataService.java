@@ -35,10 +35,29 @@ public class UserDataService implements IUserDataService {
         try {
             supplierName = getCompany(userId).getCompanyName();
         } catch (UserServiceNotFoundException e) {
-            Person personData = getPerson(userId);
-            supplierName = personData.getFirstName() + " " + personData.getLastName();
+            try {
+                Person personData = getPerson(userId);
+                supplierName = personData.getFirstName() + " " + personData.getLastName();
+            }catch (UserServiceNotFoundException exception){
+                throw new UserServiceNotFoundException("User with UUID " + userId + " not found. ");
+            }
         }
         return supplierName;
+    }
+
+    @Override
+    public String getPublicNameForUser(UUID userId) throws UserServiceNotFoundException {
+        String publicName;
+        try {
+            publicName = getCompany(userId).getCompanyName();
+        } catch (UserServiceNotFoundException e) {
+            try {
+                publicName = getPerson(userId).getNickName();
+            }catch (UserServiceNotFoundException exception){
+                throw new UserServiceNotFoundException("User with UUID " + userId + " not found. ");
+            }
+        }
+        return publicName;
     }
 
     @Override

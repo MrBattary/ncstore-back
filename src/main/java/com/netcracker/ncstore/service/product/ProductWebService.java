@@ -41,6 +41,9 @@ import com.netcracker.ncstore.service.product.interfaces.IProductWebService;
 import com.netcracker.ncstore.service.statistics.interfaces.IProductStatisticsService;
 import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
 import com.netcracker.ncstore.util.converter.DoubleRounder;
+import com.netcracker.ncstore.util.converter.ProductRequestConverter;
+import com.netcracker.ncstore.util.enumeration.EProductSortRule;
+import com.netcracker.ncstore.util.enumeration.ESortOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -73,14 +76,17 @@ public class ProductWebService implements IProductWebService {
 
     @Override
     public List<ProductsGetPaginationResponse> getPageOfFilteredAndSortedProducts(ProductGetPaginationRequest request) {
+        EProductSortRule sortEnum = ProductRequestConverter.convertSortRuleStringToEnum(request.getSort());
+        ESortOrder sortOrderEnum = ProductRequestConverter.convertSortOrderStringToEnum(request.getSortOrder());
+
         ProductsPageRequestDTO productsPageRequestDTO = new ProductsPageRequestDTO(
                 request.getCategoriesNames(),
                 request.getSearchText(),
                 request.getPage(),
                 request.getSize(),
                 request.getLocale(),
-                request.getSort(),
-                request.getSortOrder(),
+                sortEnum,
+                sortOrderEnum,
                 request.getSupplierId()
         );
 

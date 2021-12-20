@@ -13,9 +13,6 @@ import java.util.UUID;
  * DTO containing information about product that will
  * be added (or updated, if exists in cart) to cart.
  */
-@Jacksonized
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
 public class CartPutRequest {

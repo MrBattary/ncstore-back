@@ -1,8 +1,8 @@
 package com.netcracker.ncstore.util.converter;
 
-import com.netcracker.ncstore.exception.RequestParametersInvalidException;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
+import com.netcracker.ncstore.util.enumeration.EProductSortRule;
 import com.netcracker.ncstore.util.enumeration.ESortOrder;
-import com.netcracker.ncstore.util.enumeration.ESortRule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,18 +22,18 @@ public abstract class ProductRequestConverter {
             try {
                 return Arrays.stream(stringOfCategoriesNames.split("\\|")).collect(Collectors.toList());
             } catch (IllegalArgumentException e) {
-                throw new RequestParametersInvalidException("Provided name is not valid.");
+                throw new GeneralBadRequestException("Provided categories names are not valid.");
             }
         } else {
             return new ArrayList<>();
         }
     }
 
-    public static ESortRule convertSortRuleStringToEnum(String sortRuleString) {
+    public static EProductSortRule convertSortRuleStringToEnum(String sortRuleString) {
         try {
-            return ESortRule.valueOf(sortRuleString.toUpperCase(Locale.ROOT));
+            return EProductSortRule.valueOf(sortRuleString.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            throw new RequestParametersInvalidException("Provided sort rule not supported.");
+            throw new GeneralBadRequestException("Provided sort rule " + sortRuleString + " not supported.");
         }
     }
 
@@ -41,7 +41,7 @@ public abstract class ProductRequestConverter {
         try {
             return ESortOrder.valueOf(sortOrderString.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            throw new RequestParametersInvalidException("Provided sort order not supported.");
+            throw new GeneralBadRequestException("Provided sort order " + sortOrderString + " not supported.");
         }
     }
 }

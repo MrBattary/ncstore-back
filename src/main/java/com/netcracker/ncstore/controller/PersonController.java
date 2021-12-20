@@ -4,7 +4,6 @@ import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonInfoResponse;
 import com.netcracker.ncstore.service.user.IUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +32,7 @@ public class PersonController {
 
         log.info("RESPONSE: to get Person detailed info for user " + principal.getName());
 
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping(value = "/info")
@@ -49,6 +48,6 @@ public class PersonController {
 
         log.info("RESPONSE: to get Person info of user with UUID " + userId);
 
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
+        return ResponseEntity.ok(response);
     }
 }

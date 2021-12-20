@@ -1,10 +1,10 @@
 package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.body.CartCheckoutBody;
-import com.netcracker.ncstore.dto.body.CartPutBody;
-import com.netcracker.ncstore.dto.request.CartCheckoutRequest;
 import com.netcracker.ncstore.dto.request.CartDeleteRequest;
 import com.netcracker.ncstore.dto.request.CartGetRequest;
+import com.netcracker.ncstore.dto.body.CartPutBody;
+import com.netcracker.ncstore.dto.request.CartCheckoutRequest;
 import com.netcracker.ncstore.dto.request.CartPutRequest;
 import com.netcracker.ncstore.dto.response.CartItemResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -91,6 +92,7 @@ public class CartController {
                     contentType(MediaType.APPLICATION_JSON).
                     body(response);
         }
+
     }
 
     @PostMapping

@@ -13,6 +13,7 @@ import com.netcracker.ncstore.dto.response.CompanyInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonInfoResponse;
 import com.netcracker.ncstore.exception.UserServiceCreationException;
+import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServiceRepositoryException;
 import com.netcracker.ncstore.exception.UserServiceValidationException;
 import com.netcracker.ncstore.model.User;

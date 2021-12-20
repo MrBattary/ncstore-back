@@ -3,7 +3,6 @@ package com.netcracker.ncstore.controller;
 import com.netcracker.ncstore.dto.response.PaymentGetResponse;
 import com.netcracker.ncstore.service.payment.IPaymentService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +26,7 @@ public class PaymentController {
         PaymentGetResponse response = new PaymentGetResponse(clientToken);
 
         return ResponseEntity.
-                ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(response);
+                ok().
+                body(response);
     }
 }

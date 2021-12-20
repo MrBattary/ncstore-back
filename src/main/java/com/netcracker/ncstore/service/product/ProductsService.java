@@ -11,6 +11,7 @@ import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
 import com.netcracker.ncstore.dto.create.DiscountCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductCreateDTO;
 import com.netcracker.ncstore.dto.create.ProductPriceCreateDTO;
+import com.netcracker.ncstore.dto.data.PersonDTO;
 import com.netcracker.ncstore.dto.data.ProductDTO;
 import com.netcracker.ncstore.dto.data.ProductPriceDTO;
 import com.netcracker.ncstore.dto.request.ProductGetRequest;
@@ -27,6 +28,7 @@ import com.netcracker.ncstore.exception.ProductServiceNotAllowedException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundException;
 import com.netcracker.ncstore.exception.ProductServiceNotFoundExpectedException;
 import com.netcracker.ncstore.exception.ProductServiceValidationException;
+import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.model.Category;
 import com.netcracker.ncstore.model.Product;
 import com.netcracker.ncstore.model.User;
@@ -53,7 +55,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**

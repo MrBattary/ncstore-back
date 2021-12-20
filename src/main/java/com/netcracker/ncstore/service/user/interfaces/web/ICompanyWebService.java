@@ -1,8 +1,10 @@
 package com.netcracker.ncstore.service.user.interfaces.web;
 
 import com.netcracker.ncstore.dto.request.CompanyDetailedInfoRequest;
+import com.netcracker.ncstore.dto.request.CompanyUpdateRequest;
 import com.netcracker.ncstore.dto.response.CompanyDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.CompanyInfoResponse;
+import com.netcracker.ncstore.dto.response.CompanyUpdateResponse;
 
 import java.util.UUID;
 
@@ -13,4 +15,6 @@ public interface ICompanyWebService {
     CompanyDetailedInfoResponse getDetailedCompanyInfo(CompanyDetailedInfoRequest request);
 
     CompanyInfoResponse getPublicCompanyInfo(UUID companyId);
+
+    CompanyUpdateResponse updateCompanyInfo(CompanyUpdateRequest request);
 }

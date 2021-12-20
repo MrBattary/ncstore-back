@@ -2,12 +2,15 @@ package com.netcracker.ncstore.service.user;
 
 import com.netcracker.ncstore.dto.AddBalanceDTO;
 import com.netcracker.ncstore.dto.ChangePasswordDTO;
+import com.netcracker.ncstore.dto.CompanyUpdateDTO;
 import com.netcracker.ncstore.dto.PaymentProceedDTO;
+import com.netcracker.ncstore.dto.PersonUpdateDTO;
 import com.netcracker.ncstore.exception.PaymentServiceException;
 import com.netcracker.ncstore.exception.UserServiceBalancePaymentException;
 import com.netcracker.ncstore.exception.UserServiceNotFoundException;
 import com.netcracker.ncstore.exception.UserServicePasswordChangingException;
 import com.netcracker.ncstore.exception.UserServiceValidationException;
+import com.netcracker.ncstore.model.Company;
 import com.netcracker.ncstore.model.Person;
 import com.netcracker.ncstore.model.Role;
 import com.netcracker.ncstore.model.User;
@@ -125,7 +128,7 @@ public class UserBusinessService implements IUserBusinessService {
 
         newRoles.add(role);
 
-        log.info("giving role "+role.getRoleName() +" to user with UUID "+user.getId());
+        log.info("giving role " + role.getRoleName() + " to user with UUID " + user.getId());
 
         user.setRoles(newRoles);
         userRepository.flush();
@@ -133,12 +136,60 @@ public class UserBusinessService implements IUserBusinessService {
         return user;
     }
 
-    private boolean isPersonInfoGoodForSupplier(Person person){
+    @Override
+    @Transactional
+    public Person updatePersonInfo(PersonUpdateDTO dto) throws UserServiceNotFoundException, UserServiceValidationException {
+        Person person = userDataService.getPerson(dto.getUserId());
+
+        if (dto.getFirstName() == null || dto.getFirstName().isEmpty()){
+            throw new UserServiceValidationException("First name can not be empty. ");
+        }
+        if (dto.getLastName() == null || dto.getLastName().isEmpty()){
+            throw new UserServiceValidationException("Last name can not be empty. ");
+        }
+        if (dto.getNickName() == null || dto.getNickName().isEmpty()){
+            throw new UserServiceValidationException("Nick name can not be empty. ");
+        }
+        if (dto.getBirthday() == null || dto.getBirthday().isAfter(LocalDate.now())){
+            throw new UserServiceValidationException("Birthday can not be from future. ");
+        }
+
+        person.setFirstName(dto.getFirstName());
+        person.setLastName(dto.getLastName());
+        person.setNickName(dto.getNickName());
+        person.setBirthday(dto.getBirthday());
+
+        return person;
+    }
+
+    @Override
+    @Transactional
+    public Company updateCompanyInfo(CompanyUpdateDTO dto) throws UserServiceNotFoundException, UserServiceValidationException {
+        Company company = userDataService.getCompany(dto.getUserId());
+
+        if (dto.getCompanyName() == null || dto.getCompanyName().isEmpty()){
+            throw new UserServiceValidationException("Company name can not be empty. ");
+        }
+        if (dto.getDescription() == null || dto.getDescription().isEmpty()){
+            throw new UserServiceValidationException("Description can not be empty. ");
+        }
+        if (dto.getFoundationDate() == null || dto.getFoundationDate().isAfter(LocalDate.now())){
+            throw new UserServiceValidationException("Foundation date can not be from future. ");
+        }
+
+        company.setCompanyName(dto.getCompanyName());
+        company.setDescription(dto.getDescription());
+        company.setFoundationDate(dto.getFoundationDate());
+
+        return company;
+    }
+
+    private boolean isPersonInfoGoodForSupplier(Person person) {
         return person.getFirstName() != null
                 && person.getLastName() != null
                 && person.getBirthday() != null
-                && !person.getFirstName().equals("")
-                && !person.getLastName().equals("")
+                && !person.getFirstName().isEmpty()
+                && !person.getLastName().isEmpty()
                 && !person.getBirthday().isAfter(LocalDate.now());
     }
 }

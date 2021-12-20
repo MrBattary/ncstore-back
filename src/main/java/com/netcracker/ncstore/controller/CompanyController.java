@@ -1,14 +1,18 @@
 package com.netcracker.ncstore.controller;
 
+import com.netcracker.ncstore.dto.body.CompanyUpdateBody;
 import com.netcracker.ncstore.dto.request.CompanyDetailedInfoRequest;
+import com.netcracker.ncstore.dto.request.CompanyUpdateRequest;
 import com.netcracker.ncstore.dto.response.CompanyDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.CompanyInfoResponse;
+import com.netcracker.ncstore.dto.response.CompanyUpdateResponse;
 import com.netcracker.ncstore.service.user.interfaces.web.ICompanyWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +31,7 @@ public class CompanyController {
 
 
     @GetMapping(value = "/info")
-    public ResponseEntity<CompanyDetailedInfoResponse> getCompanyInfo(Principal principal) {
+    public ResponseEntity<CompanyDetailedInfoResponse> getCompanyInfo(final Principal principal) {
         log.info("REQUEST: to get self Company info for user " + principal.getName());
 
         CompanyDetailedInfoRequest request = new CompanyDetailedInfoRequest(
@@ -44,9 +48,25 @@ public class CompanyController {
                 body(response);
     }
 
-    @PostMapping(value = "/info")
-    public ResponseEntity<?> updateCompanyInfo(Principal principal) {
-        return null;
+    @PutMapping(value = "/info")
+    public ResponseEntity<?> updateCompanyInfo(@RequestBody final CompanyUpdateBody body,
+                                               final Principal principal) {
+        log.info("REQUEST: to update Company info for user " + principal.getName());
+
+        CompanyUpdateRequest request = new CompanyUpdateRequest(
+                principal.getName(),
+                body.getCompanyName(),
+                body.getDescription(),
+                body.getFoundationDate()
+        );
+
+        CompanyUpdateResponse response = companyWebService.updateCompanyInfo(request);
+
+        log.info("RESPONSE: to update Company info for user " + principal.getName());
+
+        return ResponseEntity.
+                ok().
+                body(response);
     }
 
     @GetMapping(value = "/info/{userId}")

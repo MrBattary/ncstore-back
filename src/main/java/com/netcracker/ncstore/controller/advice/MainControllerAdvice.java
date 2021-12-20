@@ -25,13 +25,13 @@ public class MainControllerAdvice {
     @ExceptionHandler(GeneralPermissionDeniedException.class)
     public ResponseEntity<String> handleGeneralPermissionDeniedException(final GeneralPermissionDeniedException e) {
         log.error(e.getMessage());
-        return new ResponseEntity<String>(e.getMessage(), HttpStatus.FORBIDDEN);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
     @ExceptionHandler(GeneralNotFoundException.class)
     public ResponseEntity<String> handleGeneralNotFoundException(final GeneralNotFoundException e) {
         log.error(e.getMessage());
-        return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(GeneralBadRequestException.class)

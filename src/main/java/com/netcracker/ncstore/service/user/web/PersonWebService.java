@@ -1,15 +1,21 @@
 package com.netcracker.ncstore.service.user.web;
 
+import com.netcracker.ncstore.dto.PersonUpdateDTO;
 import com.netcracker.ncstore.dto.request.PersonDetailedInfoRequest;
+import com.netcracker.ncstore.dto.request.PersonUpdateRequest;
 import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonInfoResponse;
+import com.netcracker.ncstore.dto.response.PersonUpdateResponse;
 import com.netcracker.ncstore.exception.UserServiceNotFoundException;
+import com.netcracker.ncstore.exception.UserServiceValidationException;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
 import com.netcracker.ncstore.exception.general.GeneralNotFoundException;
 import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
 import com.netcracker.ncstore.model.Person;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.model.enumerations.ERoleName;
 import com.netcracker.ncstore.model.enumerations.EUserType;
+import com.netcracker.ncstore.service.user.interfaces.IUserBusinessService;
 import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
 import com.netcracker.ncstore.service.user.interfaces.web.IPersonWebService;
 import com.netcracker.ncstore.util.converter.RolesConverter;
@@ -23,9 +29,12 @@ import java.util.UUID;
 @Slf4j
 public class PersonWebService implements IPersonWebService {
     private final IUserDataService userDataService;
+    private final IUserBusinessService userBusinessService;
 
-    public PersonWebService(IUserDataService userDataService) {
+    public PersonWebService(final IUserDataService userDataService,
+                            final IUserBusinessService userBusinessService) {
         this.userDataService = userDataService;
+        this.userBusinessService = userBusinessService;
     }
 
     @Override
@@ -33,7 +42,6 @@ public class PersonWebService implements IPersonWebService {
             throws GeneralNotFoundException, GeneralPermissionDeniedException {
         try {
             User user = userDataService.getUserByEmail(request.getEmailOfPerson());
-
             Person person = userDataService.getPerson(user.getId());
 
             if (!user.getEmail().equals(request.getEmailOfIssuer())) {
@@ -87,6 +95,34 @@ public class PersonWebService implements IPersonWebService {
             );
         } catch (UserServiceNotFoundException notFoundException) {
             throw new GeneralNotFoundException(notFoundException.getMessage(), notFoundException);
+        }
+    }
+
+    @Override
+    public PersonUpdateResponse updatePersonInfo(PersonUpdateRequest request) {
+        try {
+            User user = userDataService.getUserByEmail(request.getEmailOfUser());
+
+            PersonUpdateDTO updateDTO = new PersonUpdateDTO(
+                    user.getId(),
+                    request.getNickName(),
+                    request.getFirstName(),
+                    request.getLastName(),
+                    request.getBirthday()
+            );
+
+            Person person = userBusinessService.updatePersonInfo(updateDTO);
+
+            return new PersonUpdateResponse(
+                    person.getNickName(),
+                    person.getFirstName(),
+                    person.getLastName(),
+                    person.getBirthday()
+            );
+        } catch (UserServiceNotFoundException notFoundException) {
+            throw new GeneralNotFoundException(notFoundException.getMessage(), notFoundException);
+        } catch (UserServiceValidationException validationException) {
+            throw new GeneralBadRequestException(validationException.getMessage(), validationException);
         }
     }
 }

@@ -4,7 +4,7 @@ import com.netcracker.ncstore.dto.request.OrderGetRequest;
 import com.netcracker.ncstore.dto.request.OrderInfoGetRequest;
 import com.netcracker.ncstore.dto.response.OrderGetResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
-import com.netcracker.ncstore.service.order.interfaces.IOrderWebService;
+import com.netcracker.ncstore.service.web.order.IOrderWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

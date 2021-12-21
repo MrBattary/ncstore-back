@@ -8,7 +8,7 @@ import com.netcracker.ncstore.dto.request.CartGetRequest;
 import com.netcracker.ncstore.dto.request.CartPutRequest;
 import com.netcracker.ncstore.dto.response.CartItemResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
-import com.netcracker.ncstore.service.cart.interfaces.ICartWebService;
+import com.netcracker.ncstore.service.web.cart.ICartWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

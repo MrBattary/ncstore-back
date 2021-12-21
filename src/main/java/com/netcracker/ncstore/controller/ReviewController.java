@@ -4,7 +4,7 @@ import com.netcracker.ncstore.dto.body.ReviewCreateBody;
 import com.netcracker.ncstore.dto.request.ReviewCreateRequest;
 import com.netcracker.ncstore.dto.request.ReviewGetRequest;
 import com.netcracker.ncstore.dto.response.ReviewGetResponse;
-import com.netcracker.ncstore.service.review.interfaces.IReviewWebService;
+import com.netcracker.ncstore.service.web.review.IReviewWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

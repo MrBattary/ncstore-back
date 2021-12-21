@@ -6,7 +6,7 @@ import com.netcracker.ncstore.dto.request.CompanyUpdateRequest;
 import com.netcracker.ncstore.dto.response.CompanyDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.CompanyInfoResponse;
 import com.netcracker.ncstore.dto.response.CompanyUpdateResponse;
-import com.netcracker.ncstore.service.user.interfaces.web.ICompanyWebService;
+import com.netcracker.ncstore.service.web.company.ICompanyWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

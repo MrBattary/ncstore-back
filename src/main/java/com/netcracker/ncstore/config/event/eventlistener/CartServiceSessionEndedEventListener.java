@@ -6,7 +6,7 @@ import com.netcracker.ncstore.model.CartItem;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.repository.CartItemRepository;
 import com.netcracker.ncstore.repository.CartRepository;
-import com.netcracker.ncstore.service.user.interfaces.IUserDataService;
+import com.netcracker.ncstore.service.data.user.IUserDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;

@@ -6,7 +6,7 @@ import com.netcracker.ncstore.dto.request.PersonUpdateRequest;
 import com.netcracker.ncstore.dto.response.PersonDetailedInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonInfoResponse;
 import com.netcracker.ncstore.dto.response.PersonUpdateResponse;
-import com.netcracker.ncstore.service.user.interfaces.web.IPersonWebService;
+import com.netcracker.ncstore.service.web.person.IPersonWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

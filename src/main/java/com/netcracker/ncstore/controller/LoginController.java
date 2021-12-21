@@ -3,7 +3,7 @@ package com.netcracker.ncstore.controller;
 import com.netcracker.ncstore.dto.request.SignInEmailPasswordBody;
 import com.netcracker.ncstore.dto.request.SignInEmailPasswordRequest;
 import com.netcracker.ncstore.dto.response.SignInResponse;
-import com.netcracker.ncstore.service.user.interfaces.web.ILoginWebService;
+import com.netcracker.ncstore.service.web.login.ILoginWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

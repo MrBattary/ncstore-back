@@ -9,7 +9,7 @@ import com.netcracker.ncstore.dto.request.UserBalanceGetRequest;
 import com.netcracker.ncstore.dto.request.UserChangePasswordRequest;
 import com.netcracker.ncstore.dto.response.UserAddBalanceResponse;
 import com.netcracker.ncstore.dto.response.UserBalanceGetResponse;
-import com.netcracker.ncstore.service.user.interfaces.web.IUserBaseWebService;
+import com.netcracker.ncstore.service.web.user.IUserBaseWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

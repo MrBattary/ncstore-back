@@ -1,7 +1,7 @@
 package com.netcracker.ncstore.controller;
 
 import com.netcracker.ncstore.dto.response.CategoryGetResponse;
-import com.netcracker.ncstore.service.category.interfaces.ICategoryWebService;
+import com.netcracker.ncstore.service.web.category.ICategoryWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

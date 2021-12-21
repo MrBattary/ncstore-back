@@ -4,7 +4,7 @@ import com.netcracker.ncstore.dto.body.SignUpCompanyBody;
 import com.netcracker.ncstore.dto.body.SignUpPersonBody;
 import com.netcracker.ncstore.dto.request.RegisterCompanyRequest;
 import com.netcracker.ncstore.dto.request.RegisterPersonRequest;
-import com.netcracker.ncstore.service.user.interfaces.web.IRegistrationWebService;
+import com.netcracker.ncstore.service.web.register.IRegistrationWebService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

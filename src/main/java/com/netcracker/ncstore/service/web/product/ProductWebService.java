@@ -261,7 +261,7 @@ public class ProductWebService implements IProductWebService {
 
             Product product = productDataService.getProductById(request.getProductId());
 
-            if (!product.getSupplier().equals(supplier)) {
+            if (!product.getSupplier().getId().equals(supplier.getId())) {
                 throw new GeneralPermissionDeniedException("Only owner of product can view detailed info. ");
             }
 

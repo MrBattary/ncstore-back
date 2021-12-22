@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import java.util.UUID;
 
 @Getter
@@ -41,4 +40,9 @@ public class ProductStatistic {
     public ProductStatistic(Product product) {
         this.product = product;
     }
+
+    public void calculateAverageRating() {
+        averageRating = (oneStarReviewCount + 2*twoStarsReviewCount + 3*threeStarsReviewCount + 4*fourStarsReviewCount + 5*fiveStarsReviewCount)/(double)totalReviewCount;
+    }
+
 }

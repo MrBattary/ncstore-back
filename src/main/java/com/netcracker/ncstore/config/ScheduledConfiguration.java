@@ -15,6 +15,8 @@ import java.time.Instant;
 public class ScheduledConfiguration {
     private final DiscountRepository discountRepository;
 
+    private long cartLifetimeInDays;
+
     public ScheduledConfiguration(DiscountRepository discountRepository) {
         this.discountRepository = discountRepository;
     }
@@ -26,5 +28,11 @@ public class ScheduledConfiguration {
         int deleted = discountRepository.deleteDiscountByLessEndTime(Instant.now());
         discountRepository.flush();
         log.info("Deleted " + deleted + " past discounts from database");
+    }
+
+    @Scheduled(initialDelay = 0, fixedRate = 1000 * 60 * 60 * 12)
+    @Transactional
+    public void deleteOldCartsFromDatabase(){
+
     }
 }

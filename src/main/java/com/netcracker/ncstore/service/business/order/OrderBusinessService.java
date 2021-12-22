@@ -1,5 +1,6 @@
 package com.netcracker.ncstore.service.business.order;
 
+import com.netcracker.ncstore.config.event.customevent.ProductOrderCompletedEvent;
 import com.netcracker.ncstore.dto.ActualProductPrice;
 import com.netcracker.ncstore.dto.ActualProductPriceConvertedForRegionDTO;
 import com.netcracker.ncstore.dto.ConvertedPriceWithCurrencySymbolDTO;
@@ -25,12 +26,13 @@ import com.netcracker.ncstore.model.enumerations.EOrderStatus;
 import com.netcracker.ncstore.repository.OrderItemRepository;
 import com.netcracker.ncstore.repository.OrderRepository;
 import com.netcracker.ncstore.service.data.order.IOrderDataService;
-import com.netcracker.ncstore.service.general.payment.IPaymentService;
 import com.netcracker.ncstore.service.data.price.IPricesDataService;
-import com.netcracker.ncstore.service.general.priceconverter.IPriceConversionService;
 import com.netcracker.ncstore.service.data.product.IProductDataService;
+import com.netcracker.ncstore.service.general.payment.IPaymentService;
+import com.netcracker.ncstore.service.general.priceconverter.IPriceConversionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -53,6 +55,8 @@ public class OrderBusinessService implements IOrderBusinessService {
     private final IPaymentService paymentService;
     private final IOrderDataService orderDataService;
 
+    private final ApplicationEventPublisher applicationEventPublisher;
+
     @Value("${store.sales_percentage}")
     private double ownerPercent;
 
@@ -62,7 +66,8 @@ public class OrderBusinessService implements IOrderBusinessService {
                                 final IPricesDataService pricesDataService,
                                 final IPriceConversionService priceConversionService,
                                 final IPaymentService paymentService,
-                                final IOrderDataService orderDataService) {
+                                final IOrderDataService orderDataService,
+                                final ApplicationEventPublisher applicationEventPublisher) {
 
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
@@ -71,6 +76,7 @@ public class OrderBusinessService implements IOrderBusinessService {
         this.priceConversionService = priceConversionService;
         this.paymentService = paymentService;
         this.orderDataService = orderDataService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -181,6 +187,13 @@ public class OrderBusinessService implements IOrderBusinessService {
             item.setItemStatus(EOrderItemStatus.COMPLETED);
             //TODO not random keys
             item.setLicenseKey(UUID.randomUUID().toString());
+
+            applicationEventPublisher.publishEvent(
+                    new ProductOrderCompletedEvent(
+                            this,
+                            item.getProduct().getId()
+                    )
+            );
         }
 
         order.setOrderStatus(EOrderStatus.COMPLETED);

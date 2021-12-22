@@ -205,7 +205,7 @@ public class ProductBusinessService implements IProductBusinessService {
     }
 
     private void validateSupplierToModifyProduct(User supplier, Product product) {
-        if (!supplier.equals(product.getSupplier())) {
+        if (!supplier.getId().equals(product.getSupplier().getId())) {
             throw new GeneralPermissionDeniedException("Only owner of product can update product. ");
         }
     }

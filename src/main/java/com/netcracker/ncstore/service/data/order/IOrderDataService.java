@@ -2,6 +2,7 @@ package com.netcracker.ncstore.service.data.order;
 
 import com.netcracker.ncstore.dto.OrderGetDTO;
 import com.netcracker.ncstore.dto.OrderGetPageDTO;
+import com.netcracker.ncstore.dto.UserIdProductIdDTO;
 import com.netcracker.ncstore.exception.OrderServiceNotFoundException;
 import com.netcracker.ncstore.exception.OrderServicePermissionException;
 import com.netcracker.ncstore.model.Order;
@@ -28,4 +29,11 @@ public interface IOrderDataService {
      * @throws OrderServicePermissionException when user do not own requested order
      */
     Order getSpecificOrderForUser(final OrderGetDTO orderGetDTO) throws OrderServiceNotFoundException, OrderServicePermissionException;
+
+    /**
+     * Checks if user ordered product with this ID
+     *
+     * @return - true: if ordered, false: otherwise
+     */
+    boolean isUserOrderedProduct(final UserIdProductIdDTO userIdProductIdDTO);
 }

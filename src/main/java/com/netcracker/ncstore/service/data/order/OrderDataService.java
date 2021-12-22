@@ -2,6 +2,7 @@ package com.netcracker.ncstore.service.data.order;
 
 import com.netcracker.ncstore.dto.OrderGetDTO;
 import com.netcracker.ncstore.dto.OrderGetPageDTO;
+import com.netcracker.ncstore.dto.UserIdProductIdDTO;
 import com.netcracker.ncstore.exception.OrderServiceNotFoundException;
 import com.netcracker.ncstore.exception.OrderServicePermissionException;
 import com.netcracker.ncstore.model.Order;
@@ -39,5 +40,10 @@ public class OrderDataService implements IOrderDataService {
         } else {
             throw new OrderServicePermissionException("Requested order does not belong to provided user. ");
         }
+    }
+
+    @Override
+    public boolean isUserOrderedProduct(final UserIdProductIdDTO userIdProductIdDTO) {
+        return orderRepository.existsProductForUser(userIdProductIdDTO.getUserEmail(), userIdProductIdDTO.getProductId());
     }
 }

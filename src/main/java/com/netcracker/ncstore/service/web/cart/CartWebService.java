@@ -12,9 +12,8 @@ import com.netcracker.ncstore.dto.request.OrderCreateRequest;
 import com.netcracker.ncstore.dto.response.CartItemResponse;
 import com.netcracker.ncstore.dto.response.OrderInfoResponse;
 import com.netcracker.ncstore.service.business.cart.ICartBusinessService;
-import com.netcracker.ncstore.service.web.cart.ICartWebService;
-import com.netcracker.ncstore.service.web.order.IOrderWebService;
 import com.netcracker.ncstore.service.general.priceconverter.IPriceConversionService;
+import com.netcracker.ncstore.service.web.order.IOrderWebService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

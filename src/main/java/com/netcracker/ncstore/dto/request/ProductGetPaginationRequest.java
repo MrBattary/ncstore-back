@@ -1,7 +1,5 @@
 package com.netcracker.ncstore.dto.request;
 
-import com.netcracker.ncstore.util.enumeration.ESortOrder;
-import com.netcracker.ncstore.util.enumeration.EProductSortRule;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

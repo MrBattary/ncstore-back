@@ -1,10 +1,7 @@
 package com.netcracker.ncstore.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.extern.jackson.Jacksonized;
 
 import java.time.Instant;
 import java.util.Locale;

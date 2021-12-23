@@ -16,6 +16,7 @@ public class HeaderJwtAuthFilter extends AJwtAuthFilter {
 
     /**
      * Constructor
+     *
      * @param matcher - matcher type
      */
     public HeaderJwtAuthFilter(final RequestMatcher matcher) {

@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -30,16 +31,14 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final IJwtTokenService jwtTokenService;
     private final AccessDeniedHandler accessDeniedHandler;
+    private final LogoutSuccessHandler logoutSuccessHandler;
 
-    /**
-     * Constructor
-     *
-     * @param jwtTokenService - JWT Token Service
-     */
     public WebSecurityConfiguration(final IJwtTokenService jwtTokenService,
-                                    final AccessDeniedHandler accessDeniedHandler) {
+                                    final AccessDeniedHandler accessDeniedHandler,
+                                    final LogoutSuccessHandler logoutSuccessHandler) {
         this.jwtTokenService = jwtTokenService;
         this.accessDeniedHandler = accessDeniedHandler;
+        this.logoutSuccessHandler = logoutSuccessHandler;
     }
 
     @Override
@@ -47,7 +46,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.formLogin().disable();
         //logoutSuccessHandler() and implement LogoutSuccessHandler
-        http.logout().logoutUrl("/signout").invalidateHttpSession(true).deleteCookies("JSESSIONID");
+        http.logout().logoutUrl("/signout").invalidateHttpSession(true).deleteCookies("JSESSIONID").logoutSuccessHandler(logoutSuccessHandler);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.requestCache().disable();
         http.anonymous();
@@ -81,6 +80,20 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/products/{\\d+}").permitAll()
                 .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/cart").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.PUT, "/cart").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.DELETE, "/cart/{\\d+}").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/category").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/person/info/{\\d+}").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/company/info/{\\d+}").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/cart").hasAuthority("CUSTOMER")
+                .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/products/{\\d+}/detailed").hasAuthority("SUPPLIER")
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.PUT, "/products/{\\d+}").hasAuthority("SUPPLIER")
@@ -97,11 +110,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(new JwtAuthenticationProvider(jwtTokenService));
     }
 
-    /**
-     * Abstract factory for the password encoder
-     *
-     * @return - PasswordEncoder realization
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -112,12 +120,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new DefaultHttpFirewall();
     }
 
-    /**
-     * Abstract factory for the JWT token service
-     *
-     * @param settings - settings
-     * @return - JwtTokenService realization
-     */
     @Bean
     @Primary
     public IJwtTokenService jwtTokenService(final JwtSettings settings) {

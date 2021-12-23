@@ -31,4 +31,8 @@ public class ActualProductPriceConvertedForRegionDTO {
     private final Instant discountStartUtc;
     //should be null when no discount found
     private final Instant discountEndUtc;
+
+    public double getRealPrice() {
+        return discountConvertedPrice == null ? normalConvertedPrice : discountConvertedPrice;
+    }
 }

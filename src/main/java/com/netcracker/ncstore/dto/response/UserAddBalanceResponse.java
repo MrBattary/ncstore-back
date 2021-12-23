@@ -12,5 +12,6 @@ import lombok.extern.jackson.Jacksonized;
 @AllArgsConstructor
 @Getter
 public class UserAddBalanceResponse {
-    private final double newBalance;
+    private final double balance;
+    private final String currency;
 }

@@ -17,9 +17,10 @@ public class JwtSettings {
 
     /**
      * Settings constructor
-     * @param tokenIssuer - name
+     *
+     * @param tokenIssuer     - name
      * @param tokenSigningKey - key
-     * @param aTokenDuration - duration in minutes
+     * @param aTokenDuration  - duration in minutes
      */
     public JwtSettings(@Value("${jwt.issuer}") final String tokenIssuer,
                        @Value("${jwt.signingKey}") final String tokenSigningKey,

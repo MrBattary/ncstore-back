@@ -30,7 +30,8 @@ public class OrderItem {
     @Id
     @GeneratedValue
     private UUID id;
-    private double price;
+    private double localizedPrice;
+    private double priceUc;
     private Locale priceLocale;
     private String licenseKey;
 
@@ -46,4 +47,9 @@ public class OrderItem {
     @Column(name = "item_status")
     private EOrderItemStatus itemStatus;
 
+    public OrderItem(Order order, Product product) {
+        this.order = order;
+        this.product = product;
+        this.itemStatus = EOrderItemStatus.REGISTERED;
+    }
 }

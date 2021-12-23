@@ -9,7 +9,7 @@ import com.netcracker.ncstore.model.Product_;
 import com.netcracker.ncstore.model.User_;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.util.enumeration.ESortOrder;
-import com.netcracker.ncstore.util.enumeration.ESortRule;
+import com.netcracker.ncstore.util.enumeration.EProductSortRule;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
@@ -43,16 +43,24 @@ public abstract class ProductSpecifications {
     /**
      * Filters products that belongs to one of the specified categories
      *
-     * @param categories list of categories
+     * @param categoriesNames list of categories
      * @return Specification<Product>
      */
-    public static Specification<Product> getByCategoriesIDs(List<UUID> categories) {
+    public static Specification<Product> getByCategoriesNames(List<String> categoriesNames) {
         return (root, query, criteriaBuilder) -> {
-            if (CollectionUtils.isEmpty(categories)) {
+            if (CollectionUtils.isEmpty(categoriesNames)) {
                 return criteriaBuilder.and();
             } else {
-                Join<Product, Category> categoryJoin = root.join(Product_.CATEGORIES, JoinType.LEFT);
-                return categoryJoin.get(Category_.ID).in(categories);
+                Subquery<Category> categorySubquery = query.subquery(Category.class);
+                Root<Category> categoryRoot = categorySubquery.from(Category.class);
+                Join<Category, Product> categoryProductJoin = categoryRoot.join(Category_.products);
+                categorySubquery.select(categoryRoot).where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(root.get(Product_.id), categoryProductJoin.get(Product_.id)),
+                                categoryRoot.get(Category_.name).in(categoriesNames)
+                        )
+                );
+                return criteriaBuilder.exists(categorySubquery);
             }
         };
     }
@@ -93,7 +101,7 @@ public abstract class ProductSpecifications {
      * @param defaultLocale default locale used in application
      * @return Specification<Product>
      */
-    public static Specification<Product> order(ESortOrder order, ESortRule rule, Locale targetLocale, Locale defaultLocale) {
+    public static Specification<Product> order(ESortOrder order, EProductSortRule rule, Locale targetLocale, Locale defaultLocale) {
         return new Specification<Product>() {
             @Override
             public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -106,7 +114,7 @@ public abstract class ProductSpecifications {
                 Path<?> criteriaOrderingPath;
 
                 //add here more rules if they need Join<Product, ProductPrice>
-                if (rule.equals(ESortRule.PRICE) || rule.equals(ESortRule.DISCOUNT)) {
+                if (rule.equals(EProductSortRule.PRICE) || rule.equals(EProductSortRule.DISCOUNT)) {
                     Subquery<ProductPrice> targetLocaleExistsSubquery = query.subquery(ProductPrice.class);
                     Root<ProductPrice> productPriceRoot = targetLocaleExistsSubquery.from(ProductPrice.class);
                     productPriceJoin = root.join(Product_.productPrices, JoinType.LEFT);

@@ -24,7 +24,7 @@
         </encoder>
         <file>${LOGS_PATH}/${APP}/${APP}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOGS_PATH}/${APP}/${date:MM-yyyy}/${APP}-%d{-dd-MM-yyyy}-%i.${LOGS_EXTENSION}</fileNamePattern>
+            <fileNamePattern>${LOGS_PATH}/${APP}/%d{MM-yyyy}/${APP}-%d{dd-MM-yyyy}-%i.${LOGS_EXTENSION}</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>${LOGS_MAX_SIZE}</maxFileSize>

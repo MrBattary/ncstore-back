@@ -17,6 +17,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     /**
      * Constructor
+     *
      * @param tokenService - Token service
      */
     public JwtAuthenticationProvider(final IJwtTokenService tokenService) {
@@ -24,7 +25,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     }
 
     @Override
-    public Authentication authenticate(final Authentication authentication) throws AuthenticationException{
+    public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         String token = String.valueOf(authentication.getCredentials());
         logger.info("BEFORE REQUEST: Authenticating {}", token);
 

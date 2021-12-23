@@ -10,6 +10,7 @@ public class UnauthenticatedJwtToken extends AbstractAuthenticationToken {
 
     /**
      * Constructor
+     *
      * @param token - Token
      */
     public UnauthenticatedJwtToken(final String token) {

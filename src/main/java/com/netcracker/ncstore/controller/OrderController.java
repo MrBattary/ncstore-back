@@ -1,45 +1,69 @@
 package com.netcracker.ncstore.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.netcracker.ncstore.dto.request.OrderGetRequest;
+import com.netcracker.ncstore.dto.request.OrderInfoGetRequest;
+import com.netcracker.ncstore.dto.response.OrderGetResponse;
+import com.netcracker.ncstore.dto.response.OrderInfoResponse;
+import com.netcracker.ncstore.service.web.order.IOrderWebService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Order controller is responsible for any actions with orders
  */
 @RestController
+@RequestMapping(value = "/orders")
+@Slf4j
 public class OrderController {
-    private final Logger log;
 
-    /**
-     * Constructor
-     * <p>
-     * TODO: In the future, any services should be the arguments of constructor
-     */
-    public OrderController() {
-        this.log = LoggerFactory.getLogger(OrderController.class);
+    private final IOrderWebService orderWebService;
+
+    public OrderController(final IOrderWebService orderWebService) {
+
+        this.orderWebService = orderWebService;
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Order/getOrders
-    @RequestMapping(value = "/orders", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<?> getOrdersWithPagination(@RequestParam final Integer page,
-                                                     @RequestParam final Integer size) {
-        return null;
+    @GetMapping
+    public ResponseEntity<List<OrderGetResponse>> getOrdersWithPagination(@RequestParam final int page,
+                                                                          @RequestParam final int size,
+                                                                          final Principal principal) {
+        log.info("REQUEST: to get orders for user with email " + principal.getName() + " on page: " + page + " with size: " + size);
+
+        OrderGetRequest request = new OrderGetRequest(page, size, principal.getName());
+
+        List<OrderGetResponse> response = orderWebService.getOrders(request);
+
+        log.info("RESPONSE: to get orders for user with email " + principal.getName() + " on page: " + page + " with size: " + size);
+
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
     }
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Order/getOrder
-    @RequestMapping(value = "/orders/{orderId}", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<?> getOrder(@PathVariable final String orderId) {
-        return null;
-    }
+    @GetMapping(value = "/{orderId}")
+    public ResponseEntity<OrderInfoResponse> getOrder(@PathVariable final UUID orderId, Principal principal) {
+        log.info("REQUEST: to get order with UUID " + orderId + " requested by user with email " + principal.getName());
 
-    // https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.1#/Order/refundItemsOrder
-    @RequestMapping(value = "/orders/{orderId}", method = RequestMethod.PUT)
-    @ResponseBody
-    public ResponseEntity<?> refundFromOrder(@PathVariable final String orderId) {
-        return null;
+        OrderInfoGetRequest request = new OrderInfoGetRequest(orderId, principal.getName());
+
+        OrderInfoResponse response = orderWebService.getSpecificOrder(request);
+
+        log.info("RESPONSE: to get order with UUID " + orderId + " requested by user with email " + principal.getName());
+
+        return ResponseEntity.
+                ok().
+                contentType(MediaType.APPLICATION_JSON).
+                body(response);
     }
 }

@@ -13,7 +13,8 @@ public class AuthenticatedJwtToken extends AbstractAuthenticationToken {
 
     /**
      * Constructor
-     * @param subject - User email (login)
+     *
+     * @param subject            - User email (login)
      * @param grantedAuthorities - Collection of granted authorities
      */
     public AuthenticatedJwtToken(final String subject,

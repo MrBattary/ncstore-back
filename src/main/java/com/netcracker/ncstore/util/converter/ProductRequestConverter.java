@@ -1,14 +1,13 @@
 package com.netcracker.ncstore.util.converter;
 
-import com.netcracker.ncstore.exception.RequestParametersInvalidException;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
+import com.netcracker.ncstore.util.enumeration.EProductSortRule;
 import com.netcracker.ncstore.util.enumeration.ESortOrder;
-import com.netcracker.ncstore.util.enumeration.ESortRule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -18,23 +17,23 @@ import java.util.stream.Collectors;
  * and there is no need to create instance of it
  */
 public abstract class ProductRequestConverter {
-    public static List<String> convertCategoriesStringToList(String stringOfCategoriesIDs) {
-        if (!stringOfCategoriesIDs.equals("")) {
+    public static List<String> convertCategoriesStringToList(String stringOfCategoriesNames) {
+        if (!stringOfCategoriesNames.equals("")) {
             try {
-                return Arrays.stream(stringOfCategoriesIDs.split("\\|")).collect(Collectors.toList());
+                return Arrays.stream(stringOfCategoriesNames.split("\\|")).collect(Collectors.toList());
             } catch (IllegalArgumentException e) {
-                throw new RequestParametersInvalidException("Provided UUID is not valid.");
+                throw new GeneralBadRequestException("Provided categories names are not valid.");
             }
         } else {
             return new ArrayList<>();
         }
     }
 
-    public static ESortRule convertSortRuleStringToEnum(String sortRuleString) {
+    public static EProductSortRule convertSortRuleStringToEnum(String sortRuleString) {
         try {
-            return ESortRule.valueOf(sortRuleString.toUpperCase(Locale.ROOT));
+            return EProductSortRule.valueOf(sortRuleString.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            throw new RequestParametersInvalidException("Provided sort rule not supported.");
+            throw new GeneralBadRequestException("Provided sort rule " + sortRuleString + " not supported.");
         }
     }
 
@@ -42,7 +41,7 @@ public abstract class ProductRequestConverter {
         try {
             return ESortOrder.valueOf(sortOrderString.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            throw new RequestParametersInvalidException("Provided sort order not supported.");
+            throw new GeneralBadRequestException("Provided sort order " + sortOrderString + " not supported.");
         }
     }
 }

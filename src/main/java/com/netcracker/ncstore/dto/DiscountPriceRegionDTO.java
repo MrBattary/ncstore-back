@@ -12,9 +12,6 @@ import java.util.Locale;
 /**
  * DTO used for transferring information about discount
  */
-@Jacksonized
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
 public class DiscountPriceRegionDTO {

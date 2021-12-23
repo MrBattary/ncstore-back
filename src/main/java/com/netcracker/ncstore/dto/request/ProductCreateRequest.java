@@ -13,15 +13,13 @@ import java.util.UUID;
 
 
 /**
- * This DTO contains all POST request
- * information for creating product
+ * DTO containing information about product that will
+ * be added to store.
  */
-@Jacksonized
-@Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @Getter
 public class ProductCreateRequest {
+    private final String emailOfIssuer;
     private final String productName;
     private final String productDescription;
     private final List<PriceRegionDTO> normalPrices;

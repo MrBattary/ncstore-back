@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.security;
 
-import com.netcracker.ncstore.dto.UserEmailAndRolesDTO;
+import com.netcracker.ncstore.dto.JWTTokenCreateDTO;
 import com.netcracker.ncstore.security.token.AuthenticatedJwtToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -30,6 +30,7 @@ public class JsonJwtTokenService implements IJwtTokenService {
 
     /**
      * Constructor
+     *
      * @param settings - token settings
      */
     public JsonJwtTokenService(final JwtSettings settings) {
@@ -38,7 +39,7 @@ public class JsonJwtTokenService implements IJwtTokenService {
     }
 
     @Override
-    public String createToken(final UserEmailAndRolesDTO userLoginAndRolesDTO) {
+    public String createToken(final JWTTokenCreateDTO userLoginAndRolesDTO) {
         logger.info("Generating token for user {}", userLoginAndRolesDTO.getEmail());
 
         Instant now = Instant.now();

@@ -9,7 +9,7 @@ import com.netcracker.ncstore.model.Product_;
 import com.netcracker.ncstore.model.User_;
 import com.netcracker.ncstore.model.enumerations.EProductStatus;
 import com.netcracker.ncstore.util.enumeration.ESortOrder;
-import com.netcracker.ncstore.util.enumeration.ESortRule;
+import com.netcracker.ncstore.util.enumeration.EProductSortRule;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
@@ -101,7 +101,7 @@ public abstract class ProductSpecifications {
      * @param defaultLocale default locale used in application
      * @return Specification<Product>
      */
-    public static Specification<Product> order(ESortOrder order, ESortRule rule, Locale targetLocale, Locale defaultLocale) {
+    public static Specification<Product> order(ESortOrder order, EProductSortRule rule, Locale targetLocale, Locale defaultLocale) {
         return new Specification<Product>() {
             @Override
             public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -114,7 +114,7 @@ public abstract class ProductSpecifications {
                 Path<?> criteriaOrderingPath;
 
                 //add here more rules if they need Join<Product, ProductPrice>
-                if (rule.equals(ESortRule.PRICE) || rule.equals(ESortRule.DISCOUNT)) {
+                if (rule.equals(EProductSortRule.PRICE) || rule.equals(EProductSortRule.DISCOUNT)) {
                     Subquery<ProductPrice> targetLocaleExistsSubquery = query.subquery(ProductPrice.class);
                     Root<ProductPrice> productPriceRoot = targetLocaleExistsSubquery.from(ProductPrice.class);
                     productPriceJoin = root.join(Product_.productPrices, JoinType.LEFT);

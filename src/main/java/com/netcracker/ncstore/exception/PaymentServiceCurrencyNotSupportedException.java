@@ -3,7 +3,7 @@ package com.netcracker.ncstore.exception;
 /**
  * Used when provided currency is not registered in payment service
  */
-public class PaymentServiceCurrencyNotSupportedException extends RuntimeException{
+public class PaymentServiceCurrencyNotSupportedException extends RuntimeException {
     public PaymentServiceCurrencyNotSupportedException() {
     }
 

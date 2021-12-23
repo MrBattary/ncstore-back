@@ -3,7 +3,7 @@ package com.netcracker.ncstore.exception;
 /**
  * Used in CartService when passed parameters are invalid
  */
-public class CartServiceValidationException extends RuntimeException{
+public class CartServiceValidationException extends RuntimeException {
     public CartServiceValidationException() {
     }
 

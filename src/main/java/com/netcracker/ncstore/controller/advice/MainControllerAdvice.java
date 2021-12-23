@@ -1,6 +1,8 @@
 package com.netcracker.ncstore.controller.advice;
 
-import com.netcracker.ncstore.exception.*;
+import com.netcracker.ncstore.exception.general.GeneralBadRequestException;
+import com.netcracker.ncstore.exception.general.GeneralNotFoundException;
+import com.netcracker.ncstore.exception.general.GeneralPermissionDeniedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -23,108 +25,21 @@ public class MainControllerAdvice {
     @ExceptionHandler(GeneralPermissionDeniedException.class)
     public ResponseEntity<String> handleGeneralPermissionDeniedException(final GeneralPermissionDeniedException e) {
         log.error(e.getMessage());
-        return new ResponseEntity<String>(e.getMessage(), HttpStatus.FORBIDDEN);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
     @ExceptionHandler(GeneralNotFoundException.class)
     public ResponseEntity<String> handleGeneralNotFoundException(final GeneralNotFoundException e) {
         log.error(e.getMessage());
-        return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(GeneralBadRequestException.class)
     public ResponseEntity<String> handleGeneralBadRequestException(final GeneralBadRequestException e) {
         log.error(e.getMessage());
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
-
-
-
-
-
-
-
-    @ExceptionHandler(RequestParametersInvalidException.class)
-    public ResponseEntity<?> handleRequestParametersInvalidException(final RequestParametersInvalidException e) {
-        log.error(e.getMessage());
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
-
-    @ExceptionHandler(AuthServiceException.class)
-    public ResponseEntity<?> handleAuthServiceException(final AuthServiceException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 400");
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(ProductServiceCreationException.class)
-    public ResponseEntity<?> handleAuthServiceException(final ProductServiceCreationException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 400");
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(UserServiceCompanyInfoException.class)
-    public ResponseEntity<?> handleAuthServiceException(final UserServiceCompanyInfoException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 400");
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(UserServiceNotFoundException.class)
-    public ResponseEntity<?> handleAuthServiceException(final UserServiceNotFoundException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 404");
-        return ResponseEntity.notFound().build();
-    }
-
-    @ExceptionHandler(CartServiceValidationException.class)
-    public ResponseEntity<?> handleCartServiceValidationException(final CartServiceValidationException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 400");
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(ProductServiceNotFoundExpectedException.class)
-    public ResponseEntity<?> handleProductServiceNotFoundExpectedException(final ProductServiceNotFoundExpectedException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 204");
-        return ResponseEntity.noContent().build();
-    }
-
-    @ExceptionHandler(ProductServiceNotFoundException.class)
-    public ResponseEntity<?> handleProductServiceNotFoundException(final ProductServiceNotFoundException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 404");
-        return ResponseEntity.notFound().build();
-    }
-
-    @ExceptionHandler(CartServiceCheckoutException.class)
-    public ResponseEntity<?> handleCartServiceValidationException(final CartServiceCheckoutException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 400");
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(UserServiceChangePasswordException.class)
-    public ResponseEntity<?> handleCartServiceValidationException(final UserServiceChangePasswordException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 400");
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(PaymentServiceException.class)
-    public ResponseEntity<?> handleCartServiceValidationException(final PaymentServiceException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 400");
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(PaymentServiceCurrencyNotSupportedException.class)
-    public ResponseEntity<?> handleCartServiceValidationException(final PaymentServiceCurrencyNotSupportedException e) {
-        log.error(e.getMessage());
-        log.info("RESPONSE: 400");
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.
+                badRequest().
+                body(e.getMessage());
     }
 
 /*    //Should be activated only on production

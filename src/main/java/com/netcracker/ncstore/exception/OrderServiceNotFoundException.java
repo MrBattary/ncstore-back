@@ -1,6 +1,6 @@
 package com.netcracker.ncstore.exception;
 
-public class OrderServiceNotFoundException extends RuntimeException{
+public class OrderServiceNotFoundException extends RuntimeException {
     public OrderServiceNotFoundException() {
     }
 

@@ -33,4 +33,11 @@ public class Discount {
     @OneToOne
     @JoinColumn(name = "product_price_id")
     private ProductPrice productPrice;
+
+    public Discount(double discountPrice, Instant startUtcTime, Instant endUtcTime, ProductPrice productPrice) {
+        this.discountPrice = discountPrice;
+        this.startUtcTime = startUtcTime;
+        this.endUtcTime = endUtcTime;
+        this.productPrice = productPrice;
+    }
 }

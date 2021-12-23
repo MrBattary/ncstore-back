@@ -6,7 +6,7 @@ import com.netcracker.ncstore.model.CartItem;
 import com.netcracker.ncstore.model.User;
 import com.netcracker.ncstore.repository.CartItemRepository;
 import com.netcracker.ncstore.repository.CartRepository;
-import com.netcracker.ncstore.service.user.IUserService;
+import com.netcracker.ncstore.service.data.user.IUserDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 public class CartServiceSessionEndedEventListener implements ApplicationListener<CartServiceSessionEndedEvent> {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-    private final IUserService userService;
+    private final IUserDataService userDataService;
 
     public CartServiceSessionEndedEventListener(final CartRepository cartRepository,
                                                 final CartItemRepository cartItemRepository,
-                                                final IUserService userService) {
+                                                final IUserDataService userDataService) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
-        this.userService = userService;
+        this.userDataService = userDataService;
     }
 
 
@@ -39,12 +39,12 @@ public class CartServiceSessionEndedEventListener implements ApplicationListener
 
         log.info("Session for user " + event.getUserEmail() + " ended. Saving cart to database.");
 
-        User user = userService.loadUserEntityByEmail(event.getUserEmail());
+        User user = userDataService.getUserByEmail(event.getUserEmail());
 
         if (!cartRepository.existsById(user.getId())) {
             Cart cartToSave = new Cart(
                     Instant.now(),
-                    userService.loadUserEntityById(user.getId())
+                    userDataService.getUserById(user.getId())
             );
 
             savedCart = cartRepository.save(cartToSave);

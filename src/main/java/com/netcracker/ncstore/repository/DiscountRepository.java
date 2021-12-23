@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 public interface DiscountRepository extends JpaRepository<Discount, UUID> {
-    void deleteDiscountById(UUID id);
 
     @Modifying
     @Query("delete from Discount d where d.endUtcTime < ?1")

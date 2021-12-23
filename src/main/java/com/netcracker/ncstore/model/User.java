@@ -20,11 +20,10 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class User {
-    //TODO: need to implement UserDetails but no spring security yet
     @Id
     @GeneratedValue
     private UUID id;
@@ -32,26 +31,23 @@ public class User {
     private String password;
     private double balance;
 
-    @ManyToMany
+    @ManyToMany(fetch = javax.persistence.FetchType.EAGER)
     @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
-    /**
-     * Constructor
-     * @param email - email
-     * @param password - encoded password
-     * @param balance - balance
-     * @param roles - list of roles
-     */
+
     public User(final String email,
                 final String password,
-                final double balance,
                 final List<Role> roles) {
         this.email = email;
         this.password = password;
-        this.balance = balance;
         this.roles = roles;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return id.equals(obj);
     }
 }

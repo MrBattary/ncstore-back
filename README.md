@@ -7,7 +7,13 @@ The backend repository for ncstore project.
 - Maven 3
 - Spring Boot
 - Spring Data JPA
+- Spring Security
+- Braintree
+- Flyway
 - Lombok
+
+## API
+Server fully supports this API: [API v1.0.4](https://app.swaggerhub.com/apis/netcrstore/ncstore/1.0.4)
 
 ## Developers
 
